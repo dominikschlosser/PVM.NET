@@ -7,7 +7,7 @@ namespace PVM.Core.Definition
         private readonly List<Transition> incomingTransitions = new List<Transition>();
         private readonly List<Transition> outgoingTransitions = new List<Transition>();
         private IExecutable executable;
-        private bool IsInitialNode { get; set; }
+        private string name;
 
         public NodeBuilder WithIncomingTransition(Transition transition)
         {
@@ -23,23 +23,23 @@ namespace PVM.Core.Definition
             return this;
         }
 
-        public NodeBuilder WithExectuable(IExecutable exectuable)
+        public NodeBuilder WithExectuable(IExecutable executable)
         {
-            executable = exectuable;
+            this.executable = executable;
 
             return this;
         }
 
-        public NodeBuilder IsInitial()
+        public NodeBuilder WithName(string name)
         {
-            IsInitialNode = true;
+            this.name = name;
 
             return this;
         }
 
         public Node Build()
         {
-            return new Node(executable, incomingTransitions, outgoingTransitions);
+            return new Node(name, executable, incomingTransitions, outgoingTransitions);
         }
     }
 }

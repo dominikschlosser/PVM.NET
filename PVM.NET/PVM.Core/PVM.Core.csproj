@@ -49,6 +49,8 @@
     <Compile Include="Definition\NodeBuilder.cs" />
     <Compile Include="Definition\Node.cs" />
     <Compile Include="Definition\Transition.cs" />
+    <Compile Include="Definition\WorkflowDefinitionBuilder.cs" />
+    <Compile Include="Definition\WorkflowDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

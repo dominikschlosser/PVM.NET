@@ -2,15 +2,15 @@
 {
     public class Transition
     {
-        public Transition(string name, Node source, Node destination)
+        public Transition(string name, INode source, INode destination)
         {
             Source = source;
             Destination = destination;
             Name = name;
         }
 
-        public Node Source { get; private set; }
-        public Node Destination { get; private set; }
+        public INode Source { get; private set; }
+        public INode Destination { get; private set; }
         public string Name { get; private set; }
     }
 }
