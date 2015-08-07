@@ -2,8 +2,7 @@
 {
     public interface IExecution
     {
-        bool IsActive { get; }
-        INode CurrentNode { get; }
-        void Proceed(string transitionName);
+	    void Proceed(string transitionName);
+	    void Proceed();
     }
 }

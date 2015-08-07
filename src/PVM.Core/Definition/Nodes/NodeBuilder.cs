@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace PVM.Core.Definition
+namespace PVM.Core.Definition.Nodes
 {
     public class NodeBuilder
     {

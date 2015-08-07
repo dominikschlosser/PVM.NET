@@ -1,33 +1,54 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using PVM.Core.Definition.Exception;
+using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Definition
 {
-    public class Execution : IExecution
-    {
-        public bool IsActive { get; } = true;
-        public INode CurrentNode { get; private set; }
+	public class Execution : IExecution
+	{
+		private readonly IEnumerable<INode> endNodes;
+		private bool active = true;
+		private INode currentNode;
 
-        public void Proceed(string transitionName)
-        {
-            if (CurrentNode == null)
+		public Execution(INode startNode, IEnumerable<INode> endNodes)
+		{
+			currentNode = startNode;
+			this.endNodes = endNodes;
+		}
+
+		public void Proceed(string transitionName)
+		{
+			Proceed(n => n.OutgoingTransitions.SingleOrDefault(t => t.Name == transitionName));
+		}
+
+		public void Proceed()
+		{
+			Proceed(n => n.OutgoingTransitions.FirstOrDefault());
+		}
+
+		private void Proceed(Func<INode, Transition> transitionSelector)
+		{
+			if (currentNode == null)
+			{
+				throw new ExecutionBrokenException("Current node is null");
+			}
+
+            if (endNodes.Contains(currentNode))
             {
-                throw new ExecutionBrokenException("Current node is null");
+                active = false;
+	            return;
             }
 
-            var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Name == transitionName);
-            if (transition == null)
-            {
-                throw new TransitionNotFoundException($"Transition with name {transitionName} was not found");
-            }
+			var transition = transitionSelector(currentNode);
+			if (transition == null)
+			{
+				throw new TransitionNotFoundException($"Outgoing transition not found for node {currentNode.Name}");
+			}
 
-            CurrentNode = transition.Destination;
-            if (CurrentNode == null)
-            {
-                throw new ExecutionBrokenException($"Destination node of transition \"{transitionName}\" is null");
-            }
-
-            CurrentNode.Execute(this);
-        }
-    }
+			currentNode = transition.Destination;
+            currentNode.Execute(this);
+		}
+	}
 }
