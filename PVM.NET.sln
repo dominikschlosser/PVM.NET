@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Client.Console", "src\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core", "src\PVM.Core\PVM.Core.csproj", "{4238AB96-0C31-45B5-8DF3-4DF93EE96C73}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core.Test", "src\PVM.Core.Test\PVM.Core.Test.csproj", "{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core.Test", "test\PVM.Core.Test\PVM.Core.Test.csproj", "{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

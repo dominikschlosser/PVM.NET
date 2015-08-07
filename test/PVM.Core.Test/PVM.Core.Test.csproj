@@ -58,7 +58,7 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PVM.Core\PVM.Core.csproj">
+    <ProjectReference Include="..\..\src\PVM.Core\PVM.Core.csproj">
       <Project>{4238ab96-0c31-45b5-8df3-4df93ee96c73}</Project>
       <Name>PVM.Core</Name>
     </ProjectReference>
