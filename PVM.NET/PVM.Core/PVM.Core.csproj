@@ -40,8 +40,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Definition\Exception\ExecutionBrokenException.cs" />
+    <Compile Include="Definition\Exception\TransitionNotFoundException.cs" />
+    <Compile Include="Definition\Exception\WorkflowInconsistentException.cs" />
+    <Compile Include="Definition\Execution.cs" />
+    <Compile Include="Definition\IExecutable.cs" />
+    <Compile Include="Definition\IExecution.cs" />
+    <Compile Include="Definition\NodeBuilder.cs" />
+    <Compile Include="Definition\Node.cs" />
+    <Compile Include="Definition\Transition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
