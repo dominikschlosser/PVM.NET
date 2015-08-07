@@ -11,7 +11,7 @@ namespace PVM.Core.Test.Workflows
 	{
 
 		[Test]
-		public void SingleNode()
+		public void MinimumWorkflow()
 		{
 			var builder = new WorkflowDefinitionBuilder();
 			var executable = new MockExecutable();
