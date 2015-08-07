@@ -23,4 +23,3 @@ The idea came from a failed project using one of the many "classical" workflow-e
 The main problem im trying to solve here was, that real world workflows are not workflows by definition:
 Decisions can be withdrawn, workflows might never come to an end and our stakeholders would have liked to have the possibility to react on unforeseen circumstances by skipping parts or even changing the flow on demand.
 
-CAUTION: Not production ready!! (In fact not ready in any form)
