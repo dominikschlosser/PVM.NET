@@ -1,7 +1,7 @@
 # PVM.NET
 Process Virtual Machine
 
-Based on concept described here: http://www.onjava.com/pub/a/onjava/2007/05/07/the-process-virtual-machine.html
+Based on concept described here: http://docs.jboss.com/jbpm/pvm/article/
 
 Initial Goals:
  - Fully type safe data context 
