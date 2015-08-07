@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Client.Console", "PVM.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core", "PVM.Core\PVM.Core.csproj", "{4238AB96-0C31-45B5-8DF3-4DF93EE96C73}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core.Test", "PVM.Core.Test\PVM.Core.Test.csproj", "{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{4238AB96-0C31-45B5-8DF3-4DF93EE96C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4238AB96-0C31-45B5-8DF3-4DF93EE96C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4238AB96-0C31-45B5-8DF3-4DF93EE96C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
