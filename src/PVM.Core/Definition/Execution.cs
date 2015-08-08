@@ -29,6 +29,7 @@ namespace PVM.Core.Definition
                     $"Outgoing transition with name '{transitionName}' not found for node {currentNode.Name}");
             }
 
+            Logger.Info($"Taking transition with name '{transition.Identifier}' to node '{transition.Destination.Name}'");
             currentNode = transition.Destination;
             Execute();
         }
@@ -42,6 +43,7 @@ namespace PVM.Core.Definition
                 return;
             }
 
+            Logger.Info($"Taking default-transition with name '{transition.Identifier}' to node '{transition.Destination.Name}'");
             currentNode = transition.Destination;
             Execute();
         }
