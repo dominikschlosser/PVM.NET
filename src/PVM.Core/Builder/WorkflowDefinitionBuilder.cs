@@ -39,14 +39,6 @@ namespace PVM.Core.Builder
             {
                 var sourceNode = nodes[transition.Key];
 
-                if (transition.Value.Any() && endNodes.ContainsKey(sourceNode.Name))
-                {
-                    string aggregatedTargetNames = transition.Value.Select(t => t.Target).Aggregate((t1, t2) => "'" + t1 + "', '" + t2 + "'");
-
-                    throw new WorkflowValidationException(
-                        $"Node '{sourceNode.Name}' is start node but has transitions to nodes {aggregatedTargetNames}");
-                }
-
                 foreach (var transitionData in transition.Value)
                 {
                     var targetNode = nodes[transitionData.Target];
@@ -63,12 +55,6 @@ namespace PVM.Core.Builder
 
             if (isStartNode)
             {
-                if (startNode != null)
-                {
-                    throw new WorkflowValidationException(
-                        $"Cannot set '{node.Name}' as start node since there is already a start node ('{startNode.Name}')");
-                }
-
                 startNode = node;
             }
 
