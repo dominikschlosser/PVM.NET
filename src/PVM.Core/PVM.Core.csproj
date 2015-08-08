@@ -44,6 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\IWorkflowPathBuilder.cs" />
+    <Compile Include="Build\NodeBuilder.cs" />
+    <Compile Include="Build\TransitionBuilder.cs" />
+    <Compile Include="Build\TransitionData.cs" />
+    <Compile Include="Build\WorkflowDefinitionBuilder.cs" />
+    <Compile Include="Build\WorkflowValidationException.cs" />
     <Compile Include="Definition\Exceptions\ExecutionInactiveException.cs" />
     <Compile Include="Definition\Exceptions\TransitionNotFoundException.cs" />
     <Compile Include="Definition\Exceptions\WorkflowInconsistentException.cs" />
@@ -63,9 +69,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Build\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
