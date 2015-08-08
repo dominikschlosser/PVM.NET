@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices.ComTypes;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Exception;
+using PVM.Core.Definition.Exceptions;
 
 namespace PVM.Core.Utils
 {

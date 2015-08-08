@@ -1,4 +1,4 @@
-﻿namespace PVM.Core.Definition.Exception
+﻿namespace PVM.Core.Definition.Exceptions
 {
     public class WorkflowInconsistentException : System.Exception
     {
