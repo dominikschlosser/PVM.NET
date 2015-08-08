@@ -55,7 +55,7 @@ namespace PVM.Core.Definition
         private void Execute()
         {
             this.RequireActive();
-            Logger.Info($"Executing node '{currentNode.Name}");
+            Logger.Info($"Executing node '{currentNode.Name}'");
             currentNode.Execute(this);
         }
 
