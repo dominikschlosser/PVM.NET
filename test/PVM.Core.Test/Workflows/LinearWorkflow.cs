@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using PVM.Core.Build;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Test.Workflows
 {
@@ -14,8 +12,14 @@ namespace PVM.Core.Test.Workflows
         {
             var builder = new WorkflowDefinitionBuilder();
             var executable = new MockExecutable();
-            var startNode = new NodeBuilder().WithExectuable(executable).Build();
-            var workflowDefinition = builder.AddInitialNode(startNode).Build();
+            var workflowDefinition =
+                builder.AddNode()
+                            .WithName("start")
+                            .WithExecutable(executable)
+                            .IsStartNode()
+                            .IsEndNode()
+                            .BuildNode()
+                       .BuildWorkflow();
 
             new WorkflowInstance(workflowDefinition).Start();
 
@@ -27,13 +31,22 @@ namespace PVM.Core.Test.Workflows
         {
             var builder = new WorkflowDefinitionBuilder();
             var executable = new MockExecutable();
-            var endNode = new EndNode("end", new List<Transition>());
-            INode startNode = null;
-            startNode =
-                new NodeBuilder().WithExectuable(executable)
-                    .WithOutgoingTransition(new Transition("t1", startNode, endNode))
-                    .Build();
-            var workflowDefinition = builder.AddInitialNode(startNode).AddEndNode(endNode).Build();
+
+            var workflowDefinition = builder
+                .AddNode()
+                    .WithExecutable(executable)
+                    .WithName("start")
+                    .IsStartNode()
+                    .AddTransition()
+                        .WithName("transition")
+                        .WithTarget("end")
+                        .BuildTransition()
+                    .BuildNode()
+                .AddNode()
+                    .WithName("end")
+                    .IsEndNode()
+                    .BuildNode()
+                .BuildWorkflow();
 
             new WorkflowInstance(workflowDefinition).Start();
 

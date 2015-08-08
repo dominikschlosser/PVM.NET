@@ -22,7 +22,7 @@ namespace PVM.Core.Definition
 
         public void Proceed(string transitionName)
         {
-            var transition = currentNode.OutgoingTransitions.SingleOrDefault(t => t.Name == transitionName);
+            var transition = currentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
             if (transition == null)
             {
                 throw new TransitionNotFoundException(
