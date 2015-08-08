@@ -22,7 +22,7 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public TransitionBuilder WithTarget(string targetNode)
+        public TransitionBuilder To(string targetNode)
         {
             target = targetNode;
 

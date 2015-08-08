@@ -39,7 +39,7 @@ namespace PVM.Core.Test.Workflows
                     .IsStartNode()
                     .AddTransition()
                         .WithName("transition")
-                        .WithTarget("end")
+                        .To("end")
                         .BuildTransition()
                     .BuildNode()
                 .AddNode()
