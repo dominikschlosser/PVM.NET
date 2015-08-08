@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using PVM.Core.Build;
 using PVM.Core.Definition;
 using PVM.Core.Definition.Nodes;
 
