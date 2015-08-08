@@ -9,9 +9,21 @@ namespace PVM.Core.Test.Workflows
 	[TestFixture]
 	public class SimpleWorkflow
 	{
+	    [Test]
+	    public void JustOneNode()
+	    {
+            var builder = new WorkflowDefinitionBuilder();
+            var executable = new MockExecutable();
+            var startNode = new NodeBuilder().WithExectuable(executable).Build();
+            var workflowDefinition = builder.AddInitialNode(startNode).Build();
+
+            new WorkflowInstance(workflowDefinition).Start();
+
+            Assert.That(executable.Executed);
+        }
 
 		[Test]
-		public void MinimumWorkflow()
+		public void SingleStartAndEndNode()
 		{
 			var builder = new WorkflowDefinitionBuilder();
 			var executable = new MockExecutable();

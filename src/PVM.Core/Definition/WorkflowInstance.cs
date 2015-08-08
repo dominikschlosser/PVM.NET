@@ -12,8 +12,8 @@
 
 		public void Start()
 		{
-			rootExecution = new Execution(definition.InitialNode, definition.EndNodes);
-            definition.InitialNode.Execute(rootExecution);
+			rootExecution = new Execution(definition.Identifier + "_Root", definition.InitialNode);
+            rootExecution.Start();
 		}
 	}
 }

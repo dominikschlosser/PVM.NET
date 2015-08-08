@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Definition
@@ -8,6 +9,7 @@ namespace PVM.Core.Definition
 		private readonly List<INode> endNodes = new List<INode>();
 		private readonly List<INode> nodes = new List<INode>();
 		private INode initialNode;
+	    private string identifier = Guid.NewGuid().ToString();
 
 		public WorkflowDefinitionBuilder AddNode(INode node)
 		{
@@ -32,9 +34,16 @@ namespace PVM.Core.Definition
 			return this;
 		}
 
+	    public WorkflowDefinitionBuilder WithIdentifier(string identifier)
+	    {
+	        this.identifier = identifier;
+
+	        return this;
+	    }
+
 		public WorkflowDefinition Build()
 		{
-			return new WorkflowDefinition(initialNode, nodes, endNodes);
+			return new WorkflowDefinition(identifier, initialNode, nodes, endNodes);
 		}
 	}
 }
