@@ -14,5 +14,11 @@ namespace PVM.Core.Definition
         public INode Source { get; private set; }
         public INode Destination { get; private set; }
         public string Identifier { get; private set; }
+        public bool Executed { get; private set; }
+
+        internal void MarkAsExecuted()
+        {
+            Executed = true;
+        }
     }
 }

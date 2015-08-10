@@ -1,4 +1,6 @@
-﻿namespace PVM.Core.Definition
+﻿using PVM.Core.Definition.Executions;
+
+namespace PVM.Core.Definition
 {
 	public class WorkflowInstance
 	{

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using PVM.Core.Definition.Executions;
 
 namespace PVM.Core.Definition.Nodes
 {
@@ -12,12 +13,12 @@ namespace PVM.Core.Definition.Nodes
 
     public class Node : INode
     {
-        private readonly IExecutable executable;
+        private readonly IBehavior behavior;
 
-        public Node(string name, IExecutable executable)
+        public Node(string name, IBehavior behavior)
         {
             Name = name;
-            this.executable = executable;
+            this.behavior = behavior;
         }
 
         public IList<Transition> IncomingTransitions { get; } = new List<Transition>();
@@ -26,7 +27,7 @@ namespace PVM.Core.Definition.Nodes
 
         public void Execute(IExecution execution)
         {
-            executable.Execute(execution);
+            behavior.Execute(execution);
         }
     }
 }

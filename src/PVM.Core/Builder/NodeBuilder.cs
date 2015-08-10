@@ -10,7 +10,7 @@ namespace PVM.Core.Builder
     {
         private readonly WorkflowDefinitionBuilder parentWorkflowBuilder;
         private readonly List<TransitionData> transitions = new List<TransitionData>();
-        private IExecutable executable = new TransientExecutable();
+        private IBehavior behavior = new TransientBehavior();
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
@@ -31,9 +31,9 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public NodeBuilder WithExecutable(IExecutable executable)
+        public NodeBuilder WithBehavior(IBehavior behavior)
         {
-            this.executable = executable;
+            this.behavior = behavior;
 
             return this;
         }
@@ -67,7 +67,7 @@ namespace PVM.Core.Builder
 
         public IWorkflowPathBuilder BuildNode()
         {
-            parentWorkflowBuilder.AddNode(new Node(name, executable), isStartNode, isEndNode, transitions);
+            parentWorkflowBuilder.AddNode(new Node(name, behavior), isStartNode, isEndNode, transitions);
 
             return parentWorkflowBuilder;
         }

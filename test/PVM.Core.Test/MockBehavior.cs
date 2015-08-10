@@ -1,8 +1,9 @@
 ﻿using PVM.Core.Definition;
+using PVM.Core.Definition.Executions;
 
 namespace PVM.Core.Test
 {
-	public class MockExecutable : IExecutable
+	public class MockBehavior : IBehavior
 	{
 		public bool Executed { get; private set; }
 

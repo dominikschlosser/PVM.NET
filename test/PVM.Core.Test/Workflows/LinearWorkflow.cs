@@ -11,11 +11,11 @@ namespace PVM.Core.Test.Workflows
         public void JustOneNode()
         {
             var builder = new WorkflowDefinitionBuilder();
-            var executable = new MockExecutable();
+            var executable = new MockBehavior();
             var workflowDefinition =
                 builder.AddNode()
                             .WithName("start")
-                            .WithExecutable(executable)
+                            .WithBehavior(executable)
                             .IsStartNode()
                             .IsEndNode()
                             .BuildNode()
@@ -30,11 +30,11 @@ namespace PVM.Core.Test.Workflows
         public void SingleStartAndEndNode()
         {
             var builder = new WorkflowDefinitionBuilder();
-            var executable = new MockExecutable();
+            var executable = new MockBehavior();
 
             var workflowDefinition = builder
                 .AddNode()
-                    .WithExecutable(executable)
+                    .WithBehavior(executable)
                     .WithName("start")
                     .IsStartNode()
                     .AddTransition()
