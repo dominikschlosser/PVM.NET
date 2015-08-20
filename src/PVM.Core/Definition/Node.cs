@@ -1,21 +1,24 @@
 ﻿using System.Collections.Generic;
-using PVM.Core.Definition.Executions;
+using JetBrains.Annotations;
+using PVM.Core.Plan;
+using PVM.Core.Plan.Operations;
+using PVM.Core.Runtime;
 
-namespace PVM.Core.Definition.Nodes
+namespace PVM.Core.Definition
 {
     public interface INode
     {
         IList<Transition> IncomingTransitions { get; }
         IList<Transition> OutgoingTransitions { get; }
         string Name { get; }
-        void Execute(IExecution execution);
+        void Execute(IExecutionPlan executionPlan);
     }
 
     public class Node : INode
     {
         private readonly IBehavior behavior;
 
-        public Node(string name, IBehavior behavior)
+        public Node(string name, [CanBeNull] IBehavior behavior)
         {
             Name = name;
             this.behavior = behavior;
@@ -25,9 +28,16 @@ namespace PVM.Core.Definition.Nodes
         public IList<Transition> OutgoingTransitions { get; } = new List<Transition>();
         public string Name { get; }
 
-        public void Execute(IExecution execution)
+        public void Execute(IExecutionPlan executionPlan)
         {
-            behavior.Execute(execution);
+            if (behavior == null)
+            {
+                executionPlan.Proceed(this, new TransientOperation());
+            }
+            else
+            {
+                behavior.Execute(this, executionPlan);
+            }
         }
     }
 }

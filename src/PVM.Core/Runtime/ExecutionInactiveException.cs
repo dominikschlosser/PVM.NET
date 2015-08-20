@@ -1,4 +1,4 @@
-﻿namespace PVM.Core.Definition.Exceptions
+﻿namespace PVM.Core.Runtime
 {
     public class ExecutionInactiveException : System.Exception
     {

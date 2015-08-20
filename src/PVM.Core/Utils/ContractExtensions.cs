@@ -1,9 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using PVM.Core.Definition;
-using PVM.Core.Definition.Exceptions;
-using PVM.Core.Definition.Executions;
-
-namespace PVM.Core.Utils
+﻿namespace PVM.Core.Utils
 {
     public static class ContractExtensions
     {
@@ -12,14 +7,6 @@ namespace PVM.Core.Utils
             if (obj == null)
             {
                 throw new ContractException(message);
-            }
-        }
-
-        public static void RequireActive(this IExecution execution)
-        {
-            if (!execution.IsActive)
-            {
-                throw new ExecutionInactiveException($"Execution '{execution.Identifier}' is inactive.");
             }
         }
     }

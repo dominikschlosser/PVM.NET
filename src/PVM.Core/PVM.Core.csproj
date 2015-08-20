@@ -30,6 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=9.2.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\JetBrains.Annotations.9.2.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
@@ -50,20 +54,25 @@
     <Compile Include="Builder\TransitionData.cs" />
     <Compile Include="Builder\WorkflowDefinitionBuilder.cs" />
     <Compile Include="Builder\WorkflowValidationException.cs" />
-    <Compile Include="Definition\Behaviors\ParallelGatewayBehavior.cs" />
-    <Compile Include="Definition\Exceptions\ExecutionInactiveException.cs" />
-    <Compile Include="Definition\Exceptions\TransitionNotFoundException.cs" />
-    <Compile Include="Definition\Exceptions\WorkflowInconsistentException.cs" />
-    <Compile Include="Definition\Behaviors\TransientBehavior.cs" />
-    <Compile Include="Definition\Executions\Execution.cs" />
-    <Compile Include="Definition\IBehavior.cs" />
-    <Compile Include="Definition\Executions\IExecution.cs" />
-    <Compile Include="Definition\Nodes\EndNode.cs" />
-    <Compile Include="Definition\Nodes\Node.cs" />
-    <Compile Include="Definition\WorkflowInstance.cs" />
+    <Compile Include="Plan\Operations\IOperation.cs" />
+    <Compile Include="Plan\Operations\ParallelGatewayOperation.cs" />
+    <Compile Include="Plan\Operations\TransientOperation.cs" />
+    <Compile Include="Runtime\Behaviors\ParallelGatewayBehavior.cs" />
+    <Compile Include="Plan\IExecutionPlan.cs" />
+    <Compile Include="Plan\WorkflowInstance.cs" />
+    <Compile Include="Plan\ExecutionPlan.cs" />
+    <Compile Include="Runtime\InvalidExecutionStateException.cs" />
+    <Compile Include="Runtime\ExecutionInactiveException.cs" />
+    <Compile Include="Plan\TransitionNotFoundException.cs" />
+    <Compile Include="Definition\WorkflowInconsistentException.cs" />
+    <Compile Include="Runtime\Execution.cs" />
+    <Compile Include="Runtime\IBehavior.cs" />
+    <Compile Include="Runtime\IExecution.cs" />
+    <Compile Include="Definition\Node.cs" />
     <Compile Include="Definition\Transition.cs" />
     <Compile Include="Definition\WorkflowDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\IExecutionVisitor.cs" />
     <Compile Include="Utils\ContractException.cs" />
     <Compile Include="Utils\ContractExtensions.cs" />
   </ItemGroup>

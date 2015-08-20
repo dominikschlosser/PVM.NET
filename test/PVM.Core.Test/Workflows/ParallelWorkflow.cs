@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using PVM.Core.Builder;
-using PVM.Core.Definition;
-using PVM.Core.Definition.Behaviors;
+using PVM.Core.Plan;
+using PVM.Core.Runtime.Behaviors;
 
 namespace PVM.Core.Test.Workflows
 {

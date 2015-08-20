@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Builder
 {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Executables;
-using PVM.Core.Definition.Nodes;
+using PVM.Core.Runtime;
 
 namespace PVM.Core.Builder
 {
@@ -10,7 +9,7 @@ namespace PVM.Core.Builder
     {
         private readonly WorkflowDefinitionBuilder parentWorkflowBuilder;
         private readonly List<TransitionData> transitions = new List<TransitionData>();
-        private IBehavior behavior = new TransientBehavior();
+        private IBehavior behavior;
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
@@ -31,9 +30,9 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public NodeBuilder WithBehavior(IBehavior behavior)
+        public NodeBuilder WithBehavior(IBehavior withBehavior)
         {
-            this.behavior = behavior;
+            behavior = withBehavior;
 
             return this;
         }

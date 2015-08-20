@@ -1,4 +1,4 @@
-﻿namespace PVM.Core.Definition.Exceptions
+﻿namespace PVM.Core.Plan
 {
     public class TransitionNotFoundException : System.Exception
     {
