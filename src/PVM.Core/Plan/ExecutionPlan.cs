@@ -38,7 +38,7 @@ namespace PVM.Core.Plan
                     execution.Identifier,
                     activeExecutions.Select(e => e.Identifier).Aggregate((e1, e2) => e1 + ", " + e2));
             }
-            else
+            else if (!execution.CurrentNode.OutgoingTransitions.Any())
             {
                 Logger.InfoFormat("Workflow instance with definition '{0}' ended", workflowDefinition.Identifier);
             }
@@ -65,8 +65,9 @@ namespace PVM.Core.Plan
             operation.Execute(execution);
         }
 
-        private IList<IExecution> GetActiveExecutions(IExecution root)
+        private IList<IExecution> GetActiveExecutions(IExecution execution)
         {
+            IExecution root = FindRoot(execution);
             var results = new List<IExecution>();
             root.Accept(new ExecutionVisitor(e =>
             {
@@ -77,6 +78,16 @@ namespace PVM.Core.Plan
             }));
 
             return results;
+        }
+
+        private IExecution FindRoot(IExecution execution)
+        {
+            if (execution.Parent == null)
+            {
+                return execution;
+            }
+
+            return FindRoot(execution.Parent);
         }
     }
 }

@@ -55,7 +55,7 @@ namespace PVM.Core.Runtime
         {
             if (IsActive)
             {
-                Logger.InfoFormat("Execution '{0}' ended.", Identifier);
+                Logger.InfoFormat("Execution '{0}' stopped.", Identifier);
                 IsActive = false;
                 executionPlan.OnExecutionStopped(this);
             }

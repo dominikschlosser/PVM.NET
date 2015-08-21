@@ -32,7 +32,6 @@ namespace PVM.Core.Plan.Operations
                     execution.CreateChild(outgoingTransition.Destination);
                 }
             }
-
         }
     }
 }
