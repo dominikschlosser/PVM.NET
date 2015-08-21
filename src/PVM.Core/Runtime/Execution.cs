@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
-using PVM.Core.Data;
 using PVM.Core.Definition;
 using PVM.Core.Definition.Nodes;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {
-    public class Execution<T> : IExecution<T> where T : ICopyable<T>
+    public class Execution<T> : IExecution<T>
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Execution<T>));
         private readonly IExecutionPlan<T> executionPlan;
@@ -83,7 +82,7 @@ namespace PVM.Core.Runtime
             var child = new Execution<T>(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
             Children.Add(child);
 
-            child.Start(startNode, Data.Copy());
+            child.Start(startNode, Data);
         }
 
         public void Accept(IExecutionVisitor<T> visitor)

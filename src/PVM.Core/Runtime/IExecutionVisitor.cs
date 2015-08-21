@@ -1,8 +1,6 @@
-﻿using PVM.Core.Data;
-
-namespace PVM.Core.Runtime
+﻿namespace PVM.Core.Runtime
 {
-    public interface IExecutionVisitor<T> where T : ICopyable<T>
+    public interface IExecutionVisitor<T>
     {
         void Visit(IExecution<T> execution);
     }

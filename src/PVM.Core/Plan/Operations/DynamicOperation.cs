@@ -1,10 +1,9 @@
 ﻿using System;
-using PVM.Core.Data;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class DynamicOperation<T> : IOperation<T> where T : ICopyable<T>
+    public class DynamicOperation<T> : IOperation<T>
     {
         private readonly Action<IExecution<T>> action;
 

@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using PVM.Core.Data;
 using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Definition
 {
-	public class WorkflowDefinition<T> where T : ICopyable<T>
+	public class WorkflowDefinition<T>
 	{
 		public WorkflowDefinition(string identifier, INode<T> initialNode, IEnumerable<INode<T>> nodes, IEnumerable<INode<T>> endNodes)
 		{

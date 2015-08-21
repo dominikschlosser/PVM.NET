@@ -1,9 +1,8 @@
 ﻿using System;
-using PVM.Core.Data;
 
 namespace PVM.Core.Builder
 {
-    public class TransitionBuilder<T> where T : ICopyable<T>
+    public class TransitionBuilder<T>
     {
         private readonly NodeBuilder<T> parentNodeBuilder;
         private readonly string source;

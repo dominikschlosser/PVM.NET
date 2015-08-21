@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using PVM.Core.Data;
 using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Builder
 {
-    public class NodeBuilder<T> where T : ICopyable<T>
+    public class NodeBuilder<T>
     {
         private readonly WorkflowDefinitionBuilder<T> parentWorkflowBuilder;
         private readonly List<TransitionData> transitions = new List<TransitionData>();

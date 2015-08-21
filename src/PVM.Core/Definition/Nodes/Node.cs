@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
-using PVM.Core.Data;
 using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Definition.Nodes
 {
-    public interface INode<T> where T : ICopyable<T>
+    public interface INode<T>
     {
         IList<Transition<T>> IncomingTransitions { get; }
         IList<Transition<T>> OutgoingTransitions { get; }
@@ -15,7 +14,7 @@ namespace PVM.Core.Definition.Nodes
     }
 
 
-    public class Node<T> : INode<T> where T : ICopyable<T>
+    public class Node<T> : INode<T>
     {
         public Node(string name)
         {

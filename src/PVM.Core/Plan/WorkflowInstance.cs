@@ -1,11 +1,10 @@
 ﻿using System;
 using log4net;
-using PVM.Core.Data;
 using PVM.Core.Definition;
 
 namespace PVM.Core.Plan
 {
-    public class WorkflowInstance<T> where T : ICopyable<T>
+    public class WorkflowInstance<T>
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(WorkflowInstance<T>));
         private readonly string identifier = Guid.NewGuid().ToString();

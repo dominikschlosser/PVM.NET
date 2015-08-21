@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using PVM.Core.Data;
 using PVM.Core.Definition;
 using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Builder
 {
-    public class WorkflowDefinitionBuilder<T> : IWorkflowPathBuilder<T> where T : ICopyable<T>
+    public class WorkflowDefinitionBuilder<T> : IWorkflowPathBuilder<T>
     {
         private readonly IDictionary<string, INode<T>> endNodes = new Dictionary<string, INode<T>>();
         private readonly IDictionary<string, INode<T>> nodes = new Dictionary<string, INode<T>>();

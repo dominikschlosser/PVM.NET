@@ -10,13 +10,12 @@ namespace PVM.Core.Test
     public static class TestExtensions
     {
         public static IWorkflowPathBuilder<T> BuildMockNode<T>(this NodeBuilder<T> nodeBuilder,
-            Action<bool> executeAction) where T : ICopyable<T>
+            Action<bool> executeAction)
         {
             return nodeBuilder.BuildNode(n => new MockNode<T>(n, executeAction));
         }
 
-        private class MockNode<T> : Node<T> where T : ICopyable<T>
-        {
+        private class MockNode<T> : Node<T> { 
             private readonly Action<bool> action;
 
             public MockNode(string name, Action<bool> action) : base(name)
