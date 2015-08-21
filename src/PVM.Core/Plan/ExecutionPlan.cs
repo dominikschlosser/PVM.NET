@@ -51,7 +51,6 @@ namespace PVM.Core.Plan
                 Logger.InfoFormat("Execution '{0}' ended in null transition. Stopping...", execution.Identifier);
                 execution.Stop();
 
-
                 return;
             }
 

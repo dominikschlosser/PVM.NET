@@ -22,7 +22,9 @@ namespace PVM.Core.Plan.Operations
 
             if (execution.CurrentNode.OutgoingTransitions.Count == 1)
             {
-                execution.Start(execution.CurrentNode.OutgoingTransitions[0].Destination);
+                var transition = execution.CurrentNode.OutgoingTransitions[0];
+                transition.Executed = true;
+                execution.Start(transition.Destination);
             }
             else
             {
