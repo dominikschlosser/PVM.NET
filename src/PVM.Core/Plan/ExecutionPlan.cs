@@ -62,6 +62,10 @@ namespace PVM.Core.Plan
 
         public bool IsFinished { get; private set; }
 
+        public void OnExecutionResuming(Execution<T> execution)
+        {
+        }
+
         public void Proceed(IExecution<T> execution, IOperation<T> operation)
         {
             operation.Execute(execution);

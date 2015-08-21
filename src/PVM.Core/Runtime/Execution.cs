@@ -58,6 +58,17 @@ namespace PVM.Core.Runtime
             Execute(transitionName, transition);
         }
 
+        public void Resume()
+        {
+            if (!IsActive)
+            {
+                Logger.InfoFormat("Activating execution '{0}'.", Identifier);
+                IsActive = true;
+                executionPlan.OnExecutionResuming(this);
+                Proceed();
+            }
+        }
+
         public void Stop()
         {
             if (IsActive)

@@ -12,5 +12,6 @@ namespace PVM.Core.Plan
         void OnExecutionStopped(Execution<T> execution);
         void OnOutgoingTransitionIsNull(Execution<T> execution, string transitionIdentifier);
         bool IsFinished { get; }
+        void OnExecutionResuming(Execution<T> execution);
     }
 }

@@ -13,6 +13,7 @@ namespace PVM.Core.Runtime
         bool IsActive { get; }
         void Proceed();
         void Proceed(string transitionName);
+        void Resume();
         void Stop();
         void Start(INode<T> startNode, T data);
         void CreateChild(INode<T> startNode);

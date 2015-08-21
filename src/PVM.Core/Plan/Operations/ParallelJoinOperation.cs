@@ -19,6 +19,8 @@ namespace PVM.Core.Plan.Operations
                     return;
                 }
             }
+
+            execution.Resume();
         }
     }
 }

@@ -13,14 +13,13 @@ namespace PVM.Core.Plan.Operations
 
             if (execution.CurrentNode.OutgoingTransitions.Count == 1)
             {
-                var transition = execution.CurrentNode.OutgoingTransitions[0];
-                transition.Executed = true;
-                execution.Start(transition.Destination, execution.Data);
+                execution.Resume();
             }
             else
             {
                 foreach (var outgoingTransition in execution.CurrentNode.OutgoingTransitions)
                 {
+                    outgoingTransition.Executed = true;
                     Logger.InfoFormat("Split to '{0}'", outgoingTransition.Identifier);
                     execution.CreateChild(outgoingTransition.Destination);
                 }

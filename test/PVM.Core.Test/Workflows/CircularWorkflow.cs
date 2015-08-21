@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using log4net;
+using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Plan;
 
@@ -7,6 +8,8 @@ namespace PVM.Core.Test.Workflows
     [TestFixture]
     public class CircularWorkflow
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (CircularWorkflow));
+
         [Test]
         public void Executes()
         {
@@ -39,10 +42,12 @@ namespace PVM.Core.Test.Workflows
                     {
                         if (e.Data.Counter == 1)
                         {
+                            Logger.Info("COUNTER == 1");
                             e.Proceed("intermediateToJoin");
                         }
                         else
                         {
+                            Logger.Info("COUNTER == 0");
                             e.Data.Counter++;
                             e.Proceed("intermediateToStart");
                         }
