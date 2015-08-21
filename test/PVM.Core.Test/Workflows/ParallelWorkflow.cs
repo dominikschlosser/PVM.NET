@@ -54,9 +54,11 @@ namespace PVM.Core.Test.Workflows
                 .BuildMockNode(e => executed = e)
                 .BuildWorkflow();
 
-            new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
+            var instance = new WorkflowInstance<EmptyProcessData>(workflowDefinition);
+            instance.Start(new EmptyProcessData());
 
             Assert.That(executed);
+            Assert.That(instance.IsFinished);
         }
     }
 }

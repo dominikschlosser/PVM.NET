@@ -11,7 +11,7 @@ namespace PVM.Core.Plan
 {
     public class ExecutionPlan<T> : IExecutionPlan<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ExecutionPlan<T>));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan<T>));
         private readonly IExecution<T> rootExecution;
         private readonly WorkflowDefinition<T> workflowDefinition;
 
@@ -32,7 +32,7 @@ namespace PVM.Core.Plan
 
         public void OnExecutionStopped(Execution<T> execution)
         {
-            IList<IExecution<T>> activeExecutions = GetActiveExecutions(execution);
+            var activeExecutions = GetActiveExecutions(execution);
             if (activeExecutions.Any())
             {
                 Logger.InfoFormat("Execution '{0}' stopped but the following are still active: '{1}'",
@@ -41,6 +41,7 @@ namespace PVM.Core.Plan
             }
             else if (!execution.CurrentNode.OutgoingTransitions.Any())
             {
+                IsFinished = true;
                 Logger.InfoFormat("Workflow instance with definition '{0}' ended", workflowDefinition.Identifier);
             }
         }
@@ -60,6 +61,8 @@ namespace PVM.Core.Plan
                 execution.CurrentNode.Name));
         }
 
+        public bool IsFinished { get; private set; }
+
         public void Proceed(IExecution<T> execution, IOperation<T> operation)
         {
             operation.Execute(execution);
@@ -67,7 +70,7 @@ namespace PVM.Core.Plan
 
         private IList<IExecution<T>> GetActiveExecutions(IExecution<T> execution)
         {
-            IExecution<T> root = FindRoot(execution);
+            var root = FindRoot(execution);
             var results = new List<IExecution<T>>();
             root.Accept(new ExecutionVisitor<T>(e =>
             {

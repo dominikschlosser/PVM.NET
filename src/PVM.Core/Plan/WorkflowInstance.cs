@@ -6,10 +6,9 @@ namespace PVM.Core.Plan
 {
     public class WorkflowInstance<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(WorkflowInstance<T>));
-        private readonly string identifier = Guid.NewGuid().ToString();
-        private readonly IExecutionPlan<T> plan;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance<T>));
         private readonly WorkflowDefinition<T> definition;
+        private readonly IExecutionPlan<T> plan;
 
         public WorkflowInstance(WorkflowDefinition<T> definition)
         {
@@ -17,9 +16,11 @@ namespace PVM.Core.Plan
             this.definition = definition;
         }
 
-        public string Identifier
+        public string Identifier { get; } = Guid.NewGuid().ToString();
+
+        public bool IsFinished
         {
-            get { return identifier; }
+            get { return plan.IsFinished; }
         }
 
         public void Start(T data)

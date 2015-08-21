@@ -52,6 +52,7 @@
     <Compile Include="Definition\WorkflowDefinitionBuilderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestExtensions.cs" />
+    <Compile Include="Workflows\CircularWorkflow.cs" />
     <Compile Include="Workflows\LinearWorkflow.cs" />
     <Compile Include="Workflows\ParallelWorkflow.cs" />
   </ItemGroup>
