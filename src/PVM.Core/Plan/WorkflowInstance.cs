@@ -1,19 +1,20 @@
 ﻿using System;
 using log4net;
+using PVM.Core.Data;
 using PVM.Core.Definition;
 
 namespace PVM.Core.Plan
 {
-    public class WorkflowInstance
+    public class WorkflowInstance<T> where T : IProcessData<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(WorkflowInstance<T>));
         private readonly string identifier = Guid.NewGuid().ToString();
-        private readonly IExecutionPlan plan;
-        private readonly WorkflowDefinition definition;
+        private readonly IExecutionPlan<T> plan;
+        private readonly WorkflowDefinition<T> definition;
 
-        public WorkflowInstance(WorkflowDefinition definition)
+        public WorkflowInstance(WorkflowDefinition<T> definition)
         {
-            plan = new ExecutionPlan(definition);
+            plan = new ExecutionPlan<T>(definition);
             this.definition = definition;
         }
 
@@ -22,9 +23,9 @@ namespace PVM.Core.Plan
             get { return identifier; }
         }
 
-        public void Start()
+        public void Start(T data)
         {
-            plan.Start(definition.InitialNode);
+            plan.Start(definition.InitialNode, data);
         }
     }
 }

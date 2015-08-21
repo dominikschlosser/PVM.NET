@@ -1,10 +1,11 @@
-﻿using PVM.Core.Definition;
+﻿using PVM.Core.Data;
+using PVM.Core.Definition;
 
 namespace PVM.Core.Builder
 {
-    public interface IWorkflowPathBuilder
+    public interface IWorkflowPathBuilder<T> where T: IProcessData<T>
     {
-        NodeBuilder AddNode();
-        WorkflowDefinition BuildWorkflow();
+        NodeBuilder<T> AddNode();
+        WorkflowDefinition<T> BuildWorkflow();
     }
 }

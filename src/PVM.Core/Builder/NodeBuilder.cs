@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using PVM.Core.Data;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Builder
 {
-    public class NodeBuilder
+    public class NodeBuilder<T> where T : IProcessData<T>
     {
-        private readonly WorkflowDefinitionBuilder parentWorkflowBuilder;
+        private readonly WorkflowDefinitionBuilder<T> parentWorkflowBuilder;
         private readonly List<TransitionData> transitions = new List<TransitionData>();
-        private IBehavior behavior;
+        private IBehavior<T> behavior;
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
 
-        public NodeBuilder(WorkflowDefinitionBuilder parentWorkflowBuilder)
+        public NodeBuilder(WorkflowDefinitionBuilder<T> parentWorkflowBuilder)
         {
             this.parentWorkflowBuilder = parentWorkflowBuilder;
         }
 
-        public NodeBuilder WithName(string name)
+        public NodeBuilder<T> WithName(string name)
         {
             this.name = name;
 
@@ -30,16 +31,16 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public NodeBuilder WithBehavior(IBehavior withBehavior)
+        public NodeBuilder<T> WithBehavior(IBehavior<T> withBehavior)
         {
             behavior = withBehavior;
 
             return this;
         }
 
-        public TransitionBuilder AddTransition()
+        public TransitionBuilder<T> AddTransition()
         {
-            return new TransitionBuilder(this, name);
+            return new TransitionBuilder<T>(this, name);
         }
 
         internal void AddTransition(TransitionData data)
@@ -50,23 +51,23 @@ namespace PVM.Core.Builder
             }
         }
 
-        public NodeBuilder IsStartNode()
+        public NodeBuilder<T> IsStartNode()
         {
             isStartNode = true;
 
             return this;
         }
 
-        public NodeBuilder IsEndNode()
+        public NodeBuilder<T> IsEndNode()
         {
             isEndNode = true;
 
             return this;
         }
 
-        public IWorkflowPathBuilder BuildNode()
+        public IWorkflowPathBuilder<T> BuildNode()
         {
-            parentWorkflowBuilder.AddNode(new Node(name, behavior), isStartNode, isEndNode, transitions);
+            parentWorkflowBuilder.AddNode(new Node<T>(name, behavior), isStartNode, isEndNode, transitions);
 
             return parentWorkflowBuilder;
         }

@@ -1,7 +1,9 @@
-﻿namespace PVM.Core.Runtime
+﻿using PVM.Core.Data;
+
+namespace PVM.Core.Runtime
 {
-    public interface IExecutionVisitor
+    public interface IExecutionVisitor<T> where T : IProcessData<T>
     {
-        void Visit(IExecution execution);
+        void Visit(IExecution<T> execution);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using PVM.Core.Builder;
+using PVM.Core.Data;
 using PVM.Core.Plan;
 using PVM.Core.Runtime.Behaviors;
 
@@ -11,12 +12,12 @@ namespace PVM.Core.Test.Workflows
         [Test]
         public void SingleBranch_ExecutesNodeAfterJoin()
         {
-            var builder = new WorkflowDefinitionBuilder();
-            var behavior = new MockBehavior();
+            var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
+            var behavior = new MockBehavior<EmptyProcessData>();
 
             var workflowDefinition = builder
                 .AddNode()
-                    .WithBehavior(new ParallelGatewayBehavior())
+                    .WithBehavior(new ParallelGatewayBehavior<EmptyProcessData>())
                     .WithName("split")
                     .IsStartNode()
                         .AddTransition()
@@ -44,7 +45,7 @@ namespace PVM.Core.Test.Workflows
                 .BuildNode()
                 .AddNode()
                     .WithName("join")
-                    .WithBehavior(new ParallelGatewayBehavior())
+                    .WithBehavior(new ParallelGatewayBehavior<EmptyProcessData>())
                         .AddTransition()
                                     .WithName("joinToEnd")
                                     .To("end")
@@ -57,7 +58,7 @@ namespace PVM.Core.Test.Workflows
                 .BuildNode()
                 .BuildWorkflow();
 
-            new WorkflowInstance(workflowDefinition).Start();
+            new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
 
             Assert.That(behavior.Executed);
         }

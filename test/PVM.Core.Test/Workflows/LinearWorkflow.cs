@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
 using PVM.Core.Builder;
-using PVM.Core.Definition;
+using PVM.Core.Data;
 using PVM.Core.Plan;
-using PVM.Core.Runtime;
 
 namespace PVM.Core.Test.Workflows
 {
@@ -12,8 +11,8 @@ namespace PVM.Core.Test.Workflows
         [Test]
         public void JustOneNode()
         {
-            var builder = new WorkflowDefinitionBuilder();
-            var executable = new MockBehavior();
+            var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
+            var executable = new MockBehavior<EmptyProcessData>();
             var workflowDefinition =
                 builder.AddNode()
                             .WithName("start")
@@ -23,7 +22,7 @@ namespace PVM.Core.Test.Workflows
                             .BuildNode()
                        .BuildWorkflow();
 
-            new WorkflowInstance(workflowDefinition).Start();
+            new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
 
             Assert.That(executable.Executed);
         }
@@ -31,8 +30,8 @@ namespace PVM.Core.Test.Workflows
         [Test]
         public void SingleStartAndEndNode()
         {
-            var builder = new WorkflowDefinitionBuilder();
-            var executable = new MockBehavior();
+            var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
+            var executable = new MockBehavior<EmptyProcessData>();
 
             var workflowDefinition = builder
                 .AddNode()
@@ -50,7 +49,7 @@ namespace PVM.Core.Test.Workflows
                     .BuildNode()
                 .BuildWorkflow();
 
-            new WorkflowInstance(workflowDefinition).Start();
+            new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
 
             Assert.That(executable.Executed);
         }

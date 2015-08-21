@@ -1,13 +1,14 @@
 ﻿using log4net;
+using PVM.Core.Data;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class ParallelGatewayOperation : IOperation
+    public class ParallelGatewayOperation<T> : IOperation<T> where T : IProcessData<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (ParallelGatewayOperation));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (ParallelGatewayOperation<T>));
 
-        public void Execute(IExecution execution)
+        public void Execute(IExecution<T> execution)
         {
             execution.Stop();
 
@@ -24,7 +25,7 @@ namespace PVM.Core.Plan.Operations
             {
                 var transition = execution.CurrentNode.OutgoingTransitions[0];
                 transition.Executed = true;
-                execution.Start(transition.Destination);
+                execution.Start(transition.Destination, execution.Data);
             }
             else
             {

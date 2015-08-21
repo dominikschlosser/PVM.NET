@@ -2,32 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using PVM.Core.Data;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {
-    public class Execution : IExecution
+    public class Execution<T> : IExecution<T> where T : IProcessData<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution));
-        private readonly IExecutionPlan executionPlan;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(Execution<T>));
+        private readonly IExecutionPlan<T> executionPlan;
 
-        public Execution(string identifier, IExecutionPlan executionPlan)
+        public Execution(string identifier, IExecutionPlan<T> executionPlan)
         {
             Identifier = identifier;
-            Children = new List<IExecution>();
+            Children = new List<IExecution<T>>();
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
+        public Execution(IExecution<T> parent, string identifier, IExecutionPlan<T> executionPlan)
             : this(identifier, executionPlan)
         {
             Parent = parent;
         }
 
-        public IExecution Parent { get; private set; }
-        public IList<IExecution> Children { get; private set; }
-        public INode CurrentNode { get; private set; }
+        public IExecution<T> Parent { get; private set; }
+        public T Data { get; private set; }
+        public IList<IExecution<T>> Children { get; private set; }
+        public INode<T> CurrentNode { get; private set; }
         public string Identifier { get; private set; }
         public bool IsActive { get; private set; }
 
@@ -36,7 +38,7 @@ namespace PVM.Core.Runtime
             RequireActive();
 
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            Transition transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
+            Transition<T> transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
 
             Execute("Default", transition);
         }
@@ -46,7 +48,7 @@ namespace PVM.Core.Runtime
             RequireActive();
 
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            Transition transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
+            Transition<T> transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
             Execute(transitionName, transition);
         }
@@ -61,37 +63,38 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void Start(INode startNode)
+        public void Start(INode<T> startNode, T data)
         {
             if (!IsActive)
             {
-                Logger.InfoFormat("Execution '{0}' started.", Identifier);
+                Logger.InfoFormat("Execution '{0}' started. (Data: {1})", Identifier, data);
                 CurrentNode = startNode;
+                Data = data;
                 IsActive = true;
                 executionPlan.OnExecutionStarting(this);
                 CurrentNode.Execute(this, executionPlan);
             }
         }
 
-        public void CreateChild(INode startNode)
+        public void CreateChild(INode<T> startNode)
         {
             Stop();
-            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
+            var child = new Execution<T>(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
             Children.Add(child);
 
-            child.Start(startNode);
+            child.Start(startNode, Data.Copy());
         }
 
-        public void Accept(IExecutionVisitor visitor)
+        public void Accept(IExecutionVisitor<T> visitor)
         {
             visitor.Visit(this);
-            foreach (IExecution child in Children)
+            foreach (IExecution<T> child in Children)
             {
                 child.Accept(visitor);
             }
         }
 
-        private void Execute(string transitionIdentifier, Transition transition)
+        private void Execute(string transitionIdentifier, Transition<T> transition)
         {
             if (transition == null)
             {

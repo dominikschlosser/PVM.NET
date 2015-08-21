@@ -1,10 +1,11 @@
-﻿using PVM.Core.Definition;
+﻿using PVM.Core.Data;
+using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Runtime
 {
-    public interface IBehavior
+    public interface IBehavior<T> where T : IProcessData<T>
     {
-        IOperation CreateOperation(INode node);
+        IOperation<T> CreateOperation(INode<T> node);
     }
 }

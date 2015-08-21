@@ -2,36 +2,37 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using PVM.Core.Data;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan
 {
-    public class ExecutionPlan : IExecutionPlan
+    public class ExecutionPlan<T> : IExecutionPlan<T> where T : IProcessData<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
-        private readonly IExecution rootExecution;
-        private readonly WorkflowDefinition workflowDefinition;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ExecutionPlan<T>));
+        private readonly IExecution<T> rootExecution;
+        private readonly WorkflowDefinition<T> workflowDefinition;
 
-        public ExecutionPlan(WorkflowDefinition workflowDefinition)
+        public ExecutionPlan(WorkflowDefinition<T> workflowDefinition)
         {
             this.workflowDefinition = workflowDefinition;
-            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
+            rootExecution = new Execution<T>(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
         }
 
-        public void Start(INode startNode)
+        public void Start(INode<T> startNode, T data)
         {
-            rootExecution.Start(startNode);
+            rootExecution.Start(startNode, data);
         }
 
-        public void OnExecutionStarting(Execution execution)
+        public void OnExecutionStarting(Execution<T> execution)
         {
         }
 
-        public void OnExecutionStopped(Execution execution)
+        public void OnExecutionStopped(Execution<T> execution)
         {
-            IList<IExecution> activeExecutions = GetActiveExecutions(execution);
+            IList<IExecution<T>> activeExecutions = GetActiveExecutions(execution);
             if (activeExecutions.Any())
             {
                 Logger.InfoFormat("Execution '{0}' stopped but the following are still active: '{1}'",
@@ -44,7 +45,7 @@ namespace PVM.Core.Plan
             }
         }
 
-        public void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier)
+        public void OnOutgoingTransitionIsNull(Execution<T> execution, string transitionIdentifier)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
@@ -59,16 +60,16 @@ namespace PVM.Core.Plan
                 execution.CurrentNode.Name));
         }
 
-        public void Proceed(IExecution execution, IOperation operation)
+        public void Proceed(IExecution<T> execution, IOperation<T> operation)
         {
             operation.Execute(execution);
         }
 
-        private IList<IExecution> GetActiveExecutions(IExecution execution)
+        private IList<IExecution<T>> GetActiveExecutions(IExecution<T> execution)
         {
-            IExecution root = FindRoot(execution);
-            var results = new List<IExecution>();
-            root.Accept(new ExecutionVisitor(e =>
+            IExecution<T> root = FindRoot(execution);
+            var results = new List<IExecution<T>>();
+            root.Accept(new ExecutionVisitor<T>(e =>
             {
                 if (e.IsActive)
                 {
@@ -79,7 +80,7 @@ namespace PVM.Core.Plan
             return results;
         }
 
-        private IExecution FindRoot(IExecution execution)
+        private IExecution<T> FindRoot(IExecution<T> execution)
         {
             if (execution.Parent == null)
             {
