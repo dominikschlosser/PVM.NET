@@ -28,7 +28,7 @@ namespace PVM.Core.Plan
 
             if (finder.FoundExecution == null)
             {
-                throw new InvalidExecutionStateException($"There is no execution with active node '{node.Name}'.");
+                throw new InvalidExecutionStateException(string.Format("There is no execution with active node '{0}'.", node.Name));
             }
 
             operation.Execute(finder.FoundExecution);
@@ -51,7 +51,7 @@ namespace PVM.Core.Plan
                 {
                     if (FoundExecution != null)
                     {
-                        throw new InvalidExecutionStateException($"Node '{node.Name}' found in at least two executions.");
+                        throw new InvalidExecutionStateException(string.Format("Node '{0}' found in at least two executions.", node.Name));
                     }
                     FoundExecution = execution;
                 }

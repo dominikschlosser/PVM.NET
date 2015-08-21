@@ -15,7 +15,7 @@ namespace PVM.Core.Plan.Operations
             {
                 if (!incomingTransition.Executed)
                 {
-                    Logger.Info($"Transition '{incomingTransition.Identifier}' not taken yet. Waiting...");
+                    Logger.InfoFormat("Transition '{0}' not taken yet. Waiting...", incomingTransition.Identifier);
                     return;
                 }
             }
@@ -28,7 +28,7 @@ namespace PVM.Core.Plan.Operations
             {
                 foreach (var outgoingTransition in execution.CurrentNode.OutgoingTransitions)
                 {
-                    Logger.Info($"Split to '{outgoingTransition.Identifier}'");
+                    Logger.InfoFormat("Split to '{0}'", outgoingTransition.Identifier);
                     execution.CreateChild(outgoingTransition.Destination);
                 }
             }

@@ -21,12 +21,14 @@ namespace PVM.Core.Definition
         public Node(string name, [CanBeNull] IBehavior behavior)
         {
             Name = name;
+            IncomingTransitions = new List<Transition>();
+            OutgoingTransitions = new List<Transition>();
             this.behavior = behavior;
         }
 
-        public IList<Transition> IncomingTransitions { get; } = new List<Transition>();
-        public IList<Transition> OutgoingTransitions { get; } = new List<Transition>();
-        public string Name { get; }
+        public IList<Transition> IncomingTransitions { get; private set; }
+        public IList<Transition> OutgoingTransitions { get; private set; }
+        public string Name { get; private set; }
 
         public void Execute(IExecutionPlan executionPlan)
         {

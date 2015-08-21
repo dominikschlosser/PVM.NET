@@ -15,27 +15,27 @@ namespace PVM.Core.Runtime
         public Execution(string identifier, IExecutionPlan executionPlan)
         {
             Identifier = identifier;
+            Children = new List<IExecution>();
+            IsActive = true;
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
+        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan) : this(identifier, executionPlan)
         {
-            Identifier = identifier;
-            this.executionPlan = executionPlan;
             Parent = parent;
         }
 
-        public IExecution Parent { get; }
-        public IList<IExecution> Children { get; } = new List<IExecution>();
+        public IExecution Parent { get; private set; }
+        public IList<IExecution> Children { get; private set; }
         public INode CurrentNode { get; private set; }
-        public string Identifier { get; }
-        public bool IsActive { get; private set; } = true;
+        public string Identifier { get; private set; }
+        public bool IsActive { get; private set; }
 
         public void Proceed()
         {
             RequireActive();
 
-            Logger.Info($"Executing node '{CurrentNode.Name}'");
+            Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
             var transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
             if (transition == null)
             {
@@ -43,8 +43,8 @@ namespace PVM.Core.Runtime
                 return;
             }
 
-            Logger.Info(
-                $"Taking default-transition with name '{transition.Identifier}' to node '{transition.Destination.Name}'");
+            Logger.InfoFormat(
+                "Taking default-transition with name '{0}' to node '{1}'", transition.Identifier, transition.Destination.Name);
             CurrentNode = transition.Destination;
             CurrentNode.Execute(executionPlan);
         }
@@ -53,15 +53,15 @@ namespace PVM.Core.Runtime
         {
             RequireActive();
 
-            Logger.Info($"Executing node '{CurrentNode.Name}'");
+            Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
             var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
             if (transition == null)
             {
-                throw new TransitionNotFoundException(
-                    $"Outgoing transition with name '{transitionName}' not found for node {CurrentNode.Name}");
+                throw new TransitionNotFoundException(string.Format(
+                    "Outgoing transition with name '{0}' not found for node {1}", transitionName, CurrentNode.Name));
             }
 
-            Logger.Info($"Taking transition with name '{transition.Identifier}' to node '{transition.Destination.Name}'");
+            Logger.InfoFormat("Taking transition with name '{0}' to node '{1}'", transition.Identifier, transition.Destination.Name);
 
             CurrentNode = transition.Destination;
             CurrentNode.Execute(executionPlan);
@@ -69,7 +69,7 @@ namespace PVM.Core.Runtime
 
         public void Stop()
         {
-            Logger.Info($"Execution '{Identifier}' ended.");
+            Logger.InfoFormat("Execution '{0}' ended.", Identifier);
             IsActive = false;
         }
 
@@ -102,7 +102,7 @@ namespace PVM.Core.Runtime
         {
             if (!IsActive)
             {
-                throw new ExecutionInactiveException($"Execution '{Identifier}' is inactive.");
+                throw new ExecutionInactiveException(string.Format("Execution '{0}' is inactive.", Identifier));
             }
         }
     }
