@@ -5,7 +5,7 @@ using PVM.Core.Definition;
 
 namespace PVM.Core.Plan
 {
-    public class WorkflowInstance<T> where T : IProcessData<T>
+    public class WorkflowInstance<T> where T : ICopyable<T>
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(WorkflowInstance<T>));
         private readonly string identifier = Guid.NewGuid().ToString();

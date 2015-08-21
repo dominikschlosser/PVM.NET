@@ -1,8 +1,9 @@
 ﻿using PVM.Core.Data;
+using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Definition
 {
-    public class Transition<T> where T : IProcessData<T>
+    public class Transition<T> where T : ICopyable<T>
     {
         public Transition(string identifier, INode<T> source, INode<T> destination)
         {

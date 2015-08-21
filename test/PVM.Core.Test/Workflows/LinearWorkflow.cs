@@ -12,37 +12,36 @@ namespace PVM.Core.Test.Workflows
         public void JustOneNode()
         {
             var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
-            var executable = new MockBehavior<EmptyProcessData>();
+            bool executed = false;
+
             var workflowDefinition =
                 builder.AddNode()
                             .WithName("start")
-                            .WithBehavior(executable)
                             .IsStartNode()
                             .IsEndNode()
-                            .BuildNode()
+                            .BuildMockNode(e => executed = e)
                        .BuildWorkflow();
 
             new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
 
-            Assert.That(executable.Executed);
+            Assert.That(executed);
         }
 
         [Test]
         public void SingleStartAndEndNode()
         {
             var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
-            var executable = new MockBehavior<EmptyProcessData>();
+            bool executed = false;
 
             var workflowDefinition = builder
                 .AddNode()
-                    .WithBehavior(executable)
                     .WithName("start")
                     .IsStartNode()
                     .AddTransition()
                         .WithName("transition")
                         .To("end")
                         .BuildTransition()
-                    .BuildNode()
+                    .BuildMockNode(e => executed = e)
                 .AddNode()
                     .WithName("end")
                     .IsEndNode()
@@ -51,7 +50,7 @@ namespace PVM.Core.Test.Workflows
 
             new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
 
-            Assert.That(executable.Executed);
+            Assert.That(executed);
         }
     }
 }

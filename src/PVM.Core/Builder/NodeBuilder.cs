@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVM.Core.Data;
-using PVM.Core.Definition;
-using PVM.Core.Runtime;
+using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Builder
 {
-    public class NodeBuilder<T> where T : IProcessData<T>
+    public class NodeBuilder<T> where T : ICopyable<T>
     {
         private readonly WorkflowDefinitionBuilder<T> parentWorkflowBuilder;
         private readonly List<TransitionData> transitions = new List<TransitionData>();
-        private IBehavior<T> behavior;
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
@@ -28,13 +26,6 @@ namespace PVM.Core.Builder
             {
                 transition.Source = name;
             }
-            return this;
-        }
-
-        public NodeBuilder<T> WithBehavior(IBehavior<T> withBehavior)
-        {
-            behavior = withBehavior;
-
             return this;
         }
 
@@ -65,11 +56,20 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public IWorkflowPathBuilder<T> BuildNode()
+        public IWorkflowPathBuilder<T> BuildNode(Func<string, INode<T>> nodeFactory)
         {
-            parentWorkflowBuilder.AddNode(new Node<T>(name, behavior), isStartNode, isEndNode, transitions);
+            parentWorkflowBuilder.AddNode(nodeFactory(name), isStartNode, isEndNode, transitions);
 
             return parentWorkflowBuilder;
+        } 
+        public IWorkflowPathBuilder<T> BuildNode()
+        {
+            return BuildNode(n => new Node<T>(n));
+        }
+
+        public IWorkflowPathBuilder<T> BuildParallelGateway()
+        {
+            return BuildNode(n => new ParallelGatewayNode<T>(n));
         }
     }
 }

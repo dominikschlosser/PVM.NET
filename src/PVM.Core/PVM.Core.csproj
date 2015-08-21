@@ -56,12 +56,13 @@
     <Compile Include="Builder\WorkflowDefinitionBuilder.cs" />
     <Compile Include="Builder\WorkflowValidationException.cs" />
     <Compile Include="Data\EmptyProcessData.cs" />
-    <Compile Include="Data\IProcessData.cs" />
+    <Compile Include="Data\ICopyable.cs" />
+    <Compile Include="Definition\Nodes\ParallelGatewayNode.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
+    <Compile Include="Plan\Operations\DynamicOperation.cs" />
     <Compile Include="Plan\Operations\IOperation.cs" />
     <Compile Include="Plan\Operations\ParallelGatewayOperation.cs" />
-    <Compile Include="Plan\Operations\TransientOperation.cs" />
-    <Compile Include="Runtime\Behaviors\ParallelGatewayBehavior.cs" />
+    <Compile Include="Plan\Operations\TakeDefaultTransitionOperation.cs" />
     <Compile Include="Plan\IExecutionPlan.cs" />
     <Compile Include="Plan\WorkflowInstance.cs" />
     <Compile Include="Plan\ExecutionPlan.cs" />
@@ -71,9 +72,8 @@
     <Compile Include="Plan\TransitionNotFoundException.cs" />
     <Compile Include="Definition\WorkflowInconsistentException.cs" />
     <Compile Include="Runtime\Execution.cs" />
-    <Compile Include="Runtime\IBehavior.cs" />
     <Compile Include="Runtime\IExecution.cs" />
-    <Compile Include="Definition\Node.cs" />
+    <Compile Include="Definition\Nodes\Node.cs" />
     <Compile Include="Definition\Transition.cs" />
     <Compile Include="Definition\WorkflowDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

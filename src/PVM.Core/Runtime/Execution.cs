@@ -4,11 +4,12 @@ using System.Linq;
 using log4net;
 using PVM.Core.Data;
 using PVM.Core.Definition;
+using PVM.Core.Definition.Nodes;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {
-    public class Execution<T> : IExecution<T> where T : IProcessData<T>
+    public class Execution<T> : IExecution<T> where T : ICopyable<T>
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof(Execution<T>));
         private readonly IExecutionPlan<T> executionPlan;

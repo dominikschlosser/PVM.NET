@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using PVM.Core.Data;
 using PVM.Core.Definition;
+using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Builder
 {
-    public class WorkflowDefinitionBuilder<T> : IWorkflowPathBuilder<T> where T : IProcessData<T>
+    public class WorkflowDefinitionBuilder<T> : IWorkflowPathBuilder<T> where T : ICopyable<T>
     {
         private readonly IDictionary<string, INode<T>> endNodes = new Dictionary<string, INode<T>>();
         private readonly IDictionary<string, INode<T>> nodes = new Dictionary<string, INode<T>>();
@@ -49,7 +50,7 @@ namespace PVM.Core.Builder
             }
         }
 
-        internal void AddNode(Node<T> node, bool isStartNode, bool isEndNode, List<TransitionData> transitions)
+        internal void AddNode(INode<T> node, bool isStartNode, bool isEndNode, List<TransitionData> transitions)
         {
             nodes.Add(node.Name, node);
 

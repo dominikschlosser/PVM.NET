@@ -3,7 +3,7 @@ using PVM.Core.Data;
 
 namespace PVM.Core.Builder
 {
-    public class TransitionBuilder<T> where T : IProcessData<T>
+    public class TransitionBuilder<T> where T : ICopyable<T>
     {
         private readonly NodeBuilder<T> parentNodeBuilder;
         private readonly string source;

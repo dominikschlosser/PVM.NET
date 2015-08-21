@@ -4,7 +4,7 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan
 {
-    public class ExecutionVisitor<T> : IExecutionVisitor<T> where T : IProcessData<T>
+    public class ExecutionVisitor<T> : IExecutionVisitor<T> where T : ICopyable<T>
     {
         private readonly Action<IExecution<T>> action;
 

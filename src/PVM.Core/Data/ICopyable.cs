@@ -1,6 +1,6 @@
 ﻿namespace PVM.Core.Data
 {
-    public interface IProcessData<T>
+    public interface ICopyable<T>
     {
         T Copy();
     }

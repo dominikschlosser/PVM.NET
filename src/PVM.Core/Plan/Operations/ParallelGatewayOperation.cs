@@ -4,7 +4,7 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class ParallelGatewayOperation<T> : IOperation<T> where T : IProcessData<T>
+    public class ParallelGatewayOperation<T> : IOperation<T> where T : ICopyable<T>
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ParallelGatewayOperation<T>));
 

@@ -1,6 +1,6 @@
 ﻿namespace PVM.Core.Data
 {
-    public class EmptyProcessData : IProcessData<EmptyProcessData>
+    public class EmptyProcessData : ICopyable<EmptyProcessData>
     {
         public EmptyProcessData Copy()
         {

@@ -2,7 +2,6 @@
 using PVM.Core.Builder;
 using PVM.Core.Data;
 using PVM.Core.Plan;
-using PVM.Core.Runtime.Behaviors;
 
 namespace PVM.Core.Test.Workflows
 {
@@ -13,11 +12,10 @@ namespace PVM.Core.Test.Workflows
         public void SingleBranch_ExecutesNodeAfterJoin()
         {
             var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
-            var behavior = new MockBehavior<EmptyProcessData>();
+            bool executed = false;
 
             var workflowDefinition = builder
                 .AddNode()
-                    .WithBehavior(new ParallelGatewayBehavior<EmptyProcessData>())
                     .WithName("split")
                     .IsStartNode()
                         .AddTransition()
@@ -28,7 +26,7 @@ namespace PVM.Core.Test.Workflows
                             .WithName("transition2")
                             .To("subNode2")
                             .BuildTransition()
-                .BuildNode()
+                .BuildParallelGateway()
                 .AddNode()
                     .WithName("subNode1")
                         .AddTransition()
@@ -45,22 +43,20 @@ namespace PVM.Core.Test.Workflows
                 .BuildNode()
                 .AddNode()
                     .WithName("join")
-                    .WithBehavior(new ParallelGatewayBehavior<EmptyProcessData>())
                         .AddTransition()
                                     .WithName("joinToEnd")
                                     .To("end")
                                     .BuildTransition()
-                .BuildNode()
+                .BuildParallelGateway()
                 .AddNode()
                     .WithName("end")
-                    .WithBehavior(behavior)
                     .IsEndNode()
-                .BuildNode()
+                .BuildMockNode(e => executed = e)
                 .BuildWorkflow();
 
             new WorkflowInstance<EmptyProcessData>(workflowDefinition).Start(new EmptyProcessData());
 
-            Assert.That(behavior.Executed);
+            Assert.That(executed);
         }
     }
 }

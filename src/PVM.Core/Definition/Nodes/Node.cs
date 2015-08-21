@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
+﻿using System.Collections.Generic;
 using PVM.Core.Data;
 using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
-namespace PVM.Core.Definition
+namespace PVM.Core.Definition.Nodes
 {
-    public interface INode<T> where T : IProcessData<T>
+    public interface INode<T> where T : ICopyable<T>
     {
         IList<Transition<T>> IncomingTransitions { get; }
         IList<Transition<T>> OutgoingTransitions { get; }
@@ -17,27 +15,22 @@ namespace PVM.Core.Definition
     }
 
 
-    public class Node<T> : INode<T> where T : IProcessData<T>
+    public class Node<T> : INode<T> where T : ICopyable<T>
     {
-        private readonly IBehavior<T> behavior;
-
-        public Node(string name, [CanBeNull] IBehavior<T> behavior)
+        public Node(string name)
         {
             Name = name;
             IncomingTransitions = new List<Transition<T>>();
             OutgoingTransitions = new List<Transition<T>>();
-            this.behavior = behavior;
         }
 
-        public IList<Transition<T>> IncomingTransitions { get; private set; }
-        public IList<Transition<T>> OutgoingTransitions { get; private set; }
-        public string Name { get; private set; }
+        public IList<Transition<T>> IncomingTransitions { get; }
+        public IList<Transition<T>> OutgoingTransitions { get; }
+        public string Name { get; }
 
-        public void Execute(IExecution<T> execution, IExecutionPlan<T> executionPlan)
+        public virtual void Execute(IExecution<T> execution, IExecutionPlan<T> executionPlan)
         {
-            IOperation<T> operation = behavior == null ? new TransientOperation<T>() : behavior.CreateOperation(this);
-
-            executionPlan.Proceed(execution, operation);
+            executionPlan.Proceed(execution, new TakeDefaultTransitionOperation<T>());
         }
 
         protected bool Equals(Node<T> other)

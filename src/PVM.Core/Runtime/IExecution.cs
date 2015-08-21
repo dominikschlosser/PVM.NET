@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using PVM.Core.Data;
 using PVM.Core.Definition;
+using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Runtime
 {
-    public interface IExecution<T> where T : IProcessData<T>
+    public interface IExecution<T> where T : ICopyable<T>
     {
         string Identifier { get; }
         IExecution <T> Parent { get; }
