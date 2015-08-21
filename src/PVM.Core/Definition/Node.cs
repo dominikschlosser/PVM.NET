@@ -32,7 +32,7 @@ namespace PVM.Core.Definition
         public IList<Transition<T>> IncomingTransitions { get; }
         public IList<Transition<T>> OutgoingTransitions { get; }
         public string Name { get; }
-        private IOperation<T> operation;
+        private readonly IOperation<T> operation;
          
         public virtual void Execute(IExecution<T> execution, IExecutionPlan<T> executionPlan)
         {
