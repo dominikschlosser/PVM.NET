@@ -55,6 +55,7 @@
     <Compile Include="Builder\TransitionData.cs" />
     <Compile Include="Builder\WorkflowDefinitionBuilder.cs" />
     <Compile Include="Builder\WorkflowValidationException.cs" />
+    <Compile Include="Plan\ExecutionVisitor.cs" />
     <Compile Include="Plan\Operations\IOperation.cs" />
     <Compile Include="Plan\Operations\ParallelGatewayOperation.cs" />
     <Compile Include="Plan\Operations\TransientOperation.cs" />
@@ -62,6 +63,7 @@
     <Compile Include="Plan\IExecutionPlan.cs" />
     <Compile Include="Plan\WorkflowInstance.cs" />
     <Compile Include="Plan\ExecutionPlan.cs" />
+    <Compile Include="Runtime\IExecutionVisitor.cs" />
     <Compile Include="Runtime\InvalidExecutionStateException.cs" />
     <Compile Include="Runtime\ExecutionInactiveException.cs" />
     <Compile Include="Plan\TransitionNotFoundException.cs" />
@@ -73,7 +75,6 @@
     <Compile Include="Definition\Transition.cs" />
     <Compile Include="Definition\WorkflowDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Runtime\IExecutionVisitor.cs" />
     <Compile Include="Utils\ContractException.cs" />
     <Compile Include="Utils\ContractExtensions.cs" />
   </ItemGroup>

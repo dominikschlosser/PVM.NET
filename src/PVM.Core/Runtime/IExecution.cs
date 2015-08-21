@@ -13,8 +13,8 @@ namespace PVM.Core.Runtime
         void Proceed();
         void Proceed(string transitionName);
         void Stop();
-        void Accept(IExecutionVisitor visitor);
         void Start(INode startNode);
         void CreateChild(INode startNode);
+        void Accept(IExecutionVisitor visitor);
     }
 }

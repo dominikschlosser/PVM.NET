@@ -7,12 +7,24 @@ namespace PVM.Core.Test
 {
     public class MockBehavior : IBehavior
     {
-        public bool Executed { get; private set; }
+        public bool Executed { get { return operation.Executed; } }
 
-        public void Execute(INode node, IExecutionPlan executionPlan)
+        private readonly MockOperation operation = new MockOperation();
+
+        public IOperation CreateOperation(INode node)
         {
-            Executed = true;
-            executionPlan.Proceed(node, new TransientOperation());
+            return operation;
+        }
+
+        private class MockOperation : IOperation
+        {
+            public bool Executed { get; private set; }
+
+            public void Execute(IExecution execution)
+            {
+                Executed = true;
+                execution.Proceed();
+            }
         }
     }
 }

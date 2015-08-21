@@ -1,10 +1,10 @@
 ﻿using PVM.Core.Definition;
-using PVM.Core.Plan;
+using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Runtime
 {
     public interface IBehavior
     {
-        void Execute(INode node, IExecutionPlan executionPlan);
+        IOperation CreateOperation(INode node);
     }
 }

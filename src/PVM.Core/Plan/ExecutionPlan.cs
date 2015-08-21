@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
@@ -10,10 +12,12 @@ namespace PVM.Core.Plan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
         private readonly IExecution rootExecution;
+        private readonly WorkflowDefinition workflowDefinition;
 
-        public ExecutionPlan(WorkflowDefinition definition)
+        public ExecutionPlan(WorkflowDefinition workflowDefinition)
         {
-            rootExecution = new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Name, this);
+            this.workflowDefinition = workflowDefinition;
+            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
         }
 
         public void Start(INode startNode)
@@ -21,41 +25,58 @@ namespace PVM.Core.Plan
             rootExecution.Start(startNode);
         }
 
-        public void Proceed(INode node, IOperation operation)
+        public void OnExecutionStarting(Execution execution)
         {
-            var finder = new ExecutionFinder(node);
-            rootExecution.Accept(finder);
-
-            if (finder.FoundExecution == null)
-            {
-                throw new InvalidExecutionStateException(string.Format("There is no execution with active node '{0}'.", node.Name));
-            }
-
-            operation.Execute(finder.FoundExecution);
         }
 
-        private class ExecutionFinder : IExecutionVisitor
+        public void OnExecutionStopped(Execution execution)
         {
-            private readonly INode node;
-
-            public ExecutionFinder(INode node)
+            IList<IExecution> activeExecutions = GetActiveExecutions(execution);
+            if (activeExecutions.Any())
             {
-                this.node = node;
+                Logger.InfoFormat("Execution '{0}' stopped but the following are still active: '{1}'",
+                    execution.Identifier,
+                    activeExecutions.Select(e => e.Identifier).Aggregate((e1, e2) => e1 + ", " + e2));
+            }
+            else
+            {
+                Logger.InfoFormat("Workflow instance with definition '{0}' ended", workflowDefinition.Identifier);
+            }
+        }
+
+        public void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier)
+        {
+            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
+            {
+                Logger.InfoFormat("Execution '{0}' ended in null transition. Stopping...", execution.Identifier);
+                execution.Stop();
+
+
+                return;
             }
 
-            public IExecution FoundExecution { get; private set; }
+            throw new TransitionNotFoundException(string.Format(
+                "Outgoing transition with name '{0}' not found for node {1}", transitionIdentifier,
+                execution.CurrentNode.Name));
+        }
 
-            public void Visit(IExecution execution)
+        public void Proceed(IExecution execution, IOperation operation)
+        {
+            operation.Execute(execution);
+        }
+
+        private IList<IExecution> GetActiveExecutions(IExecution root)
+        {
+            var results = new List<IExecution>();
+            root.Accept(new ExecutionVisitor(e =>
             {
-                if (execution.CurrentNode == node)
+                if (e.IsActive)
                 {
-                    if (FoundExecution != null)
-                    {
-                        throw new InvalidExecutionStateException(string.Format("Node '{0}' found in at least two executions.", node.Name));
-                    }
-                    FoundExecution = execution;
+                    results.Add(e);
                 }
-            }
+            }));
+
+            return results;
         }
     }
 }

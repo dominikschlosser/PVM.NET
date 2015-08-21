@@ -11,7 +11,7 @@ namespace PVM.Core.Definition
         IList<Transition> IncomingTransitions { get; }
         IList<Transition> OutgoingTransitions { get; }
         string Name { get; }
-        void Execute(IExecutionPlan executionPlan);
+        void Execute(IExecution execution, IExecutionPlan executionPlan);
     }
 
     public class Node : INode
@@ -30,16 +30,29 @@ namespace PVM.Core.Definition
         public IList<Transition> OutgoingTransitions { get; private set; }
         public string Name { get; private set; }
 
-        public void Execute(IExecutionPlan executionPlan)
+        public void Execute(IExecution execution, IExecutionPlan executionPlan)
         {
-            if (behavior == null)
-            {
-                executionPlan.Proceed(this, new TransientOperation());
-            }
-            else
-            {
-                behavior.Execute(this, executionPlan);
-            }
+            IOperation operation = behavior == null ? new TransientOperation() : behavior.CreateOperation(this);
+
+            executionPlan.Proceed(execution, operation);
+        }
+
+        protected bool Equals(Node other)
+        {
+            return string.Equals(Name, other.Name);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Node) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Name != null ? Name.GetHashCode() : 0);
         }
     }
 }

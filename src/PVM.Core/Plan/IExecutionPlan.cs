@@ -1,11 +1,15 @@
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
+using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan
 {
     public interface IExecutionPlan
     {
-        void Proceed(INode node, IOperation operation);
+        void Proceed(IExecution execution, IOperation operation);
         void Start(INode startNode);
+        void OnExecutionStarting(Execution execution);
+        void OnExecutionStopped(Execution execution);
+        void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier);
     }
 }

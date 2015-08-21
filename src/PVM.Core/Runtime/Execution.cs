@@ -16,11 +16,11 @@ namespace PVM.Core.Runtime
         {
             Identifier = identifier;
             Children = new List<IExecution>();
-            IsActive = true;
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan) : this(identifier, executionPlan)
+        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
+            : this(identifier, executionPlan)
         {
             Parent = parent;
         }
@@ -36,17 +36,9 @@ namespace PVM.Core.Runtime
             RequireActive();
 
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            var transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
-            if (transition == null)
-            {
-                Stop();
-                return;
-            }
+            Transition transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
 
-            Logger.InfoFormat(
-                "Taking default-transition with name '{0}' to node '{1}'", transition.Identifier, transition.Destination.Name);
-            CurrentNode = transition.Destination;
-            CurrentNode.Execute(executionPlan);
+            Execute("Default", transition);
         }
 
         public void Proceed(string transitionName)
@@ -54,39 +46,31 @@ namespace PVM.Core.Runtime
             RequireActive();
 
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
-            if (transition == null)
-            {
-                throw new TransitionNotFoundException(string.Format(
-                    "Outgoing transition with name '{0}' not found for node {1}", transitionName, CurrentNode.Name));
-            }
+            Transition transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
-            Logger.InfoFormat("Taking transition with name '{0}' to node '{1}'", transition.Identifier, transition.Destination.Name);
-
-            CurrentNode = transition.Destination;
-            CurrentNode.Execute(executionPlan);
+            Execute(transitionName, transition);
         }
 
         public void Stop()
         {
-            Logger.InfoFormat("Execution '{0}' ended.", Identifier);
-            IsActive = false;
-        }
-
-        public void Accept(IExecutionVisitor visitor)
-        {
-            visitor.Visit(this);
-            foreach (var child in Children)
+            if (IsActive)
             {
-                child.Accept(visitor);
+                Logger.InfoFormat("Execution '{0}' ended.", Identifier);
+                IsActive = false;
+                executionPlan.OnExecutionStopped(this);
             }
         }
 
         public void Start(INode startNode)
         {
-            CurrentNode = startNode;
-            IsActive = true;
-            CurrentNode.Execute(executionPlan);
+            if (!IsActive)
+            {
+                Logger.InfoFormat("Execution '{0}' started.", Identifier);
+                CurrentNode = startNode;
+                IsActive = true;
+                executionPlan.OnExecutionStarting(this);
+                CurrentNode.Execute(this, executionPlan);
+            }
         }
 
         public void CreateChild(INode startNode)
@@ -96,6 +80,32 @@ namespace PVM.Core.Runtime
             Children.Add(child);
 
             child.Start(startNode);
+        }
+
+        public void Accept(IExecutionVisitor visitor)
+        {
+            visitor.Visit(this);
+            foreach (IExecution child in Children)
+            {
+                child.Accept(visitor);
+            }
+        }
+
+        private void Execute(string transitionIdentifier, Transition transition)
+        {
+            if (transition == null)
+            {
+                executionPlan.OnOutgoingTransitionIsNull(this, transitionIdentifier);
+                return;
+            }
+
+            Logger.InfoFormat("Taking transition with name '{0}' to node '{1}'", transition.Identifier,
+                transition.Destination.Name);
+
+            transition.Executed = true;
+
+            CurrentNode = transition.Destination;
+            CurrentNode.Execute(this, executionPlan);
         }
 
         private void RequireActive()

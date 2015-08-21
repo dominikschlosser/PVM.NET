@@ -9,12 +9,12 @@ namespace PVM.Core.Definition
 			InitialNode = initialNode;
 			Nodes = nodes;
 			EndNodes = endNodes;
-		    Identifier = identifier;
+			Identifier = identifier;
 		}
 
 		public IEnumerable<INode> Nodes { get; private set; }
 		public IEnumerable<INode> EndNodes { get; private set; }
 		public INode InitialNode { get; private set; }
-        public string Identifier { get; private set; }
+		public string Identifier { get; private set; }
 	}
 }
