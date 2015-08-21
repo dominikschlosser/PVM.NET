@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using log4net;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Nodes;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {
     public class Execution<T> : IExecution<T>
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(Execution<T>));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution<T>));
         private readonly IExecutionPlan<T> executionPlan;
 
         public Execution(string identifier, IExecutionPlan<T> executionPlan)
@@ -26,19 +25,25 @@ namespace PVM.Core.Runtime
             Parent = parent;
         }
 
-        public IExecution<T> Parent { get; private set; }
+        public IExecution<T> Parent { get; }
         public T Data { get; private set; }
-        public IList<IExecution<T>> Children { get; private set; }
+        public IList<IExecution<T>> Children { get; }
         public INode<T> CurrentNode { get; private set; }
-        public string Identifier { get; private set; }
+        public string Identifier { get; }
         public bool IsActive { get; private set; }
 
         public void Proceed()
         {
             RequireActive();
 
+            if (CurrentNode.OutgoingTransitions.Count > 1)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Cannot take default node since there are '{0}' eligible nodes",
+                        CurrentNode.OutgoingTransitions.Count));
+            }
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            Transition<T> transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
+            var transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
 
             Execute("Default", transition);
         }
@@ -48,7 +53,7 @@ namespace PVM.Core.Runtime
             RequireActive();
 
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            Transition<T> transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
+            var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
             Execute(transitionName, transition);
         }
@@ -88,7 +93,7 @@ namespace PVM.Core.Runtime
         public void Accept(IExecutionVisitor<T> visitor)
         {
             visitor.Visit(this);
-            foreach (IExecution<T> child in Children)
+            foreach (var child in Children)
             {
                 child.Accept(visitor);
             }

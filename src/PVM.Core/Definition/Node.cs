@@ -3,7 +3,7 @@ using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
-namespace PVM.Core.Definition.Nodes
+namespace PVM.Core.Definition
 {
     public interface INode<T>
     {
@@ -16,8 +16,14 @@ namespace PVM.Core.Definition.Nodes
 
     public class Node<T> : INode<T>
     {
-        public Node(string name)
+        public Node(string name) : this(name, new TakeDefaultTransitionOperation<T>())
         {
+            
+        }
+
+        public Node(string name, IOperation<T> operation)
+        {
+            this.operation = operation;
             Name = name;
             IncomingTransitions = new List<Transition<T>>();
             OutgoingTransitions = new List<Transition<T>>();
@@ -26,10 +32,11 @@ namespace PVM.Core.Definition.Nodes
         public IList<Transition<T>> IncomingTransitions { get; }
         public IList<Transition<T>> OutgoingTransitions { get; }
         public string Name { get; }
-
+        private IOperation<T> operation;
+         
         public virtual void Execute(IExecution<T> execution, IExecutionPlan<T> executionPlan)
         {
-            executionPlan.Proceed(execution, new TakeDefaultTransitionOperation<T>());
+            executionPlan.Proceed(execution, operation);
         }
 
         protected bool Equals(Node<T> other)

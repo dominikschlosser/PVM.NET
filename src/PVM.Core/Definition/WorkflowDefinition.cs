@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Definition
 {

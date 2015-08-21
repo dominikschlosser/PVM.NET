@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PVM.Core.Definition.Nodes;
+using PVM.Core.Definition;
+using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Builder
 {
@@ -68,7 +69,17 @@ namespace PVM.Core.Builder
 
         public IWorkflowPathBuilder<T> BuildParallelGateway()
         {
-            return BuildNode(n => new ParallelGatewayNode<T>(n));
+            return BuildNode(n => new Node<T>(n, new ParallelGatewayOperation<T>()));
+        }
+
+        public IWorkflowPathBuilder<T> BuildParallelSplit()
+        {
+            return BuildNode(n => new Node<T>(n, new ParallelSplitOperation<T>()));
+        }
+
+        public IWorkflowPathBuilder<T> BuildParallelJoin()
+        {
+            return BuildNode(n => new Node<T>(n, new ParallelJoinOperation<T>()));
         }
     }
 }

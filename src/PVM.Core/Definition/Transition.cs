@@ -1,6 +1,4 @@
-﻿using PVM.Core.Definition.Nodes;
-
-namespace PVM.Core.Definition
+﻿namespace PVM.Core.Definition
 {
     public class Transition<T>
     {
@@ -15,5 +13,23 @@ namespace PVM.Core.Definition
         public INode<T> Destination { get; private set; }
         public string Identifier { get; private set; }
         public bool Executed { get; set; }
+
+        protected bool Equals(Transition<T> other)
+        {
+            return string.Equals(Identifier, other.Identifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Transition<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Identifier != null ? Identifier.GetHashCode() : 0);
+        }
     }
 }
