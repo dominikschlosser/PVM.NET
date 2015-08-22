@@ -1,5 +1,6 @@
 language: csharp
 solution: PVM.NET.sln
+sudo: required
 script:
   - xbuild /p:Configuration=Release PVM.NET.sln
 before_install:
