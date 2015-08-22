@@ -2,9 +2,9 @@
 
 namespace PVM.Core.Definition
 {
-	public class WorkflowDefinition<T>
+	public class WorkflowDefinition
 	{
-		public WorkflowDefinition(string identifier, INode<T> initialNode, IEnumerable<INode<T>> nodes, IEnumerable<INode<T>> endNodes)
+		public WorkflowDefinition(string identifier, INode initialNode, IEnumerable<INode> nodes, IEnumerable<INode> endNodes)
 		{
 			InitialNode = initialNode;
 			Nodes = nodes;
@@ -12,9 +12,9 @@ namespace PVM.Core.Definition
 			Identifier = identifier;
 		}
 
-		public IEnumerable<INode<T>> Nodes { get; private set; }
-		public IEnumerable<INode<T>> EndNodes { get; private set; }
-		public INode<T> InitialNode { get; private set; }
+		public IEnumerable<INode> Nodes { get; private set; }
+		public IEnumerable<INode> EndNodes { get; private set; }
+		public INode InitialNode { get; private set; }
 		public string Identifier { get; private set; }
 	}
 }

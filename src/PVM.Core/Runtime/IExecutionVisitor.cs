@@ -1,7 +1,7 @@
 ﻿namespace PVM.Core.Runtime
 {
-    public interface IExecutionVisitor<T>
+    public interface IExecutionVisitor
     {
-        void Visit(IExecution<T> execution);
+        void Visit(IExecution execution);
     }
 }

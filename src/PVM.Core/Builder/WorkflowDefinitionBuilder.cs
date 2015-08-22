@@ -1,35 +1,34 @@
-﻿using System;
+﻿using PVM.Core.Definition;
+using System;
 using System.Collections.Generic;
-using PVM.Core.Data;
-using PVM.Core.Definition;
 
 namespace PVM.Core.Builder
 {
-    public class WorkflowDefinitionBuilder<T> : IWorkflowPathBuilder<T>
+    public class WorkflowDefinitionBuilder : IWorkflowPathBuilder
     {
-        private readonly IDictionary<string, INode<T>> endNodes = new Dictionary<string, INode<T>>();
-        private readonly IDictionary<string, INode<T>> nodes = new Dictionary<string, INode<T>>();
+        private readonly IDictionary<string, INode> endNodes = new Dictionary<string, INode>();
+        private readonly IDictionary<string, INode> nodes = new Dictionary<string, INode>();
         private readonly IDictionary<string, List<TransitionData>> transitions = new Dictionary<string, List<TransitionData>>();
         private string identifier = Guid.NewGuid().ToString();
-        private INode<T> startNode;
+        private INode startNode;
 
-        public NodeBuilder<T> AddNode()
+        public NodeBuilder AddNode()
         {
-            return new NodeBuilder<T>(this);
+            return new NodeBuilder(this);
         }
 
-        public IWorkflowPathBuilder<T> WithIdentifier(string id)
+        public IWorkflowPathBuilder WithIdentifier(string id)
         {
             identifier = id;
 
             return this;
         }
 
-        public WorkflowDefinition<T> BuildWorkflow()
+        public WorkflowDefinition BuildWorkflow()
         {
             AssembleTransitions();
 
-            return new WorkflowDefinition<T>(identifier, startNode, nodes.Values, endNodes.Values);
+            return new WorkflowDefinition(identifier, startNode, nodes.Values, endNodes.Values);
         }
 
         private void AssembleTransitions()
@@ -41,14 +40,14 @@ namespace PVM.Core.Builder
                 foreach (var transitionData in transition.Value)
                 {
                     var targetNode = nodes[transitionData.Target];
-                    var transitionToAdd = new Transition<T>(transitionData.Name, sourceNode, targetNode);
+                    var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, sourceNode, targetNode);
                     sourceNode.OutgoingTransitions.Add(transitionToAdd);
                     targetNode.IncomingTransitions.Add(transitionToAdd);
                 }
             }
         }
 
-        internal void AddNode(INode<T> node, bool isStartNode, bool isEndNode, List<TransitionData> transitions)
+        internal void AddNode(INode node, bool isStartNode, bool isEndNode, List<TransitionData> transitions)
         {
             nodes.Add(node.Name, node);
 

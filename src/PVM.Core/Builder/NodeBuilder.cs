@@ -5,20 +5,20 @@ using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Builder
 {
-    public class NodeBuilder<T>
+    public class NodeBuilder
     {
-        private readonly WorkflowDefinitionBuilder<T> parentWorkflowBuilder;
+        private readonly WorkflowDefinitionBuilder parentWorkflowBuilder;
         private readonly List<TransitionData> transitions = new List<TransitionData>();
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
 
-        public NodeBuilder(WorkflowDefinitionBuilder<T> parentWorkflowBuilder)
+        public NodeBuilder(WorkflowDefinitionBuilder parentWorkflowBuilder)
         {
             this.parentWorkflowBuilder = parentWorkflowBuilder;
         }
 
-        public NodeBuilder<T> WithName(string name)
+        public NodeBuilder WithName(string name)
         {
             this.name = name;
 
@@ -29,9 +29,9 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public TransitionBuilder<T> AddTransition()
+        public TransitionBuilder AddTransition()
         {
-            return new TransitionBuilder<T>(this, name);
+            return new TransitionBuilder(this, name);
         }
 
         internal void AddTransition(TransitionData data)
@@ -42,44 +42,44 @@ namespace PVM.Core.Builder
             }
         }
 
-        public NodeBuilder<T> IsStartNode()
+        public NodeBuilder IsStartNode()
         {
             isStartNode = true;
 
             return this;
         }
 
-        public NodeBuilder<T> IsEndNode()
+        public NodeBuilder IsEndNode()
         {
             isEndNode = true;
 
             return this;
         }
 
-        public IWorkflowPathBuilder<T> BuildNode(Func<string, INode<T>> nodeFactory)
+        public IWorkflowPathBuilder BuildNode(Func<string, INode> nodeFactory)
         {
             parentWorkflowBuilder.AddNode(nodeFactory(name), isStartNode, isEndNode, transitions);
 
             return parentWorkflowBuilder;
         } 
-        public IWorkflowPathBuilder<T> BuildNode()
+        public IWorkflowPathBuilder BuildNode()
         {
-            return BuildNode(n => new Node<T>(n));
+            return BuildNode(n => new Node(n));
         }
 
-        public IWorkflowPathBuilder<T> BuildParallelGateway()
+        public IWorkflowPathBuilder BuildParallelGateway()
         {
-            return BuildNode(n => new Node<T>(n, new ParallelGatewayOperation<T>()));
+            return BuildNode(n => new Node(n, new ParallelGatewayOperation()));
         }
 
-        public IWorkflowPathBuilder<T> BuildParallelSplit()
+        public IWorkflowPathBuilder BuildParallelSplit()
         {
-            return BuildNode(n => new Node<T>(n, new ParallelSplitOperation<T>()));
+            return BuildNode(n => new Node(n, new ParallelSplitOperation()));
         }
 
-        public IWorkflowPathBuilder<T> BuildParallelJoin()
+        public IWorkflowPathBuilder BuildParallelJoin()
         {
-            return BuildNode(n => new Node<T>(n, new ParallelJoinOperation<T>()));
+            return BuildNode(n => new Node(n, new ParallelJoinOperation()));
         }
     }
 }

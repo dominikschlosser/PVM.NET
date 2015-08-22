@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using PVM.Core.Builder;
-using PVM.Core.Data;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Test.Workflows
@@ -11,7 +10,7 @@ namespace PVM.Core.Test.Workflows
         [Test]
         public void SingleBranch_ExecutesNodeAfterJoin()
         {
-            var builder = new WorkflowDefinitionBuilder<EmptyProcessData>();
+            var builder = new WorkflowDefinitionBuilder();
             bool executed = false;
 
             var workflowDefinition = builder
@@ -54,8 +53,8 @@ namespace PVM.Core.Test.Workflows
                 .BuildMockNode(e => executed = e)
                 .BuildWorkflow();
 
-            var instance = new WorkflowInstance<EmptyProcessData>(workflowDefinition);
-            instance.Start(new EmptyProcessData());
+            var instance = new WorkflowInstance(workflowDefinition);
+            instance.Start();
 
             Assert.That(executed);
             Assert.That(instance.IsFinished);

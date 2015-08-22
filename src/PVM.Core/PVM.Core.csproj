@@ -55,8 +55,6 @@
     <Compile Include="Builder\TransitionData.cs" />
     <Compile Include="Builder\WorkflowDefinitionBuilder.cs" />
     <Compile Include="Builder\WorkflowValidationException.cs" />
-    <Compile Include="Data\EmptyProcessData.cs" />
-    <Compile Include="Data\ICopyable.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
     <Compile Include="Plan\Operations\DynamicOperation.cs" />
     <Compile Include="Plan\Operations\IOperation.cs" />

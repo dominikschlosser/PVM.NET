@@ -3,11 +3,11 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class ParallelJoinOperation<T> : IOperation<T>
+    public class ParallelJoinOperation : IOperation
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (ParallelJoinOperation<T>));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (ParallelJoinOperation));
 
-        public void Execute(IExecution<T> execution)
+        public void Execute(IExecution execution)
         {
             execution.Stop();
 

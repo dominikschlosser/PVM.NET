@@ -2,6 +2,7 @@
 using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Plan;
+using System.Collections.Generic;
 
 namespace PVM.Core.Test.Workflows
 {
@@ -13,7 +14,7 @@ namespace PVM.Core.Test.Workflows
         [Test]
         public void Executes()
         {
-            var builder = new WorkflowDefinitionBuilder<TestData>();
+            var builder = new WorkflowDefinitionBuilder();
             bool executed = false;
 
             var workflowDefinition = builder.AddNode()
@@ -40,7 +41,7 @@ namespace PVM.Core.Test.Workflows
                         .BuildTransition()
                     .BuildDynamicNode(e =>
                     {
-                        if (e.Data.Counter == 1)
+                        if ((int)e.Data["counter"] == 1)
                         {
                             Logger.Info("COUNTER == 1");
                             e.Proceed("intermediateToJoin");
@@ -48,7 +49,7 @@ namespace PVM.Core.Test.Workflows
                         else
                         {
                             Logger.Info("COUNTER == 0");
-                            e.Data.Counter++;
+                            e.Data["counter"] = 1;
                             e.Proceed("intermediateToStart");
                         }
 
@@ -66,16 +67,13 @@ namespace PVM.Core.Test.Workflows
                     .BuildMockNode(e => executed = e)
                .BuildWorkflow();
 
-            var instance = new WorkflowInstance<TestData>(workflowDefinition);
-            instance.Start(new TestData());
+            var instance = new WorkflowInstance(workflowDefinition);
+            var testdata = new Dictionary<string, object>();
+            testdata.Add("counter", 0);
+            instance.Start(testdata);
 
             Assert.That(executed);
             Assert.That(instance.IsFinished);
-        }
-
-        private class TestData
-        {
-            public int Counter { get; set; }
         }
     }
 }

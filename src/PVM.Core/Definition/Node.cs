@@ -5,41 +5,41 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Definition
 {
-    public interface INode<T>
+    public interface INode
     {
-        IList<Transition<T>> IncomingTransitions { get; }
-        IList<Transition<T>> OutgoingTransitions { get; }
+        IList<Transition> IncomingTransitions { get; }
+        IList<Transition> OutgoingTransitions { get; }
         string Name { get; }
-        void Execute(IExecution<T> execution, IExecutionPlan<T> executionPlan);
+        void Execute(IExecution execution, IExecutionPlan executionPlan);
     }
 
 
-    public class Node<T> : INode<T>
+    public class Node : INode
     {
-        public Node(string name) : this(name, new TakeDefaultTransitionOperation<T>())
+        public Node(string name) : this(name, new TakeDefaultTransitionOperation())
         {
             
         }
 
-        public Node(string name, IOperation<T> operation)
+        public Node(string name, IOperation operation)
         {
             this.operation = operation;
             Name = name;
-            IncomingTransitions = new List<Transition<T>>();
-            OutgoingTransitions = new List<Transition<T>>();
+            IncomingTransitions = new List<Transition>();
+            OutgoingTransitions = new List<Transition>();
         }
 
-        public IList<Transition<T>> IncomingTransitions { get; }
-        public IList<Transition<T>> OutgoingTransitions { get; }
+        public IList<Transition> IncomingTransitions { get; }
+        public IList<Transition> OutgoingTransitions { get; }
         public string Name { get; }
-        private readonly IOperation<T> operation;
+        private readonly IOperation operation;
          
-        public virtual void Execute(IExecution<T> execution, IExecutionPlan<T> executionPlan)
+        public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
         {
             executionPlan.Proceed(execution, operation);
         }
 
-        protected bool Equals(Node<T> other)
+        protected bool Equals(Node other)
         {
             return string.Equals(Name, other.Name);
         }
@@ -49,7 +49,7 @@ namespace PVM.Core.Definition
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Node<T>) obj);
+            return Equals((Node) obj);
         }
 
         public override int GetHashCode()

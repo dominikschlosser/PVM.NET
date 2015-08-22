@@ -3,11 +3,11 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class ParallelGatewayOperation<T> : IOperation<T>
+    public class ParallelGatewayOperation : IOperation
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof(ParallelGatewayOperation<T>));
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ParallelGatewayOperation));
 
-        public void Execute(IExecution<T> execution)
+        public void Execute(IExecution execution)
         {
             execution.Stop();
 
@@ -20,7 +20,7 @@ namespace PVM.Core.Plan.Operations
                 }
             }
 
-            new ParallelSplitOperation<T>().Execute(execution);
+            new ParallelSplitOperation().Execute(execution);
         }
     }
 }

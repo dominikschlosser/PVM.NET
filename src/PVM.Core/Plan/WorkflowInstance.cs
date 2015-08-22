@@ -1,18 +1,19 @@
-﻿using System;
-using log4net;
+﻿using log4net;
 using PVM.Core.Definition;
+using System;
+using System.Collections.Generic;
 
 namespace PVM.Core.Plan
 {
-    public class WorkflowInstance<T>
+    public class WorkflowInstance
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance<T>));
-        private readonly WorkflowDefinition<T> definition;
-        private readonly IExecutionPlan<T> plan;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance));
+        private readonly WorkflowDefinition definition;
+        private readonly IExecutionPlan plan;
 
-        public WorkflowInstance(WorkflowDefinition<T> definition)
+        public WorkflowInstance(WorkflowDefinition definition)
         {
-            plan = new ExecutionPlan<T>(definition);
+            plan = new ExecutionPlan(definition);
             this.definition = definition;
         }
 
@@ -23,9 +24,14 @@ namespace PVM.Core.Plan
             get { return plan.IsFinished; }
         }
 
-        public void Start(T data)
+        public void Start(IDictionary<string, object> data)
         {
             plan.Start(definition.InitialNode, data);
+        }
+
+        public void Start()
+        {
+            Start(new Dictionary<string, object>());
         }
     }
 }

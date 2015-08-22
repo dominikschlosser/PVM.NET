@@ -2,8 +2,8 @@
 
 namespace PVM.Core.Plan.Operations
 {
-    public interface IOperation<T>
+    public interface IOperation
     {
-        void Execute(IExecution<T> execution);
+        void Execute(IExecution execution);
     }
 }

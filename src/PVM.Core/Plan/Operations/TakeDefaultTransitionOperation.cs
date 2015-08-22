@@ -3,9 +3,9 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class TakeDefaultTransitionOperation<T> : IOperation<T>
+    public class TakeDefaultTransitionOperation : IOperation
     {
-        public void Execute(IExecution<T> execution)
+        public void Execute(IExecution execution)
         {
             execution.Proceed();
         }

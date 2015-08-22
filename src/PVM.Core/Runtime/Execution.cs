@@ -1,34 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using log4net;
+﻿using log4net;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PVM.Core.Runtime
 {
-    public class Execution<T> : IExecution<T>
+    public class Execution : IExecution
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution<T>));
-        private readonly IExecutionPlan<T> executionPlan;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution));
+        private readonly IExecutionPlan executionPlan;
 
-        public Execution(string identifier, IExecutionPlan<T> executionPlan)
+        public Execution(string identifier, IExecutionPlan executionPlan)
         {
             Identifier = identifier;
-            Children = new List<IExecution<T>>();
+            Children = new List<IExecution>();
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution<T> parent, string identifier, IExecutionPlan<T> executionPlan)
+        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
             : this(identifier, executionPlan)
         {
             Parent = parent;
         }
 
-        public IExecution<T> Parent { get; }
-        public T Data { get; private set; }
-        public IList<IExecution<T>> Children { get; }
-        public INode<T> CurrentNode { get; private set; }
+        public IExecution Parent { get; }
+        public IDictionary<string, object> Data { get; private set; }
+        public IList<IExecution> Children { get; }
+        public INode CurrentNode { get; private set; }
         public string Identifier { get; }
         public bool IsActive { get; private set; }
 
@@ -36,14 +36,25 @@ namespace PVM.Core.Runtime
         {
             RequireActive();
 
-            if (CurrentNode.OutgoingTransitions.Count > 1)
+            IList<Transition> eligibleNodes = CurrentNode.OutgoingTransitions.Count > 1
+                ? CurrentNode.OutgoingTransitions.Where(t => t.IsDefault).ToList()
+                : CurrentNode.OutgoingTransitions.ToList();
+
+            if (!eligibleNodes.Any())
+            {
+                throw new InvalidOperationException(
+                    string.Format("There are no eligible nodes to take in node '{0}'",
+                        CurrentNode.Name));
+            }
+
+            if (eligibleNodes.Count > 1)
             {
                 throw new InvalidOperationException(
                     string.Format("Cannot take default node since there are '{0}' eligible nodes",
                         CurrentNode.OutgoingTransitions.Count));
             }
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            var transition = CurrentNode.OutgoingTransitions.FirstOrDefault();
+            var transition = eligibleNodes.First();
 
             Execute("Default", transition);
         }
@@ -79,11 +90,11 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void Start(INode<T> startNode, T data)
+        public void Start(INode startNode, IDictionary<string, object> data)
         {
             if (!IsActive)
             {
-                Logger.InfoFormat("Execution '{0}' started. (Data: {1})", Identifier, data);
+                Logger.InfoFormat("Execution '{0}' started.", Identifier);
                 CurrentNode = startNode;
                 Data = data;
                 IsActive = true;
@@ -92,16 +103,16 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void CreateChild(INode<T> startNode)
+        public void CreateChild(INode startNode)
         {
             Stop();
-            var child = new Execution<T>(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
+            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
             Children.Add(child);
 
             child.Start(startNode, Data);
         }
 
-        public void Accept(IExecutionVisitor<T> visitor)
+        public void Accept(IExecutionVisitor visitor)
         {
             visitor.Visit(this);
             foreach (var child in Children)
@@ -110,7 +121,7 @@ namespace PVM.Core.Runtime
             }
         }
 
-        private void Execute(string transitionIdentifier, Transition<T> transition)
+        private void Execute(string transitionIdentifier, Transition transition)
         {
             if (transition == null)
             {

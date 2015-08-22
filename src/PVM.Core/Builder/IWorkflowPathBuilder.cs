@@ -2,9 +2,9 @@
 
 namespace PVM.Core.Builder
 {
-    public interface IWorkflowPathBuilder<T>
+    public interface IWorkflowPathBuilder
     {
-        NodeBuilder<T> AddNode();
-        WorkflowDefinition<T> BuildWorkflow();
+        NodeBuilder AddNode();
+        WorkflowDefinition BuildWorkflow();
     }
 }
