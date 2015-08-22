@@ -1,7 +1,7 @@
 language: csharp
 solution: PVM.NET.sln
 install:
-  - nuget restore solution-name.sln
+  - nuget restore PVM.NET.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release PVM.NET.sln
