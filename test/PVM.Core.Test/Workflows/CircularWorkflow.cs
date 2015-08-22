@@ -70,7 +70,7 @@ namespace PVM.Core.Test.Workflows
             instance.Start(new TestData());
 
             Assert.That(executed);
-            Assert.That(instance.IsFinished);
+            Assert.That(!instance.IsFinished);
         }
 
         private class TestData
