@@ -1,6 +1,8 @@
 # PVM.NET
 Process Virtual Machine
 
+[![Build Status](https://travis-ci.org/dkschlos/PVM.NET.svg?branch=master)](https://travis-ci.org/dkschlos/PVM.NET)
+
 Based on concept described here: http://docs.jboss.com/jbpm/pvm/article/
 
 Initial Goals:
