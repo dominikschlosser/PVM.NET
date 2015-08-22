@@ -1,8 +1,10 @@
 language: csharp
 solution: PVM.NET.sln
-install:
-  - nuget restore PVM.NET.sln
-  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release PVM.NET.sln
-  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./PVM.Core.Test/bin/Release/PVM.Core.Test.dll
+before_install:
+  - sudo apt-get install nunit-console
+before_script:
+  - nuget restore PVM.NET.sln
+after_script:
+  - nunit-console PVM.Core.Test/bin/Release/PVM.Core.Test.dll
