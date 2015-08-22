@@ -12,7 +12,7 @@
         public INode<T> Source { get; private set; }
         public INode<T> Destination { get; private set; }
         public string Identifier { get; private set; }
-        public bool Executed { get; set; }
+        public bool Execute { get; set; }
 
         protected bool Equals(Transition<T> other)
         {
