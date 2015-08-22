@@ -7,4 +7,4 @@ before_install:
 before_script:
   - nuget restore PVM.NET.sln
 after_script:
-  - nunit-console PVM.Core.Test/bin/Release/PVM.Core.Test.dll
+  - nunit-console test/PVM.Core.Test/bin/Release/PVM.Core.Test.dll
