@@ -13,11 +13,12 @@ namespace PVM.Core.Plan
 
         public WorkflowInstance(WorkflowDefinition definition)
         {
+            Identifier = Guid.NewGuid().ToString();
             plan = new ExecutionPlan(definition);
             this.definition = definition;
         }
 
-        public string Identifier { get; } = Guid.NewGuid().ToString();
+        public string Identifier { get; private set; }
 
         public bool IsFinished
         {

@@ -25,11 +25,11 @@ namespace PVM.Core.Runtime
             Parent = parent;
         }
 
-        public IExecution Parent { get; }
+        public IExecution Parent { get; private set; }
         public IDictionary<string, object> Data { get; private set; }
-        public IList<IExecution> Children { get; }
+        public IList<IExecution> Children { get; private set; }
         public INode CurrentNode { get; private set; }
-        public string Identifier { get; }
+        public string Identifier { get; private set; }
         public bool IsActive { get; private set; }
 
         public void Proceed()

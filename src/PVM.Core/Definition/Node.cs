@@ -29,9 +29,9 @@ namespace PVM.Core.Definition
             OutgoingTransitions = new List<Transition>();
         }
 
-        public IList<Transition> IncomingTransitions { get; }
-        public IList<Transition> OutgoingTransitions { get; }
-        public string Name { get; }
+        public IList<Transition> IncomingTransitions { get; private set; }
+        public IList<Transition> OutgoingTransitions { get; private set; }
+        public string Name { get; private set; }
         private readonly IOperation operation;
          
         public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
