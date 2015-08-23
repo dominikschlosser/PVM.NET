@@ -1,6 +1,4 @@
-﻿using PVM.Core.Definition.Nodes;
-
-namespace PVM.Core.Definition
+﻿namespace PVM.Core.Definition
 {
     public class Transition
     {

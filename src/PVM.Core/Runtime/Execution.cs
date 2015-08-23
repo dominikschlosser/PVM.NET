@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using PVM.Core.Data;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Nodes;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
@@ -11,17 +11,19 @@ namespace PVM.Core.Runtime
     public class Execution : IInternalExecution
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution));
+        private readonly IDataMapper dataMapper;
         private readonly IExecutionPlan executionPlan;
 
-        public Execution(string identifier, IExecutionPlan executionPlan)
+        public Execution(string identifier, IExecutionPlan executionPlan, IDataMapper dataMapper)
         {
             Identifier = identifier;
             Children = new List<IExecution>();
+            this.dataMapper = dataMapper;
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
-            : this(identifier, executionPlan)
+        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan, IDataMapper dataMapper)
+            : this(identifier, executionPlan, dataMapper)
         {
             Parent = parent;
         }
@@ -60,6 +62,12 @@ namespace PVM.Core.Runtime
             Execute("Default", transition);
         }
 
+        public void Proceed<T>(T dataContext)
+        {
+            SetData(dataContext);
+            Proceed();
+        }
+
         public void Proceed(string transitionName)
         {
             RequireActive();
@@ -68,6 +76,12 @@ namespace PVM.Core.Runtime
             var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
             Execute(transitionName, transition);
+        }
+
+        public void Proceed<T>(string transitionName, T dataContext)
+        {
+            SetData(dataContext);
+            Proceed(transitionName);
         }
 
         public void Resume()
@@ -97,7 +111,7 @@ namespace PVM.Core.Runtime
             {
                 Logger.InfoFormat("Execution '{0}' started.", Identifier);
                 CurrentNode = startNode;
-                this.Data = data;
+                Data = data;
                 IsActive = true;
                 executionPlan.OnExecutionStarting(this);
                 CurrentNode.Execute(this, executionPlan);
@@ -107,7 +121,7 @@ namespace PVM.Core.Runtime
         public void CreateChild(INode startNode)
         {
             Stop();
-            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
+            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan, dataMapper);
             Children.Add(child);
 
             child.Start(startNode, Data);
@@ -120,6 +134,11 @@ namespace PVM.Core.Runtime
             {
                 child.Accept(visitor);
             }
+        }
+
+        private void SetData<T>(T dataContext)
+        {
+            Data = dataMapper.ExtractData(dataContext);
         }
 
         private void Execute(string transitionIdentifier, Transition transition)

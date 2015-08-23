@@ -2,7 +2,7 @@
 
 namespace PVM.Core.Plan.Operations
 {
-    public interface IOperation<in TDataMappingDefinition> : IOperation
+    public interface IOperation<in TDataMappingDefinition> : IOperation where TDataMappingDefinition : class, new()
     {
         void Execute(IExecution execution, TDataMappingDefinition dataContext);
     }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVM.Core.Data;
-using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Definition
 {

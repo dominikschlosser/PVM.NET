@@ -3,7 +3,7 @@ using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
-namespace PVM.Core.Definition.Nodes
+namespace PVM.Core.Definition
 {
     public interface INode
     {

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Nodes;
 using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Builder
@@ -13,10 +12,18 @@ namespace PVM.Core.Builder
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
+        private IOperation operation; 
 
         public NodeBuilder(WorkflowDefinitionBuilder parentWorkflowBuilder)
         {
             this.parentWorkflowBuilder = parentWorkflowBuilder;
+        }
+
+        public NodeBuilder WithOperation(IOperation operation)
+        {
+            this.operation = operation;
+
+            return this;
         }
 
         public NodeBuilder WithName(string name)
@@ -62,10 +69,18 @@ namespace PVM.Core.Builder
             parentWorkflowBuilder.AddNode(nodeFactory(name), isStartNode, isEndNode, transitions);
 
             return parentWorkflowBuilder;
+        }
+
+        public IWorkflowPathBuilder BuildNode(Func<string, IOperation, INode> nodeFactory)
+        {
+            parentWorkflowBuilder.AddNode(nodeFactory(name, operation), isStartNode, isEndNode, transitions);
+
+            return parentWorkflowBuilder;
         } 
+
         public IWorkflowPathBuilder BuildNode()
         {
-            return BuildNode(n => new Node(n));
+            return BuildNode(n => new Node(n, operation));
         }
 
         public IWorkflowPathBuilder BuildParallelGateway()

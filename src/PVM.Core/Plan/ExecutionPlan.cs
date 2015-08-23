@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using log4net;
 using PVM.Core.Definition;
-using PVM.Core.Definition.Nodes;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
@@ -18,7 +17,7 @@ namespace PVM.Core.Plan
         public ExecutionPlan(WorkflowDefinition workflowDefinition)
         {
             this.workflowDefinition = workflowDefinition;
-            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
+            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this, workflowDefinition.DataMapper);
         }
 
         public void Start(INode startNode, IDictionary<string, object> data)
@@ -75,9 +74,16 @@ namespace PVM.Core.Plan
             }
             else
             {
-                if (operation.GetType().IsGenericType)
+                var genericOperationInterface = operation.GetType()
+                                                         .GetInterfaces()
+                                                         .FirstOrDefault(
+                                                             i =>
+                                                                 i.IsGenericType &&
+                                                                 i.GetGenericTypeDefinition() == typeof (IOperation<>));
+                if (
+                    genericOperationInterface != null)
                 {
-                    var genericType = operation.GetType().GetGenericArguments().First();
+                    var genericType = genericOperationInterface.GetGenericArguments().First();
                     var dataContext = Activator.CreateInstance(genericType);
 
                     workflowDefinition.DataMapper.MapData(dataContext, execution.Data);
