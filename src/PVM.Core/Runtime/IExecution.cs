@@ -1,5 +1,6 @@
 ﻿using PVM.Core.Definition;
 using System.Collections.Generic;
+using PVM.Core.Definition.Nodes;
 
 namespace PVM.Core.Runtime
 {
@@ -7,7 +8,6 @@ namespace PVM.Core.Runtime
     {
         string Identifier { get; }
         IExecution  Parent { get; }
-        IDictionary<string, object> Data { get; }
         IList<IExecution> Children { get; }
         INode CurrentNode { get; }
         bool IsActive { get; }
@@ -18,5 +18,12 @@ namespace PVM.Core.Runtime
         void Start(INode startNode, IDictionary<string, object> data);
         void CreateChild(INode startNode);
         void Accept(IExecutionVisitor visitor);
+    }
+
+    // TODO: kinda sucks but dont know a better way just yet. Activiti does it the same way
+    // but at least come up with better names...
+    public interface IInternalExecution : IExecution
+    {
+        IDictionary<string, object> Data { get; }  
     }
 }

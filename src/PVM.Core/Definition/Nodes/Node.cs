@@ -3,14 +3,14 @@ using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Runtime;
 
-namespace PVM.Core.Definition
+namespace PVM.Core.Definition.Nodes
 {
     public interface INode
     {
         IList<Transition> IncomingTransitions { get; }
         IList<Transition> OutgoingTransitions { get; }
         string Name { get; }
-        void Execute(IExecution execution, IExecutionPlan executionPlan);
+        void Execute(IInternalExecution execution, IExecutionPlan executionPlan);
     }
 
 
@@ -33,8 +33,8 @@ namespace PVM.Core.Definition
         public IList<Transition> OutgoingTransitions { get; private set; }
         public string Name { get; private set; }
         private readonly IOperation operation;
-         
-        public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
+
+        public virtual void Execute(IInternalExecution execution, IExecutionPlan executionPlan)
         {
             executionPlan.Proceed(execution, operation);
         }

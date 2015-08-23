@@ -1,10 +1,11 @@
-﻿using log4net;
-using PVM.Core.Definition;
-using PVM.Core.Plan.Operations;
-using PVM.Core.Runtime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using log4net;
+using PVM.Core.Definition;
+using PVM.Core.Definition.Nodes;
+using PVM.Core.Plan.Operations;
+using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan
 {
@@ -66,7 +67,7 @@ namespace PVM.Core.Plan
         {
         }
 
-        public void Proceed(IExecution execution, IOperation operation)
+        public void Proceed(IInternalExecution execution, IOperation operation)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
@@ -74,7 +75,20 @@ namespace PVM.Core.Plan
             }
             else
             {
-                operation.Execute(execution);
+                if (operation.GetType().IsGenericType)
+                {
+                    var genericType = operation.GetType().GetGenericArguments().First();
+                    var dataContext = Activator.CreateInstance(genericType);
+
+                    workflowDefinition.DataMapper.MapData(dataContext, execution.Data);
+
+                    operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
+                             .Invoke(operation, new[] {execution, dataContext});
+                }
+                else
+                {
+                    operation.Execute(execution);
+                }
             }
         }
 

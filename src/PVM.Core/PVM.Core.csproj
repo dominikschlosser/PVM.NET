@@ -71,6 +71,10 @@
     <Compile Include="Builder\TransitionData.cs" />
     <Compile Include="Builder\WorkflowDefinitionBuilder.cs" />
     <Compile Include="Builder\WorkflowValidationException.cs" />
+    <Compile Include="Data\Attributes\OutAttribute.cs" />
+    <Compile Include="Data\Attributes\InAttribute.cs" />
+    <Compile Include="Data\DefaultDataMapper.cs" />
+    <Compile Include="Data\DataMappingNotSatisfiedException.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
     <Compile Include="Plan\Operations\DynamicOperation.cs" />
     <Compile Include="Plan\Operations\IOperation.cs" />
@@ -88,7 +92,7 @@
     <Compile Include="Definition\WorkflowInconsistentException.cs" />
     <Compile Include="Runtime\Execution.cs" />
     <Compile Include="Runtime\IExecution.cs" />
-    <Compile Include="Definition\Node.cs" />
+    <Compile Include="Definition\Nodes\Node.cs" />
     <Compile Include="Definition\Transition.cs" />
     <Compile Include="Definition\WorkflowDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
