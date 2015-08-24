@@ -79,7 +79,6 @@
     <Compile Include="Data\Attributes\OutAttribute.cs" />
     <Compile Include="Data\Attributes\InAttribute.cs" />
     <Compile Include="Data\Proxy\DataImplementationGenerator.cs" />
-    <Compile Include="Data\DefaultDataMapper.cs" />
     <Compile Include="Data\DataMappingNotSatisfiedException.cs" />
     <Compile Include="Data\Proxy\DataInterceptor.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />

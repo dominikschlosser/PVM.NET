@@ -87,8 +87,6 @@ namespace PVM.Core.Plan
                     var genericType = genericOperationInterface.GetGenericArguments().First();
                     var dataContext = DataImplementationGenerator.CreateInstanceFor(genericType, execution.Data);
 
-                    workflowDefinition.DataMapper.MapData(dataContext, execution.Data);
-
                     operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
                              .Invoke(operation, new[] {execution, dataContext});
                 }

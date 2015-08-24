@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using PVM.Core.Data;
 
 namespace PVM.Core.Definition
 {
     public class WorkflowDefinition
     {
-        public WorkflowDefinition(string identifier, INode initialNode, IDataMapper dataMapper, IEnumerable<INode> nodes,
+        public WorkflowDefinition(string identifier, INode initialNode, IEnumerable<INode> nodes,
             IEnumerable<INode> endNodes)
         {
-            DataMapper = dataMapper;
             InitialNode = initialNode;
             Nodes = nodes;
             EndNodes = endNodes;
@@ -20,13 +18,11 @@ namespace PVM.Core.Definition
         public IEnumerable<INode> EndNodes { get; private set; }
         public INode InitialNode { get; private set; }
         public string Identifier { get; private set; }
-        public IDataMapper DataMapper { get; private set; }
 
         public class Builder
         {
             private readonly List<INode> endNodes = new List<INode>();
             private readonly List<INode> nodes = new List<INode>();
-            private IDataMapper dataMapper = new DefaultDataMapper();
             private string identifier = Guid.NewGuid().ToString();
             private INode initialNode;
 
@@ -58,16 +54,9 @@ namespace PVM.Core.Definition
                 return this;
             }
 
-            public Builder WithDataMapper(IDataMapper dataMapper)
-            {
-                this.dataMapper = dataMapper;
-
-                return this;
-            }
-
             public WorkflowDefinition Build()
             {
-                return new WorkflowDefinition(identifier, initialNode, dataMapper, nodes, endNodes);
+                return new WorkflowDefinition(identifier, initialNode, nodes, endNodes);
             }
         }
     }

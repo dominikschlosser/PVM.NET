@@ -1,8 +1,6 @@
 ﻿using PVM.Core.Definition;
 using System;
 using System.Collections.Generic;
-using PVM.Core.Data;
-using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Builder
 {
@@ -13,7 +11,6 @@ namespace PVM.Core.Builder
         private readonly IDictionary<string, List<TransitionData>> transitions = new Dictionary<string, List<TransitionData>>();
         private string identifier = Guid.NewGuid().ToString();
         private INode startNode;
-        private IDataMapper dataMapper = new DefaultDataMapper();
 
         public NodeBuilder AddNode()
         {
@@ -27,13 +24,6 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public WorkflowDefinitionBuilder WithDataMapper(IDataMapper dataMapper)
-        {
-            this.dataMapper = dataMapper;
-
-            return this;
-        }
-
         public WorkflowDefinition BuildWorkflow()
         {
             AssembleTransitions();
@@ -43,7 +33,6 @@ namespace PVM.Core.Builder
                                                 .WithInitialNode(startNode)
                                                 .WithNodes(nodes.Values)
                                                 .WithEndNodes(endNodes.Values)
-                                                .WithDataMapper(dataMapper)
                                                 .Build();
         }
 
