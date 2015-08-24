@@ -12,7 +12,7 @@ namespace PVM.Core.Builder
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
-        private IOperation operation; 
+        private IOperation operation = new TakeDefaultTransitionOperation(); 
 
         public NodeBuilder(WorkflowDefinitionBuilder parentWorkflowBuilder)
         {
