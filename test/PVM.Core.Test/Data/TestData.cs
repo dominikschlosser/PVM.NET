@@ -5,10 +5,10 @@ namespace PVM.Core.Test.Data
     public class TestData
     {
         [In]
-        public string Name { get; set; }
+        public string SomeInput { get; set; }
 
-        [In("mappedName")]
-        public string SomeProperty { get; set; }
+        [In("mappedInput")]
+        public string SomeMappedInput { get; set; }
 
         [Out]
         public string SomeOutput { get; set; }

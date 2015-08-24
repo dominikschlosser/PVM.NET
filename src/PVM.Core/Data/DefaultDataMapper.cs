@@ -15,15 +15,14 @@ namespace PVM.Core.Data
     {
         public void MapData(object destination, IDictionary<string, object> data)
         {
-
             foreach (
-                var property in
+                PropertyInfo property in
                     destination.GetType()
-                               .GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                               .Where(p => p.GetCustomAttributes<InAttribute>(true).Any()))
+                        .GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                        .Where(p => p.GetCustomAttributes<InAttribute>(true).Any()))
             {
-                var name = property.GetCustomAttribute<InAttribute>(true).Name ?? property.Name;
-               
+                string name = property.GetCustomAttribute<InAttribute>(true).Name ?? property.Name;
+
                 if (!data.ContainsKey(name.ToLower()))
                 {
                     throw new DataMappingNotSatisfiedException(
@@ -46,10 +45,12 @@ namespace PVM.Core.Data
         public IDictionary<string, object> ExtractData(object source)
         {
             IDictionary<string, object> result = new Dictionary<string, object>();
-            foreach (var property in source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
-                p => p.GetCustomAttributes<OutAttribute>().Any()))
+            foreach (
+                PropertyInfo property in
+                    source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
+                        p => p.GetCustomAttributes<OutAttribute>().Any()))
             {
-                var name = property.GetCustomAttribute<OutAttribute>(true).Name ?? property.Name;
+                string name = property.GetCustomAttribute<OutAttribute>(true).Name ?? property.Name;
 
                 if (property.GetGetMethod() == null)
                 {
@@ -62,6 +63,6 @@ namespace PVM.Core.Data
             }
 
             return result;
-        } 
+        }
     }
 }

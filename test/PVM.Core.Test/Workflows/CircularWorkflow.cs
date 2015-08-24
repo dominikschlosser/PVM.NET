@@ -4,7 +4,7 @@ using PVM.Core.Builder;
 using PVM.Core.Plan;
 using System.Collections.Generic;
 using PVM.Core.Data.Attributes;
-using PVM.Core.Plan.Operations;
+using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Test.Workflows
@@ -68,27 +68,21 @@ namespace PVM.Core.Test.Workflows
             Assert.That(instance.IsFinished);
         }
 
-        private class CounterGateway : IOperation<TestData>
+        private class CounterGateway : DataAwareOperation<TestData>
         {
-            public void Execute(IExecution e, TestData dataContext)
+            public override void Execute(IExecution e, TestData dataContext)
             {
                 if (dataContext.Counter == 1)
                 {
                     Logger.Info("COUNTER == 1");
-                    e.Proceed("intermediateToJoin", dataContext);
+                    e.Proceed("intermediateToJoin");
                 }
                 else
                 {
                     Logger.Info("COUNTER == 0");
                     dataContext.Counter = 1;
-                    e.Proceed("intermediateToStart", dataContext);
+                    e.Proceed("intermediateToStart");
                 }
-            }
-
-            // ugly api is ugly, introduce base class or something
-            public void Execute(IExecution execution)
-            {
-                throw new System.NotImplementedException();
             }
         }
 

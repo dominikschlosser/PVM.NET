@@ -11,9 +11,7 @@ namespace PVM.Core.Runtime
         INode CurrentNode { get; }
         bool IsActive { get; }
         void Proceed();
-        void Proceed<T>(T dataContext);
         void Proceed(string transitionName);
-        void Proceed<T>(string transitionName, T dataContext);
         void Resume();
         void Stop();
         void Start(INode startNode, IDictionary<string, object> data);

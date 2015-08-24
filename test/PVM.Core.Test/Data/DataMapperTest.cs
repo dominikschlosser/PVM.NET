@@ -13,13 +13,13 @@ namespace PVM.Core.Test.Data
             var dataMapper = new DefaultDataMapper();
             var testData = new TestData();
             var processDataMap = new Dictionary<string, object>();
-            processDataMap["name"] = "value";
-            processDataMap["mappedname"] = "mappedValue";
+            processDataMap["someinput"] = "value";
+            processDataMap["mappedinput"] = "mappedValue";
 
             dataMapper.MapData(testData, processDataMap);
 
-            Assert.That(testData.Name, Is.EqualTo("value"));
-            Assert.That(testData.SomeProperty, Is.EqualTo("mappedValue"));
+            Assert.That(testData.SomeInput, Is.EqualTo("value"));
+            Assert.That(testData.SomeMappedInput, Is.EqualTo("mappedValue"));
         }
 
         [Test]

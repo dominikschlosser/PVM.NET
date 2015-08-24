@@ -62,12 +62,6 @@ namespace PVM.Core.Runtime
             Execute("Default", transition);
         }
 
-        public void Proceed<T>(T dataContext)
-        {
-            SetData(dataContext);
-            Proceed();
-        }
-
         public void Proceed(string transitionName)
         {
             RequireActive();
@@ -76,12 +70,6 @@ namespace PVM.Core.Runtime
             var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
             Execute(transitionName, transition);
-        }
-
-        public void Proceed<T>(string transitionName, T dataContext)
-        {
-            SetData(dataContext);
-            Proceed(transitionName);
         }
 
         public void Resume()

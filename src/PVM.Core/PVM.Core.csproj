@@ -76,12 +76,12 @@
     <Compile Include="Data\DefaultDataMapper.cs" />
     <Compile Include="Data\DataMappingNotSatisfiedException.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
-    <Compile Include="Plan\Operations\DynamicOperation.cs" />
-    <Compile Include="Plan\Operations\IOperation.cs" />
+    <Compile Include="Plan\Operations\Base\DataAwareOperation.cs" />
+    <Compile Include="Plan\Operations\Base\IOperation.cs" />
     <Compile Include="Plan\Operations\ParallelJoinOperation.cs" />
     <Compile Include="Plan\Operations\ParallelSplitOperation.cs" />
     <Compile Include="Plan\Operations\ParallelGatewayOperation.cs" />
-    <Compile Include="Plan\Operations\TakeDefaultTransitionOperation.cs" />
+    <Compile Include="Plan\Operations\Base\TakeDefaultTransitionOperation.cs" />
     <Compile Include="Plan\IExecutionPlan.cs" />
     <Compile Include="Plan\WorkflowInstance.cs" />
     <Compile Include="Plan\ExecutionPlan.cs" />
