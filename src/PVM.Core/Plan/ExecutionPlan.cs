@@ -4,7 +4,6 @@ using System.Linq;
 using log4net;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
-using PVM.Core.Plan.Operations;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -19,7 +18,7 @@ namespace PVM.Core.Plan
         public ExecutionPlan(WorkflowDefinition workflowDefinition)
         {
             this.workflowDefinition = workflowDefinition;
-            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this, workflowDefinition.DataMapper);
+            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
         }
 
         public void Start(INode startNode, IDictionary<string, object> data)

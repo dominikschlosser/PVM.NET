@@ -11,19 +11,17 @@ namespace PVM.Core.Runtime
     public class Execution : IInternalExecution
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution));
-        private readonly IDataMapper dataMapper;
         private readonly IExecutionPlan executionPlan;
 
-        public Execution(string identifier, IExecutionPlan executionPlan, IDataMapper dataMapper)
+        public Execution(string identifier, IExecutionPlan executionPlan)
         {
             Identifier = identifier;
             Children = new List<IExecution>();
-            this.dataMapper = dataMapper;
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan, IDataMapper dataMapper)
-            : this(identifier, executionPlan, dataMapper)
+        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
+            : this(identifier, executionPlan)
         {
             Parent = parent;
         }
@@ -109,7 +107,7 @@ namespace PVM.Core.Runtime
         public void CreateChild(INode startNode)
         {
             Stop();
-            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan, dataMapper);
+            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
             Children.Add(child);
 
             child.Start(startNode, Data);
@@ -122,11 +120,6 @@ namespace PVM.Core.Runtime
             {
                 child.Accept(visitor);
             }
-        }
-
-        private void SetData<T>(T dataContext)
-        {
-            Data = dataMapper.ExtractData(dataContext);
         }
 
         private void Execute(string transitionIdentifier, Transition transition)
