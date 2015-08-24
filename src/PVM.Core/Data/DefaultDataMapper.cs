@@ -21,12 +21,12 @@ namespace PVM.Core.Data
                         .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                         .Where(p => p.GetCustomAttributes<InAttribute>(true).Any()))
             {
-                string name = property.GetCustomAttribute<InAttribute>(true).Name ?? property.Name;
+                string name = property.GetInMappingName();
 
-                if (!data.ContainsKey(name.ToLower()))
+                if (!data.ContainsKey(name))
                 {
                     throw new DataMappingNotSatisfiedException(
-                        string.Format("Key '{0}' demanded by '{1}' not present in data dictionary", name.ToLower(),
+                        string.Format("Key '{0}' demanded by '{1}' not present in data dictionary", name,
                             destination.GetType().FullName));
                 }
 
@@ -34,11 +34,11 @@ namespace PVM.Core.Data
                 if (property.GetSetMethod() == null)
                 {
                     throw new DataMappingNotSatisfiedException(
-                        string.Format("Property '{0}' of '{1}' does not have a public setter", name.ToLower(),
+                        string.Format("Property '{0}' of '{1}' does not have a public setter", name,
                             destination.GetType().FullName));
                 }
 
-                property.SetValue(destination, data[name.ToLower()]);
+                property.SetValue(destination, data[name]);
             }
         }
 
@@ -50,16 +50,16 @@ namespace PVM.Core.Data
                     source.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
                         p => p.GetCustomAttributes<OutAttribute>().Any()))
             {
-                string name = property.GetCustomAttribute<OutAttribute>(true).Name ?? property.Name;
+                string name = property.GetOutMappingName();
 
                 if (property.GetGetMethod() == null)
                 {
                     throw new DataMappingNotSatisfiedException(
-                        string.Format("Property '{0}' of '{1}' does not have a public getter", name.ToLower(),
+                        string.Format("Property '{0}' of '{1}' does not have a public getter", name,
                             source.GetType().FullName));
                 }
 
-                result.Add(name.ToLower(), property.GetValue(source));
+                result.Add(name, property.GetValue(source));
             }
 
             return result;

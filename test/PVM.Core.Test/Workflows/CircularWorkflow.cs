@@ -68,9 +68,9 @@ namespace PVM.Core.Test.Workflows
             Assert.That(instance.IsFinished);
         }
 
-        private class CounterGateway : DataAwareOperation<TestData>
+        private class CounterGateway : DataAwareOperation<ITestData>
         {
-            public override void Execute(IExecution e, TestData dataContext)
+            public override void Execute(IExecution e, ITestData dataContext)
             {
                 if (dataContext.Counter == 1)
                 {
@@ -86,11 +86,11 @@ namespace PVM.Core.Test.Workflows
             }
         }
 
-        private class TestData
+        public interface ITestData
         {
             [In]
             [Out]
-            public int Counter { get; set; }
+            int Counter { get; set; }
         }
     }
 }

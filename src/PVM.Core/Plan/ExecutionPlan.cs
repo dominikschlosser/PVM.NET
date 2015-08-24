@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using log4net;
+using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Plan.Operations.Base;
@@ -85,7 +86,7 @@ namespace PVM.Core.Plan
                     genericOperationInterface != null)
                 {
                     var genericType = genericOperationInterface.GetGenericArguments().First();
-                    var dataContext = Activator.CreateInstance(genericType);
+                    var dataContext = DataImplementationGenerator.CreateInstanceFor(genericType, execution.Data);
 
                     workflowDefinition.DataMapper.MapData(dataContext, execution.Data);
 
