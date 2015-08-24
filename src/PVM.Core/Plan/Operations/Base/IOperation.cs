@@ -1,6 +1,6 @@
 ﻿using PVM.Core.Runtime;
 
-namespace PVM.Core.Plan.Operations
+namespace PVM.Core.Plan.Operations.Base
 {
     public interface IOperation<in TDataMappingDefinition> : IOperation where TDataMappingDefinition : class, new()
     {

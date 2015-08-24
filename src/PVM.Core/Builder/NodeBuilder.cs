@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
+using PVM.Core.Plan.Operations.Base;
 
 namespace PVM.Core.Builder
 {

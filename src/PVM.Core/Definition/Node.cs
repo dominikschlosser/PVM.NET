@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
+using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Definition

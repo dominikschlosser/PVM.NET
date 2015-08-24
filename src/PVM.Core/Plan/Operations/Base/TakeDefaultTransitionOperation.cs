@@ -1,7 +1,7 @@
 ﻿
 using PVM.Core.Runtime;
 
-namespace PVM.Core.Plan.Operations
+namespace PVM.Core.Plan.Operations.Base
 {
     public class TakeDefaultTransitionOperation : IOperation
     {

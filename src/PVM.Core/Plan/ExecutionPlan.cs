@@ -4,6 +4,7 @@ using System.Linq;
 using log4net;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
+using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan
