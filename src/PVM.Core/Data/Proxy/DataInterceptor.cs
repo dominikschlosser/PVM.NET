@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Castle.Core.Internal;
 using Castle.DynamicProxy;
 using PVM.Core.Data.Attributes;
 
@@ -22,7 +23,7 @@ namespace PVM.Core.Data.Proxy
                 invocation.Method.DeclaringType.GetProperties()
                     .FirstOrDefault(p => p.GetSetMethod() == invocation.Method);
 
-            if (setter != null && setter.HasOutMapping())
+            if (setter != null && setter.HasAttribute<OutAttribute>())
             {
                 string mappingName = setter.GetOutMappingName();
 
@@ -33,7 +34,7 @@ namespace PVM.Core.Data.Proxy
                 invocation.Method.DeclaringType.GetProperties()
                     .FirstOrDefault(p => p.GetGetMethod() == invocation.Method);
 
-            if (getter != null && getter.HasInMapping())
+            if (getter != null && getter.HasAttribute<InAttribute>())
             {
                 string mappingName = getter.GetInMappingName();
 

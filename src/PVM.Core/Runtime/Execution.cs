@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using log4net;
 using PVM.Core.Data;
 using PVM.Core.Definition;
@@ -70,15 +71,19 @@ namespace PVM.Core.Runtime
             Execute(transitionName, transition);
         }
 
-        public void Resume()
+        public void Resume(INode node)
         {
             if (!IsActive)
             {
-                Logger.InfoFormat("Activating execution '{0}'.", Identifier);
+                Logger.InfoFormat("Resuming execution '{0}'.", Identifier);
                 IsActive = true;
                 executionPlan.OnExecutionResuming(this);
-                Proceed();
+                Proceed(node);
             }
+        }
+        public void Resume()
+        {
+            Resume(CurrentNode);
         }
 
         public void Stop()
@@ -119,6 +124,22 @@ namespace PVM.Core.Runtime
             foreach (var child in Children)
             {
                 child.Accept(visitor);
+            }
+        }
+
+        public void Proceed([CanBeNull] INode node)
+        {
+            RequireActive();
+
+            if (node == null)
+            {
+                Logger.InfoFormat("Node is null. Execution '{0}' stopping...", Identifier);
+                Stop();
+            }
+            else
+            {
+                CurrentNode = node;
+                Proceed();
             }
         }
 

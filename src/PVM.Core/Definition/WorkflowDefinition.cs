@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Definition
 {
-    public class WorkflowDefinition
+    public class WorkflowDefinition : Node
     {
-        public WorkflowDefinition(string identifier, INode initialNode, IEnumerable<INode> nodes,
-            IEnumerable<INode> endNodes)
+        public WorkflowDefinition(string identifier, INode initialNode, IList<INode> nodes,
+            IList<INode> endNodes) : base(identifier, new SubProcessOperation())
         {
             InitialNode = initialNode;
             Nodes = nodes;
@@ -14,8 +15,8 @@ namespace PVM.Core.Definition
             Identifier = identifier;
         }
 
-        public IEnumerable<INode> Nodes { get; private set; }
-        public IEnumerable<INode> EndNodes { get; private set; }
+        public IList<INode> Nodes { get; private set; }
+        public IList<INode> EndNodes { get; private set; }
         public INode InitialNode { get; private set; }
         public string Identifier { get; private set; }
 

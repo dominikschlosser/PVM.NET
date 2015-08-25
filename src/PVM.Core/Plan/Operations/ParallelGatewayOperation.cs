@@ -21,7 +21,21 @@ namespace PVM.Core.Plan.Operations
                 }
             }
 
-            new ParallelSplitOperation().Execute(execution);
+            var owningExecution = execution.Parent ?? execution;
+
+            if (execution.CurrentNode.OutgoingTransitions.Count == 1)
+            {
+                owningExecution.Resume(execution.CurrentNode);
+            }
+            else
+            {
+                foreach (var outgoingTransition in execution.CurrentNode.OutgoingTransitions)
+                {
+                    outgoingTransition.Executed = true;
+                    Logger.InfoFormat("Split to '{0}'", outgoingTransition.Identifier);
+                    owningExecution.CreateChild(outgoingTransition.Destination);
+                }
+            }
         }
     }
 }

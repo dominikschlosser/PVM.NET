@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using PVM.Core.Plan;
-using PVM.Core.Plan.Operations;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -50,7 +49,7 @@ namespace PVM.Core.Definition
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != GetType()) return false;
-            return Equals((Node) obj);
+            return Equals((Node)obj);
         }
 
         public override int GetHashCode()

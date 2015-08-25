@@ -9,7 +9,6 @@ namespace PVM.Core.Data.Proxy
         public static object CreateInstanceFor(Type type, IDictionary<string, object> data)
         {
             var generator = new ProxyGenerator();
-
             return generator.CreateInterfaceProxyWithoutTarget(type, new DataInterceptor(data));
         } 
     }

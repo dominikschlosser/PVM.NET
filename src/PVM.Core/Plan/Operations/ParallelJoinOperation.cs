@@ -21,7 +21,7 @@ namespace PVM.Core.Plan.Operations
                 }
             }
 
-            execution.Resume();
+            execution.Parent.Resume(execution.CurrentNode);
         }
     }
 }
