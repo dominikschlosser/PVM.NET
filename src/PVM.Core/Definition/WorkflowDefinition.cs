@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
 
 namespace PVM.Core.Definition
 {
-    public class WorkflowDefinition : Node
+    public interface IWorkflowDefinition
+    {
+        IList<INode> Nodes { get; }
+        IList<INode> EndNodes { get; }
+        INode InitialNode { get; }
+        string Identifier { get; }
+    }
+
+    public class WorkflowDefinition<T> : Node, IWorkflowDefinition where T : class
     {
         public WorkflowDefinition(string identifier, INode initialNode, IList<INode> nodes,
-            IList<INode> endNodes) : base(identifier, new SubProcessOperation())
+            IList<INode> endNodes) : base(identifier, new StartSubProcessOperation())
         {
             InitialNode = initialNode;
             Nodes = nodes;
@@ -26,6 +35,11 @@ namespace PVM.Core.Definition
             {
                 endNode.AddOutgoingTransition(transition);
             }
+        }
+
+        public WorkflowInstance<T> CreateNewInstance()
+        {
+            return new WorkflowInstance<T>(this);
         }
 
         public class Builder
@@ -63,9 +77,9 @@ namespace PVM.Core.Definition
                 return this;
             }
 
-            public WorkflowDefinition Build()
+            public WorkflowDefinition<T> Build<T>() where T : class
             {
-                return new WorkflowDefinition(identifier, initialNode, nodes, endNodes);
+                return new WorkflowDefinition<T>(identifier, initialNode, nodes, endNodes);
             }
         }
     }

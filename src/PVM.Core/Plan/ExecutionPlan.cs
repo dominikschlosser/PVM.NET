@@ -13,9 +13,9 @@ namespace PVM.Core.Plan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
         private readonly IExecution rootExecution;
-        private readonly WorkflowDefinition workflowDefinition;
+        private readonly IWorkflowDefinition workflowDefinition;
 
-        public ExecutionPlan(WorkflowDefinition workflowDefinition)
+        public ExecutionPlan(IWorkflowDefinition workflowDefinition)
         {
             this.workflowDefinition = workflowDefinition;
             rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
@@ -24,6 +24,11 @@ namespace PVM.Core.Plan
         public void Start(INode startNode, IDictionary<string, object> data)
         {
             rootExecution.Start(startNode, data);
+        }
+
+        public void Start(INode startNode)
+        {
+            Start(startNode, new Dictionary<string, object>());
         }
 
         public void OnExecutionStarting(Execution execution)
@@ -85,7 +90,7 @@ namespace PVM.Core.Plan
                     genericOperationInterface != null)
                 {
                     var genericType = genericOperationInterface.GetGenericArguments().First();
-                    var dataContext = DataImplementationGenerator.CreateInstanceFor(genericType, execution.Data);
+                    var dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
 
                     operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
                              .Invoke(operation, new[] {execution, dataContext});

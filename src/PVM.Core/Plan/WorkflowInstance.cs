@@ -1,17 +1,17 @@
 ﻿using log4net;
+using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using System;
-using System.Collections.Generic;
 
 namespace PVM.Core.Plan
 {
-    public class WorkflowInstance
+    public class WorkflowInstance<T> where T : class
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance));
-        private readonly WorkflowDefinition definition;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance<T>));
+        private readonly IWorkflowDefinition definition;
         private readonly IExecutionPlan plan;
 
-        public WorkflowInstance(WorkflowDefinition definition)
+        public WorkflowInstance(IWorkflowDefinition definition)
         {
             Identifier = Guid.NewGuid().ToString();
             plan = new ExecutionPlan(definition);
@@ -25,14 +25,14 @@ namespace PVM.Core.Plan
             get { return plan.IsFinished; }
         }
 
-        public void Start(IDictionary<string, object> data)
+        public void Start(T data)
         {
-            plan.Start(definition.InitialNode, data);
+            plan.Start(definition.InitialNode, DataMapper.ExtractData<T>(data));
         }
 
         public void Start()
         {
-            Start(new Dictionary<string, object>());
+            plan.Start(definition.InitialNode);
         }
     }
 }

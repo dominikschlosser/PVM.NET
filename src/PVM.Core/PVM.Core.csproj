@@ -78,7 +78,7 @@
     <Compile Include="Data\Attributes\AttributeExtensions.cs" />
     <Compile Include="Data\Attributes\OutAttribute.cs" />
     <Compile Include="Data\Attributes\InAttribute.cs" />
-    <Compile Include="Data\Proxy\DataImplementationGenerator.cs" />
+    <Compile Include="Data\Proxy\DataMapper.cs" />
     <Compile Include="Data\DataMappingNotSatisfiedException.cs" />
     <Compile Include="Data\Proxy\DataInterceptor.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
@@ -89,7 +89,7 @@
     <Compile Include="Plan\Operations\ParallelGatewayOperation.cs" />
     <Compile Include="Plan\Operations\Base\TakeDefaultTransitionOperation.cs" />
     <Compile Include="Plan\IExecutionPlan.cs" />
-    <Compile Include="Plan\Operations\SubProcessOperation.cs" />
+    <Compile Include="Plan\Operations\StartSubProcessOperation.cs" />
     <Compile Include="Plan\WorkflowInstance.cs" />
     <Compile Include="Plan\ExecutionPlan.cs" />
     <Compile Include="Runtime\IExecutionVisitor.cs" />

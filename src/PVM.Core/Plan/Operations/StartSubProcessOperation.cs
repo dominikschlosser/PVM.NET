@@ -4,11 +4,11 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class SubProcessOperation : IOperation
+    public class StartSubProcessOperation : IOperation
     {
         public void Execute(IExecution execution)
         {
-            var workflowDefinition = execution.CurrentNode as WorkflowDefinition;
+            var workflowDefinition = execution.CurrentNode as IWorkflowDefinition;
             if (workflowDefinition == null)
             {
                 throw new WorkflowInconsistentException(

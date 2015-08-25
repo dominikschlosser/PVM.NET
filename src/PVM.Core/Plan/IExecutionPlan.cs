@@ -1,5 +1,4 @@
 using PVM.Core.Definition;
-using PVM.Core.Plan.Operations;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 using System.Collections.Generic;
@@ -15,5 +14,6 @@ namespace PVM.Core.Plan
         void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier);
         bool IsFinished { get; }
         void OnExecutionResuming(Execution execution);
+        void Start(INode initialNode);
     }
 }

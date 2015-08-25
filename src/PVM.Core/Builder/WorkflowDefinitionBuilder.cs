@@ -27,16 +27,21 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public WorkflowDefinition BuildWorkflow()
+        public WorkflowDefinition<T> BuildWorkflow<T>() where T : class
         {
             AssembleTransitions();
 
             return
-                new WorkflowDefinition.Builder().WithIdentifier(identifier)
+                new WorkflowDefinition<T>.Builder().WithIdentifier(identifier)
                                                 .WithInitialNode(startNode)
                                                 .WithNodes(nodes.Values)
                                                 .WithEndNodes(endNodes.Values)
-                                                .Build();
+                                                .Build<T>();
+        }
+
+        public WorkflowDefinition<object> BuildWorkflow()
+        {
+            return BuildWorkflow<object>();
         }
 
         public WorkflowDefinitionBuilder AsDefinitionBuilder()

@@ -5,7 +5,8 @@ namespace PVM.Core.Builder
     public interface IWorkflowPathBuilder
     {
         NodeBuilder AddNode();
-        WorkflowDefinition BuildWorkflow();
+        WorkflowDefinition<T> BuildWorkflow<T>() where T : class;
+        WorkflowDefinition<object> BuildWorkflow();
         WorkflowDefinitionBuilder AsDefinitionBuilder();
     }
 }

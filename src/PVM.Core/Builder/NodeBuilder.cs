@@ -77,6 +77,11 @@ namespace PVM.Core.Builder
             return BuildNode(n => new Node(n, operation));
         }
 
+        public IWorkflowPathBuilder BuildSubWorkflow<T>(WorkflowDefinitionBuilder subWorkflowDefinition) where T : class
+        {
+            return BuildNode(n => subWorkflowDefinition.WithIdentifier(n).BuildWorkflow<T>());
+        }
+
         public IWorkflowPathBuilder BuildSubWorkflow(WorkflowDefinitionBuilder subWorkflowDefinition)
         {
             return BuildNode(n => subWorkflowDefinition.WithIdentifier(n).BuildWorkflow());

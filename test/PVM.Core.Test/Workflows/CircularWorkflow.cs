@@ -1,8 +1,6 @@
 ﻿using log4net;
 using NUnit.Framework;
 using PVM.Core.Builder;
-using PVM.Core.Plan;
-using System.Collections.Generic;
 using PVM.Core.Data.Attributes;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
@@ -55,14 +53,10 @@ namespace PVM.Core.Test.Workflows
                         .WithName("end")
                         .IsEndNode()
                     .BuildMockNode(e => executed = e)
-               .BuildWorkflow();
+               .BuildWorkflow<ITestData>();
 
-            var instance = new WorkflowInstance(workflowDefinition);
-
-            // todo: how to define process in/output?
-            var testdata = new Dictionary<string, object>();
-            testdata.Add("counter", 0);
-            instance.Start(testdata);
+            var instance = workflowDefinition.CreateNewInstance();
+            instance.Start(new StartData());
 
             Assert.That(executed);
             Assert.That(instance.IsFinished);
@@ -86,6 +80,15 @@ namespace PVM.Core.Test.Workflows
             }
         }
 
+        private class StartData : ITestData
+        {
+            public StartData()
+            {
+                Counter = 0;
+            }
+
+            public int Counter { get; set; }
+        }
         public interface ITestData
         {
             [In]
