@@ -48,14 +48,14 @@ namespace PVM.Core.Builder
         {
             foreach (var transition in transitions)
             {
-                Logger.InfoFormat("Assembling transition from '{0}' to '{1}", transition.Key, transition.Value);
+                Logger.DebugFormat("Assembling transition from '{0}'", transition.Key);
                 var sourceNode = nodes[transition.Key];
 
                 foreach (var transitionData in transition.Value)
                 {
 
                     var targetNode = nodes[transitionData.Target];
-                    Logger.InfoFormat("  - Source: {0}, Target: {1}", sourceNode.Name, targetNode.Name);
+                    Logger.DebugFormat("  - Source: {0}, Target: {1}", sourceNode.Name, targetNode.Name);
 
                     var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, sourceNode, targetNode);
                     sourceNode.AddOutgoingTransition(transitionToAdd);
