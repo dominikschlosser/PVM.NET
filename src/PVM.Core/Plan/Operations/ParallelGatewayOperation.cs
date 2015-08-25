@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System.Linq;
+using log4net;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -23,7 +24,7 @@ namespace PVM.Core.Plan.Operations
 
             var owningExecution = execution.Parent ?? execution;
 
-            if (execution.CurrentNode.OutgoingTransitions.Count == 1)
+            if (execution.CurrentNode.OutgoingTransitions.Count() == 1)
             {
                 owningExecution.Resume(execution.CurrentNode);
             }

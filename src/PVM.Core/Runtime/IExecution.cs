@@ -13,11 +13,11 @@ namespace PVM.Core.Runtime
         void Proceed();
         void Proceed(string transitionName);
         void Resume();
-        void Resume(INode node);
+        void Resume(INode currentNode);
         void Stop();
         void Start(INode startNode, IDictionary<string, object> data);
         void CreateChild(INode startNode);
         void Accept(IExecutionVisitor visitor);
-        void Proceed(INode node);
+        void Proceed(INode currentNode);
     }
 }

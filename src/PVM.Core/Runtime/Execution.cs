@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using log4net;
-using PVM.Core.Data;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
 
@@ -38,7 +37,7 @@ namespace PVM.Core.Runtime
         {
             RequireActive();
 
-            IList<Transition> eligibleNodes = CurrentNode.OutgoingTransitions.Count > 1
+            IList<Transition> eligibleNodes = CurrentNode.OutgoingTransitions.Count() > 1
                 ? CurrentNode.OutgoingTransitions.Where(t => t.IsDefault).ToList()
                 : CurrentNode.OutgoingTransitions.ToList();
 
@@ -53,7 +52,7 @@ namespace PVM.Core.Runtime
             {
                 throw new InvalidOperationException(
                     string.Format("Cannot take default node since there are '{0}' eligible nodes",
-                        CurrentNode.OutgoingTransitions.Count));
+                        CurrentNode.OutgoingTransitions.Count()));
             }
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
             var transition = eligibleNodes.First();
@@ -127,18 +126,18 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void Proceed([CanBeNull] INode node)
+        public void Proceed([CanBeNull] INode currentNode)
         {
             RequireActive();
 
-            if (node == null)
+            if (currentNode == null)
             {
                 Logger.InfoFormat("Node is null. Execution '{0}' stopping...", Identifier);
                 Stop();
             }
             else
             {
-                CurrentNode = node;
+                CurrentNode = currentNode;
                 Proceed();
             }
         }

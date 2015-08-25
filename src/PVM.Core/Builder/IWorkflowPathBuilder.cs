@@ -6,5 +6,6 @@ namespace PVM.Core.Builder
     {
         NodeBuilder AddNode();
         WorkflowDefinition BuildWorkflow();
+        WorkflowDefinitionBuilder AsDefinitionBuilder();
     }
 }

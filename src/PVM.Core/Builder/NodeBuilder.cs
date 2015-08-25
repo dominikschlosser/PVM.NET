@@ -72,16 +72,14 @@ namespace PVM.Core.Builder
             return parentWorkflowBuilder;
         }
 
-        public IWorkflowPathBuilder BuildNode(Func<string, IOperation, INode> nodeFactory)
-        {
-            parentWorkflowBuilder.AddNode(nodeFactory(name, operation), isStartNode, isEndNode, transitions);
-
-            return parentWorkflowBuilder;
-        } 
-
         public IWorkflowPathBuilder BuildNode()
         {
             return BuildNode(n => new Node(n, operation));
+        }
+
+        public IWorkflowPathBuilder BuildSubWorkflow(WorkflowDefinitionBuilder subWorkflowDefinition)
+        {
+            return BuildNode(n => subWorkflowDefinition.WithIdentifier(n).BuildWorkflow());
         }
 
         public IWorkflowPathBuilder BuildParallelGateway()

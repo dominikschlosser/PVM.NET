@@ -58,6 +58,7 @@
     <Compile Include="TestExtensions.cs" />
     <Compile Include="Workflows\CircularWorkflow.cs" />
     <Compile Include="Workflows\LinearWorkflow.cs" />
+    <Compile Include="Workflows\NestedSubWorkflow.cs" />
     <Compile Include="Workflows\ParallelWorkflow.cs" />
   </ItemGroup>
   <ItemGroup>
