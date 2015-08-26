@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace PVM.Core.Infrastructure.Serialization
+namespace PVM.Infrastructure.Serialization
 {
     public class JsonSerializer : IObjectSerializer
     {

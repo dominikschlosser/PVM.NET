@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PVM.Core.Infrastructure.Serialization
+namespace PVM.Infrastructure.Serialization
 {
     public interface IObjectSerializer
     {

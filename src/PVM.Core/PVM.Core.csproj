@@ -113,9 +113,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PVM.Core.Infrastructure\PVM.Core.Infrastructure.csproj">
+    <ProjectReference Include="..\PVM.Core.Infrastructure\PVM.Infrastructure.csproj">
       <Project>{05666414-39e0-4859-82d2-d15e69b51fa6}</Project>
-      <Name>PVM.Core.Infrastructure</Name>
+      <Name>PVM.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

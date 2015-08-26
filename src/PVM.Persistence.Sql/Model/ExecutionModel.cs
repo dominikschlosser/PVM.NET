@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using PVM.Core.Infrastructure.Serialization;
 using PVM.Core.Runtime;
+using PVM.Infrastructure.Serialization;
 
 namespace PVM.Persistence.Sql.Model
 {

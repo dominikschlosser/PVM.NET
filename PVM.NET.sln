@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Persistence.Sql", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Persistence.Sql.Test", "src\PVM.Persistence.Sql.Test\PVM.Persistence.Sql.Test.csproj", "{BB054747-A54B-4B74-8D89-51B036196921}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core.Infrastructure", "src\PVM.Core.Infrastructure\PVM.Core.Infrastructure.csproj", "{05666414-39E0-4859-82D2-D15E69B51FA6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Infrastructure", "src\PVM.Core.Infrastructure\PVM.Infrastructure.csproj", "{05666414-39E0-4859-82D2-D15E69B51FA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

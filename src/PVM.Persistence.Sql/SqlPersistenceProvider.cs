@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using PVM.Core.Definition;
-using PVM.Core.Infrastructure.Serialization;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime;
+using PVM.Infrastructure.Serialization;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql
