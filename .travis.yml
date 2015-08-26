@@ -3,7 +3,7 @@ solution: PVM.NET.sln
 sudo: required
 script:
   - xbuild /p:Configuration=Release PVM.NET.sln
-  - nunit-console test/PVM.Core.Test/bin/Release/PVM.Core.Test.dll
+  - nunit-console bin/Release/PVM.Core.Test.dll
 before_install:
   - sudo apt-get install nunit-console
 before_script:
