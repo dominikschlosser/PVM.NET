@@ -14,12 +14,12 @@ namespace PVM.Core.Runtime
         private readonly IExecution rootExecution;
 
         public WorkflowInstance(IWorkflowDefinition definition, IPersistenceProvider persistenceProvider)
-            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Name, new ExecutionPlan(definition, persistenceProvider)))
+            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Identifier, new ExecutionPlan(definition, persistenceProvider)))
         {
         }
 
         public WorkflowInstance(IWorkflowDefinition definition)
-            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Name, new ExecutionPlan(definition, new NullPersistenceProvider())))
+            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Identifier, new ExecutionPlan(definition, new NullPersistenceProvider())))
         {
         }
 

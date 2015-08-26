@@ -18,7 +18,7 @@ namespace PVM.Core.Test
         {
             private readonly Action<bool> action;
 
-            public MockNode(string name, Action<bool> action) : base(name)
+            public MockNode(string identifier, Action<bool> action) : base(identifier)
             {
                 this.action = action;
             }

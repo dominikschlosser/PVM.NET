@@ -18,8 +18,8 @@ namespace PVM.Persistence.Sql.Model
             return new TransitionModel
             {
                 Identifier = transition.Identifier,
-                Source = transition.Source.Name,
-                Destination = transition.Destination == null ? null : transition.Destination.Name,
+                Source = transition.Source.Identifier,
+                Destination = transition.Destination == null ? null : transition.Destination.Identifier,
                 Executed = transition.Executed,
                 IsDefault = transition.IsDefault
             };

@@ -112,7 +112,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PVM.Core.Infrastructure\PVM.Core.Infrastructure.csproj">
+      <Project>{05666414-39e0-4859-82d2-d15e69b51fa6}</Project>
+      <Name>PVM.Core.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

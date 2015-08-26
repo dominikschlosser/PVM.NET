@@ -56,7 +56,7 @@ namespace PVM.Core.Plan
 
             throw new TransitionNotFoundException(string.Format(
                 "Outgoing transition with name '{0}' not found for node {1}", transitionIdentifier,
-                execution.CurrentNode.Name));
+                execution.CurrentNode.Identifier));
         }
 
         public bool IsFinished { get; private set; }

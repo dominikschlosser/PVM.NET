@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using PVM.Core.Infrastructure.Serialization;
 using PVM.Core.Runtime;
 
 namespace PVM.Persistence.Sql.Model
@@ -12,18 +13,21 @@ namespace PVM.Persistence.Sql.Model
 
         public virtual ExecutionModel Parent { get; set; }
         public virtual IList<ExecutionModel> Children { get; set; }
-        public virtual NodeModel CurrentNode { get; set; }
+        public virtual string CurrentNodeIdentifier { get; set; }
         public bool IsActive { get; set; }
-
-        public static ExecutionModel FromExecution(IExecution execution)
+        public virtual IList<ExecutionVariableModel> Variables { get; set; }
+ 
+        public static ExecutionModel FromExecution(IExecution execution, IObjectSerializer serializer)
         {
+            var variables = execution.Data.Select(entry => new ExecutionVariableModel() {Key = entry.Key, SerializedValue = serializer.Serialize(entry.Value), ValueType = entry.Value.GetType().FullName}).ToList();
             return new ExecutionModel()
             {
                 Identifier = execution.Identifier,
                 IsActive = execution.IsActive,
-                CurrentNode = NodeModel.FromNode(execution.CurrentNode),
-                Parent = execution.Parent == null ? null : FromExecution(execution.Parent),
-                Children = execution.Children.Select(FromExecution).ToList()
+                CurrentNodeIdentifier = execution.CurrentNode.Identifier,
+                Parent = execution.Parent == null ? null : FromExecution(execution.Parent, serializer),
+                Children = execution.Children.Select(c => FromExecution(c, serializer)).ToList(),
+                Variables = variables
             };
         }
     }

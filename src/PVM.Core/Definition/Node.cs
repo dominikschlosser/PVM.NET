@@ -10,7 +10,7 @@ namespace PVM.Core.Definition
         IOperation Operation { get; }
         IEnumerable<Transition> IncomingTransitions { get; }
         IEnumerable<Transition> OutgoingTransitions { get; }
-        string Name { get; }
+        string Identifier { get; }
         void AddOutgoingTransition(Transition transition);
         void AddIncomingTransition(Transition transition);
         void Execute(IExecution execution, IExecutionPlan executionPlan);
@@ -23,14 +23,14 @@ namespace PVM.Core.Definition
         private readonly IOperation operation;
         private readonly List<Transition> outgoingTransitions = new List<Transition>();
 
-        public Node(string name) : this(name, new TakeDefaultTransitionOperation())
+        public Node(string identifier) : this(identifier, new TakeDefaultTransitionOperation())
         {
         }
 
-        public Node(string name, IOperation operation)
+        public Node(string identifier, IOperation operation)
         {
             this.operation = operation;
-            Name = name;
+            Identifier = identifier;
         }
 
         public IOperation Operation { get { return operation; } }
@@ -55,7 +55,7 @@ namespace PVM.Core.Definition
             incomingTransitions.Add(transition);
         }
 
-        public string Name { get; private set; }
+        public string Identifier { get; private set; }
 
         public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
         {
@@ -64,7 +64,7 @@ namespace PVM.Core.Definition
 
         protected bool Equals(Node other)
         {
-            return string.Equals(Name, other.Name);
+            return string.Equals(Identifier, other.Identifier);
         }
 
         public override bool Equals(object obj)
@@ -77,7 +77,7 @@ namespace PVM.Core.Definition
 
         public override int GetHashCode()
         {
-            return (Name != null ? Name.GetHashCode() : 0);
+            return (Identifier != null ? Identifier.GetHashCode() : 0);
         }
     }
 }

@@ -18,8 +18,8 @@ namespace PVM.Persistence.Sql.Model
         {
             return new NodeModel
             {
-                Identifier = node.Name,
-                OperationType = node.Operation.GetType().AssemblyQualifiedName,
+                Identifier = node.Identifier,
+                OperationType = node.Operation.GetType().FullName,
                 IncomingTransitions = node.IncomingTransitions.Select(TransitionModel.FromTransition).ToList(),
                 OutgoingTransitions = node.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList()
             };

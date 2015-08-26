@@ -13,7 +13,7 @@ namespace PVM.Core.Plan.Operations
             {
                 throw new WorkflowInconsistentException(
                     string.Format("SubProcessOperation can only operate on workflow definition nodes. ({0})",
-                        execution.CurrentNode.Name));
+                        execution.CurrentNode.Identifier));
             }
 
             execution.Proceed(workflowDefinition.InitialNode);

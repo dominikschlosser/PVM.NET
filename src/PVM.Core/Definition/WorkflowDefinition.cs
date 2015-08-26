@@ -5,12 +5,11 @@ using PVM.Core.Runtime;
 
 namespace PVM.Core.Definition
 {
-    public interface IWorkflowDefinition
+    public interface IWorkflowDefinition : INode
     {
         IList<INode> Nodes { get; }
         IList<INode> EndNodes { get; }
         INode InitialNode { get; }
-        string Identifier { get; }
     }
 
     public class WorkflowDefinition<T> : Node, IWorkflowDefinition where T : class

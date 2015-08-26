@@ -51,7 +51,7 @@ namespace PVM.Core.Runtime
             {
                 throw new InvalidOperationException(
                     string.Format("There are no eligible nodes to take in node '{0}'",
-                        CurrentNode.Name));
+                        CurrentNode.Identifier));
             }
 
             if (eligibleNodes.Count > 1)
@@ -60,7 +60,7 @@ namespace PVM.Core.Runtime
                     string.Format("Cannot take default node since there are '{0}' eligible nodes",
                         CurrentNode.OutgoingTransitions.Count()));
             }
-            Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
+            Logger.InfoFormat("Executing node '{0}'", CurrentNode.Identifier);
             Transition transition = eligibleNodes.First();
 
             Execute("Default", transition);
@@ -70,7 +70,7 @@ namespace PVM.Core.Runtime
         {
             RequireActive();
 
-            Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
+            Logger.InfoFormat("Executing node '{0}'", CurrentNode.Identifier);
             Transition transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
             Execute(transitionName, transition);
@@ -118,7 +118,7 @@ namespace PVM.Core.Runtime
         public void CreateChild(INode startNode)
         {
             Stop();
-            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Name, executionPlan);
+            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Identifier, executionPlan);
             Children.Add(child);
 
             child.Start(startNode, Data);
@@ -164,7 +164,7 @@ namespace PVM.Core.Runtime
             }
 
             Logger.InfoFormat("Taking transition with name '{0}' to node '{1}'", transition.Identifier,
-                transition.Destination.Name);
+                transition.Destination.Identifier);
 
             transition.Executed = true;
 

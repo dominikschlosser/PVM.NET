@@ -60,7 +60,7 @@ namespace PVM.Core.Builder
                 {
 
                     var targetNode = nodes[transitionData.Target];
-                    Logger.DebugFormat("  - Source: {0}, Target: {1}", sourceNode.Name, targetNode.Name);
+                    Logger.DebugFormat("  - Source: {0}, Target: {1}", sourceNode.Identifier, targetNode.Identifier);
 
                     var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, sourceNode, targetNode);
                     sourceNode.AddOutgoingTransition(transitionToAdd);
@@ -71,7 +71,7 @@ namespace PVM.Core.Builder
 
         internal void AddNode(INode node, bool isStartNode, bool isEndNode, List<TransitionData> transitions)
         {
-            nodes.Add(node.Name, node);
+            nodes.Add(node.Identifier, node);
 
             if (isStartNode)
             {
@@ -80,10 +80,10 @@ namespace PVM.Core.Builder
 
             if (isEndNode)
             {
-                endNodes.Add(node.Name, node);
+                endNodes.Add(node.Identifier, node);
             }
 
-            this.transitions[node.Name] = transitions;
+            this.transitions[node.Identifier] = transitions;
         }
     }
 }
