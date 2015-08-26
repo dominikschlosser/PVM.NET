@@ -36,7 +36,7 @@ namespace PVM.Core.Builder
                                                 .WithInitialNode(startNode)
                                                 .WithNodes(nodes.Values)
                                                 .WithEndNodes(endNodes.Values)
-                                                .Build<T>();
+                                                .Build();
         }
 
         public WorkflowDefinition<object> BuildWorkflow()

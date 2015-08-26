@@ -1,5 +1,6 @@
 ﻿using PVM.Core.Definition;
 using System.Collections.Generic;
+using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {
@@ -9,6 +10,7 @@ namespace PVM.Core.Runtime
         IExecution  Parent { get; }
         IList<IExecution> Children { get; }
         INode CurrentNode { get; }
+        IExecutionPlan Plan { get; }
         bool IsActive { get; }
         void Proceed();
         void Proceed(string transitionName);

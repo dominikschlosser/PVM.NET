@@ -89,6 +89,8 @@ namespace PVM.Core.Test.Workflows
 
             public int Counter { get; set; }
         }
+
+        [WorkflowData]
         public interface ITestData
         {
             [In]

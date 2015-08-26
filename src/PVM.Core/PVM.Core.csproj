@@ -70,17 +70,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builder\IWorkflowPathBuilder.cs" />
-    <Compile Include="Builder\NodeBuilder.cs" />
     <Compile Include="Builder\TransitionBuilder.cs" />
     <Compile Include="Builder\TransitionData.cs" />
     <Compile Include="Builder\WorkflowDefinitionBuilder.cs" />
-    <Compile Include="Builder\WorkflowValidationException.cs" />
     <Compile Include="Data\Attributes\AttributeExtensions.cs" />
     <Compile Include="Data\Attributes\OutAttribute.cs" />
     <Compile Include="Data\Attributes\InAttribute.cs" />
+    <Compile Include="Data\Attributes\WorkflowDataAttribute.cs" />
     <Compile Include="Data\Proxy\DataMapper.cs" />
     <Compile Include="Data\DataMappingNotSatisfiedException.cs" />
     <Compile Include="Data\Proxy\DataInterceptor.cs" />
+    <Compile Include="Definition\Node.cs" />
+    <Compile Include="Builder\NodeBuilder.cs" />
+    <Compile Include="Definition\Transition.cs" />
+    <Compile Include="Definition\WorkflowDefinition.cs" />
+    <Compile Include="Definition\WorkflowInconsistentException.cs" />
+    <Compile Include="Definition\WorkflowValidationException.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
     <Compile Include="Plan\Operations\Base\DataAwareOperation.cs" />
     <Compile Include="Plan\Operations\Base\IOperation.cs" />
@@ -90,20 +95,16 @@
     <Compile Include="Plan\Operations\Base\TakeDefaultTransitionOperation.cs" />
     <Compile Include="Plan\IExecutionPlan.cs" />
     <Compile Include="Plan\Operations\StartSubProcessOperation.cs" />
-    <Compile Include="Plan\WorkflowInstance.cs" />
     <Compile Include="Plan\ExecutionPlan.cs" />
+    <Compile Include="Plan\TransitionNotFoundException.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\Execution.cs" />
+    <Compile Include="Runtime\ExecutionInactiveException.cs" />
+    <Compile Include="Runtime\IExecution.cs" />
     <Compile Include="Runtime\IExecutionVisitor.cs" />
     <Compile Include="Runtime\IInternalExecution.cs" />
     <Compile Include="Runtime\InvalidExecutionStateException.cs" />
-    <Compile Include="Runtime\ExecutionInactiveException.cs" />
-    <Compile Include="Plan\TransitionNotFoundException.cs" />
-    <Compile Include="Definition\WorkflowInconsistentException.cs" />
-    <Compile Include="Runtime\Execution.cs" />
-    <Compile Include="Runtime\IExecution.cs" />
-    <Compile Include="Definition\Node.cs" />
-    <Compile Include="Definition\Transition.cs" />
-    <Compile Include="Definition\WorkflowDefinition.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Runtime\WorkflowInstance.cs" />
     <Compile Include="Utils\ContractException.cs" />
     <Compile Include="Utils\ContractExtensions.cs" />
   </ItemGroup>

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using log4net;
+using PVM.Core.Data.Attributes;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations.Base;
@@ -12,23 +14,11 @@ namespace PVM.Core.Plan
     public class ExecutionPlan : IExecutionPlan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
-        private readonly IExecution rootExecution;
         private readonly IWorkflowDefinition workflowDefinition;
 
         public ExecutionPlan(IWorkflowDefinition workflowDefinition)
         {
             this.workflowDefinition = workflowDefinition;
-            rootExecution = new Execution(Guid.NewGuid() + "_" + workflowDefinition.InitialNode.Name, this);
-        }
-
-        public void Start(INode startNode, IDictionary<string, object> data)
-        {
-            rootExecution.Start(startNode, data);
-        }
-
-        public void Start(INode startNode)
-        {
-            Start(startNode, new Dictionary<string, object>());
         }
 
         public void OnExecutionStarting(Execution execution)
@@ -37,7 +27,7 @@ namespace PVM.Core.Plan
 
         public void OnExecutionStopped(Execution execution)
         {
-            var activeExecutions = GetActiveExecutions(execution);
+            IList<IExecution> activeExecutions = GetActiveExecutions(execution);
             if (activeExecutions.Any())
             {
                 Logger.InfoFormat("Execution '{0}' stopped but the following are still active: '{1}'",
@@ -72,6 +62,11 @@ namespace PVM.Core.Plan
         {
         }
 
+        public IWorkflowDefinition Definition
+        {
+            get { return workflowDefinition; }
+        }
+
         public void Proceed(IInternalExecution execution, IOperation operation)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
@@ -80,20 +75,20 @@ namespace PVM.Core.Plan
             }
             else
             {
-                var genericOperationInterface = operation.GetType()
-                                                         .GetInterfaces()
-                                                         .FirstOrDefault(
-                                                             i =>
-                                                                 i.IsGenericType &&
-                                                                 i.GetGenericTypeDefinition() == typeof (IOperation<>));
+                Type genericOperationInterface = operation.GetType()
+                    .GetInterfaces()
+                    .FirstOrDefault(
+                        i =>
+                            i.IsGenericType &&
+                            i.GetGenericTypeDefinition() == typeof (IOperation<>));
                 if (
                     genericOperationInterface != null)
                 {
-                    var genericType = genericOperationInterface.GetGenericArguments().First();
-                    var dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
+                    Type genericType = genericOperationInterface.GetGenericArguments().First(t => t.HasAttribute<WorkflowDataAttribute>());
+                    object dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
 
                     operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
-                             .Invoke(operation, new[] {execution, dataContext});
+                        .Invoke(operation, new[] {execution, dataContext});
                 }
                 else
                 {
@@ -104,7 +99,7 @@ namespace PVM.Core.Plan
 
         private IList<IExecution> GetActiveExecutions(IExecution execution)
         {
-            var root = FindRoot(execution);
+            IExecution root = FindRoot(execution);
             var results = new List<IExecution>();
             root.Accept(new ExecutionVisitor(e =>
             {

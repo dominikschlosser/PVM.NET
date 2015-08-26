@@ -29,6 +29,12 @@ namespace PVM.Core.Runtime
         public IExecution Parent { get; private set; }
         public IList<IExecution> Children { get; private set; }
         public INode CurrentNode { get; private set; }
+
+        public IExecutionPlan Plan
+        {
+            get { return executionPlan; }
+        }
+
         public string Identifier { get; private set; }
         public bool IsActive { get; private set; }
         public IDictionary<string, object> Data { get; private set; }
@@ -55,7 +61,7 @@ namespace PVM.Core.Runtime
                         CurrentNode.OutgoingTransitions.Count()));
             }
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            var transition = eligibleNodes.First();
+            Transition transition = eligibleNodes.First();
 
             Execute("Default", transition);
         }
@@ -65,7 +71,7 @@ namespace PVM.Core.Runtime
             RequireActive();
 
             Logger.InfoFormat("Executing node '{0}'", CurrentNode.Name);
-            var transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
+            Transition transition = CurrentNode.OutgoingTransitions.SingleOrDefault(t => t.Identifier == transitionName);
 
             Execute(transitionName, transition);
         }
@@ -80,6 +86,7 @@ namespace PVM.Core.Runtime
                 Proceed(node);
             }
         }
+
         public void Resume()
         {
             Resume(CurrentNode);
@@ -120,7 +127,7 @@ namespace PVM.Core.Runtime
         public void Accept(IExecutionVisitor visitor)
         {
             visitor.Visit(this);
-            foreach (var child in Children)
+            foreach (IExecution child in Children)
             {
                 child.Accept(visitor);
             }

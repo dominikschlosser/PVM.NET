@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using PVM.Core.Plan;
 using PVM.Core.Plan.Operations;
+using PVM.Core.Runtime;
 
 namespace PVM.Core.Definition
 {
@@ -37,9 +37,9 @@ namespace PVM.Core.Definition
             }
         }
 
-        public WorkflowInstance<T> CreateNewInstance()
+        public WorkflowInstance CreateNewInstance()
         {
-            return new WorkflowInstance<T>(this);
+            return new WorkflowInstance(this);
         }
 
         public class Builder
@@ -77,7 +77,7 @@ namespace PVM.Core.Definition
                 return this;
             }
 
-            public WorkflowDefinition<T> Build<T>() where T : class
+            public WorkflowDefinition<T> Build()
             {
                 return new WorkflowDefinition<T>(identifier, initialNode, nodes, endNodes);
             }
