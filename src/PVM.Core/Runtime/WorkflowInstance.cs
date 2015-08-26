@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using log4net;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
+using PVM.Core.Persistence;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
@@ -10,10 +11,15 @@ namespace PVM.Core.Runtime
     public class WorkflowInstance
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance));
-        private IExecution rootExecution;
+        private readonly IExecution rootExecution;
+
+        public WorkflowInstance(IWorkflowDefinition definition, IPersistenceProvider persistenceProvider)
+            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Name, new ExecutionPlan(definition, persistenceProvider)))
+        {
+        }
 
         public WorkflowInstance(IWorkflowDefinition definition)
-            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Name, new ExecutionPlan(definition)))
+            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Name, new ExecutionPlan(definition, new NullPersistenceProvider())))
         {
         }
 

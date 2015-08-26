@@ -6,6 +6,7 @@ using log4net;
 using PVM.Core.Data.Attributes;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
+using PVM.Core.Persistence;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -15,10 +16,12 @@ namespace PVM.Core.Plan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
         private readonly IWorkflowDefinition workflowDefinition;
+        private readonly IPersistenceProvider persistenceProvider;
 
-        public ExecutionPlan(IWorkflowDefinition workflowDefinition)
+        public ExecutionPlan(IWorkflowDefinition workflowDefinition, IPersistenceProvider persistenceProvider)
         {
             this.workflowDefinition = workflowDefinition;
+            this.persistenceProvider = persistenceProvider;
         }
 
         public void OnExecutionStarting(Execution execution)
@@ -62,12 +65,17 @@ namespace PVM.Core.Plan
         {
         }
 
+        public void OnExecutionReachesWaitState(Execution execution)
+        {
+            persistenceProvider.Persist(execution);
+        }
+
         public IWorkflowDefinition Definition
         {
             get { return workflowDefinition; }
         }
 
-        public void Proceed(IInternalExecution execution, IOperation operation)
+        public void Proceed(IExecution execution, IOperation operation)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {

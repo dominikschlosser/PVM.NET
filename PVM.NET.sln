@@ -1,13 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Client.Console", "src\PVM.Client.Console\PVM.Client.Console.csproj", "{39BCC454-EFF3-4993-BD1F-8B22BD91AD27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core", "src\PVM.Core\PVM.Core.csproj", "{4238AB96-0C31-45B5-8DF3-4DF93EE96C73}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Core.Test", "test\PVM.Core.Test\PVM.Core.Test.csproj", "{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Persistence.Sql", "src\PVM.Persistence.Sql\PVM.Persistence.Sql.csproj", "{95D54E23-3E9C-4241-A530-C019EC75820E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Persistence.Sql.Test", "src\PVM.Persistence.Sql.Test\PVM.Persistence.Sql.Test.csproj", "{BB054747-A54B-4B74-8D89-51B036196921}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +31,14 @@ Global
 		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{09A3DA4F-4323-4A8C-A759-DAE08E9EF217}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95D54E23-3E9C-4241-A530-C019EC75820E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95D54E23-3E9C-4241-A530-C019EC75820E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95D54E23-3E9C-4241-A530-C019EC75820E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95D54E23-3E9C-4241-A530-C019EC75820E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB054747-A54B-4B74-8D89-51B036196921}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB054747-A54B-4B74-8D89-51B036196921}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB054747-A54B-4B74-8D89-51B036196921}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB054747-A54B-4B74-8D89-51B036196921}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

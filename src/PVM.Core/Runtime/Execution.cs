@@ -8,7 +8,7 @@ using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {
-    public class Execution : IInternalExecution
+    public class Execution : IExecution
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution));
         private readonly IExecutionPlan executionPlan;
@@ -147,6 +147,12 @@ namespace PVM.Core.Runtime
                 CurrentNode = currentNode;
                 Proceed();
             }
+        }
+
+        public void Wait(string signal)
+        {
+            Stop();
+            executionPlan.OnExecutionReachesWaitState(this);
         }
 
         private void Execute(string transitionIdentifier, Transition transition)

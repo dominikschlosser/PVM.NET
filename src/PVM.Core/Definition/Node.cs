@@ -7,12 +7,13 @@ namespace PVM.Core.Definition
 {
     public interface INode
     {
+        IOperation Operation { get; }
         IEnumerable<Transition> IncomingTransitions { get; }
         IEnumerable<Transition> OutgoingTransitions { get; }
         string Name { get; }
         void AddOutgoingTransition(Transition transition);
         void AddIncomingTransition(Transition transition);
-        void Execute(IInternalExecution execution, IExecutionPlan executionPlan);
+        void Execute(IExecution execution, IExecutionPlan executionPlan);
     }
 
 
@@ -31,6 +32,8 @@ namespace PVM.Core.Definition
             this.operation = operation;
             Name = name;
         }
+
+        public IOperation Operation { get { return operation; } }
 
         public IEnumerable<Transition> IncomingTransitions
         {
@@ -54,7 +57,7 @@ namespace PVM.Core.Definition
 
         public string Name { get; private set; }
 
-        public virtual void Execute(IInternalExecution execution, IExecutionPlan executionPlan)
+        public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
         {
             executionPlan.Proceed(execution, operation);
         }

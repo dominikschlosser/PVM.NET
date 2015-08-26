@@ -12,6 +12,9 @@ namespace PVM.Core.Runtime
         INode CurrentNode { get; }
         IExecutionPlan Plan { get; }
         bool IsActive { get; }
+        IDictionary<string, object> Data { get; }
+
+
         void Proceed();
         void Proceed(string transitionName);
         void Resume();
@@ -21,5 +24,6 @@ namespace PVM.Core.Runtime
         void CreateChild(INode startNode);
         void Accept(IExecutionVisitor visitor);
         void Proceed(INode currentNode);
+        void Wait(string signal);
     }
 }

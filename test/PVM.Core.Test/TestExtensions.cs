@@ -23,7 +23,7 @@ namespace PVM.Core.Test
                 this.action = action;
             }
 
-            public override void Execute(IInternalExecution execution, IExecutionPlan executionPlan)
+            public override void Execute(IExecution execution, IExecutionPlan executionPlan)
             {
                 action(true);
 
