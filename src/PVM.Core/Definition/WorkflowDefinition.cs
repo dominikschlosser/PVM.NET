@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using PVM.Core.Plan.Operations;
-using PVM.Core.Runtime;
 
 namespace PVM.Core.Definition
 {
@@ -20,25 +19,18 @@ namespace PVM.Core.Definition
             InitialNode = initialNode;
             Nodes = nodes;
             EndNodes = endNodes;
-            Identifier = identifier;
         }
 
         public IList<INode> Nodes { get; private set; }
         public IList<INode> EndNodes { get; private set; }
         public INode InitialNode { get; private set; }
-        public string Identifier { get; private set; }
 
         public override void AddOutgoingTransition(Transition transition)
         {
-            foreach (var endNode in EndNodes)
+            foreach (INode endNode in EndNodes)
             {
                 endNode.AddOutgoingTransition(transition);
             }
-        }
-
-        public WorkflowInstance CreateNewInstance()
-        {
-            return new WorkflowInstance(this);
         }
 
         public class Builder

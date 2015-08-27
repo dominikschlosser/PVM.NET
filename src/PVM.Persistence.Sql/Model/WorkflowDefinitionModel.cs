@@ -14,7 +14,7 @@ namespace PVM.Persistence.Sql.Model
             return new WorkflowDefinitionModel
             {
                 Identifier = workflowDefinition.Identifier,
-                OperationType = workflowDefinition.Operation.GetType().AssemblyQualifiedName,
+                OperationType = workflowDefinition.OperationType,
                 IncomingTransitions = workflowDefinition.IncomingTransitions.Select(TransitionModel.FromTransition).ToList(),
                 OutgoingTransitions = workflowDefinition.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList(),
                 Nodes = workflowDefinition.Nodes.Select(FromNode).ToList(),

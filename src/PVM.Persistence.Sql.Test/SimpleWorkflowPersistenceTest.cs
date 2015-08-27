@@ -30,7 +30,11 @@ namespace PVM.Persistence.Sql.Test
                     .BuildNode()
                 .BuildWorkflow<ITestData>();
 
-            var instance = new WorkflowInstance(workflowDefinition, new SqlPersistenceProvider());
+            var instance = new WorkflowEngineBuilder()
+                .WithBasicServiceLocator()
+                    .WithPersistenceProvider(new SqlPersistenceProvider())
+                 .Build()
+            .Build().CreateNewInstance(workflowDefinition);
 
             instance.Start(new StartData());
 

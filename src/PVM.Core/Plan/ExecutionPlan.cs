@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
 using log4net;
+using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Data.Attributes;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
@@ -16,12 +17,12 @@ namespace PVM.Core.Plan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
         private readonly IWorkflowDefinition workflowDefinition;
-        private readonly IPersistenceProvider persistenceProvider;
+        private readonly IServiceLocator serviceLocator;
 
-        public ExecutionPlan(IWorkflowDefinition workflowDefinition, IPersistenceProvider persistenceProvider)
+        public ExecutionPlan(IWorkflowDefinition workflowDefinition, IServiceLocator serviceLocator)
         {
             this.workflowDefinition = workflowDefinition;
-            this.persistenceProvider = persistenceProvider;
+            this.serviceLocator = serviceLocator;
         }
 
         public void OnExecutionStarting(Execution execution)
@@ -67,7 +68,7 @@ namespace PVM.Core.Plan
 
         public void OnExecutionReachesWaitState(Execution execution)
         {
-            persistenceProvider.Persist(execution);
+            serviceLocator.GetInstance<IPersistenceProvider>().Persist(execution);
         }
 
         public IWorkflowDefinition Definition
@@ -75,7 +76,7 @@ namespace PVM.Core.Plan
             get { return workflowDefinition; }
         }
 
-        public void Proceed(IExecution execution, IOperation operation)
+        public void Proceed(IExecution execution, string operationType)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
@@ -83,6 +84,12 @@ namespace PVM.Core.Plan
             }
             else
             {
+                var operation = serviceLocator.GetInstance(Type.GetType(operationType)) as IOperation;
+                if (operation == null)
+                {
+                    throw new InvalidOperationException(string.Format("Type '{0}' is not an operation", operationType));
+                }
+
                 Type genericOperationInterface = operation.GetType()
                     .GetInterfaces()
                     .FirstOrDefault(
@@ -92,7 +99,9 @@ namespace PVM.Core.Plan
                 if (
                     genericOperationInterface != null)
                 {
-                    Type genericType = genericOperationInterface.GetGenericArguments().First(t => t.HasAttribute<WorkflowDataAttribute>());
+                    Type genericType =
+                        genericOperationInterface.GetGenericArguments()
+                            .First(t => t.HasAttribute<WorkflowDataAttribute>());
                     object dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
 
                     operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
@@ -103,6 +112,8 @@ namespace PVM.Core.Plan
                     operation.Execute(execution);
                 }
             }
+
+
         }
 
         private IList<IExecution> GetActiveExecutions(IExecution execution)

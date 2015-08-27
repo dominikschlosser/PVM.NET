@@ -55,7 +55,7 @@ namespace PVM.Core.Test.Workflows
                     .BuildMockNode(e => executed = e)
                .BuildWorkflow<ITestData>();
 
-            var instance = workflowDefinition.CreateNewInstance();
+            var instance = new WorkflowEngineBuilder().Build().CreateNewInstance(workflowDefinition);
             instance.Start(new StartData());
 
             Assert.That(executed);

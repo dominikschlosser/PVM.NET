@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using log4net;
+using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
-using PVM.Core.Persistence;
 using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
@@ -13,16 +13,10 @@ namespace PVM.Core.Runtime
         private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowInstance));
         private readonly IExecution rootExecution;
 
-        public WorkflowInstance(IWorkflowDefinition definition, IPersistenceProvider persistenceProvider)
-            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Identifier, new ExecutionPlan(definition, persistenceProvider)))
+        public WorkflowInstance(IWorkflowDefinition definition, IServiceLocator serviceLocator)
+            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Identifier, new ExecutionPlan(definition, serviceLocator)))
         {
         }
-
-        public WorkflowInstance(IWorkflowDefinition definition)
-            : this(Guid.NewGuid().ToString(), new Execution(Guid.NewGuid() + "_" + definition.InitialNode.Identifier, new ExecutionPlan(definition, new NullPersistenceProvider())))
-        {
-        }
-
         public WorkflowInstance(String identifier, IExecution rootExecution)
         {
             Identifier = identifier;
