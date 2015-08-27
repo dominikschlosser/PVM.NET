@@ -2,7 +2,7 @@
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime;
-using PVM.Infrastructure.Serialization;
+using PVM.Core.Serialization;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql
