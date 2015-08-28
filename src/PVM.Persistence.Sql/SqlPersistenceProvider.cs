@@ -9,11 +9,18 @@ namespace PVM.Persistence.Sql
 {
     public class SqlPersistenceProvider : IPersistenceProvider
     {
+        private readonly IObjectSerializer objectSerializer;
+
+        public SqlPersistenceProvider(IObjectSerializer objectSerializer)
+        {
+            this.objectSerializer = objectSerializer;
+        }
+
         public void Persist(IExecution execution)
         {
             using (var db = new PvmContext())
             {
-                var entity = ExecutionModel.FromExecution(execution, new JsonSerializer());
+                var entity = ExecutionModel.FromExecution(execution, objectSerializer);
 
                 if (db.Executions.Any(e => e.Identifier == execution.Identifier))
                 {
