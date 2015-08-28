@@ -21,7 +21,7 @@ using System;
 
 namespace PVM.Core.Data.Attributes
 {
-    [AttributeUsage(AttributeTargets.Interface)]
+    [AttributeUsage(AttributeTargets.Class)]
     public class WorkflowDataAttribute : Attribute
     {
     }

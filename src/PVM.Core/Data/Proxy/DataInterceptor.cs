@@ -46,7 +46,15 @@ namespace PVM.Core.Data.Proxy
             {
                 string mappingName = setter.GetOutMappingName();
 
-                data[mappingName] = invocation.GetArgumentValue(0);
+                invocation.Proceed();
+                if (setter.GetGetMethod(true) != null)
+                {
+                    data[mappingName] = setter.GetValue(ProxyUtil.GetUnproxiedInstance(invocation.InvocationTarget));
+                }
+                else
+                {
+                    data[mappingName] = invocation.GetArgumentValue(0);
+                }
             }
 
             PropertyInfo getter =

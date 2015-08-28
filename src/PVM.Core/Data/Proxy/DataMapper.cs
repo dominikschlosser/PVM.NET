@@ -32,20 +32,19 @@ namespace PVM.Core.Data.Proxy
         public static object CreateProxyFor(Type type, IDictionary<string, object> data)
         {
             var generator = new ProxyGenerator();
-            return generator.CreateInterfaceProxyWithoutTarget(type, new DataInterceptor(data));
+            return generator.CreateClassProxyWithTarget(type, Activator.CreateInstance(type), new DataInterceptor(data));
         }
 
         public static IDictionary<string, object> ExtractData(object data)
         {
             IDictionary<string, object> result = new Dictionary<string, object>();
+            var type = data.GetType();
 
-            foreach (
-                Type workflowDataInterface in
-                    data.GetType().GetInterfaces().Where(t => t.HasAttribute<WorkflowDataAttribute>()))
+            if (type.HasAttribute<WorkflowDataAttribute>())
             {
                 foreach (
                     PropertyInfo property in
-                        workflowDataInterface.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
+                        type.GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(
                             p => p.GetCustomAttributes<OutAttribute>(true).Any()))
                 {
                     string name = property.GetOutMappingName();

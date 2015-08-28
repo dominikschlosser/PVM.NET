@@ -37,53 +37,54 @@ namespace PVM.Core.Test.Workflows
             var builder = new WorkflowDefinitionBuilder();
             bool executed = false;
 
-            var workflowDefinition = builder.AddNode()
-                .WithName("start")
-                .IsStartNode()
-                .AddTransition()
-                .WithName("toJoin")
-                .To("join")
-                .BuildTransition()
-                .AddTransition()
-                .WithName("toIntermediate")
-                .To("intermediate")
-                .BuildTransition()
+            var workflowDefinition = builder
+                .AddNode()
+                    .WithName("start")
+                    .IsStartNode()
+                    .AddTransition()
+                        .WithName("toJoin")
+                        .To("join")
+                    .BuildTransition()
+                    .AddTransition()
+                        .WithName("toIntermediate")
+                        .To("intermediate")
+                    .BuildTransition()
                 .BuildParallelSplit()
                 .AddNode()
-                .WithName("intermediate")
-                .WithOperation(new CounterGateway())
-                .AddTransition()
-                .WithName("intermediateToJoin")
-                .To("join")
-                .BuildTransition()
-                .AddTransition()
-                .WithName("intermediateToStart")
-                .To("start")
-                .BuildTransition()
+                    .WithName("intermediate")
+                    .WithOperation(new CounterGateway())
+                    .AddTransition()
+                        .WithName("intermediateToJoin")
+                        .To("join")
+                    .BuildTransition()
+                    .AddTransition()
+                        .WithName("intermediateToStart")
+                        .To("start")
+                    .BuildTransition()
                 .BuildNode()
                 .AddNode()
-                .WithName("join")
-                .AddTransition()
-                .WithName("endTransition")
-                .To("end")
-                .BuildTransition()
+                    .WithName("join")
+                    .AddTransition()
+                        .WithName("endTransition")
+                        .To("end")
+                    .BuildTransition()
                 .BuildParallelJoin()
                 .AddNode()
-                .WithName("end")
-                .IsEndNode()
+                    .WithName("end")
+                    .IsEndNode()
                 .BuildMockNode(e => executed = e)
-                .BuildWorkflow<ITestData>();
+                .BuildWorkflow<TestData>();
 
             var instance = new WorkflowEngineBuilder().Build().CreateNewInstance(workflowDefinition);
-            instance.Start(new StartData());
+            instance.Start(new StartData(){Counter = -5});
 
             Assert.That(executed);
             Assert.That(instance.IsFinished);
         }
 
-        private class CounterGateway : DataAwareOperation<ITestData>
+        private class CounterGateway : DataAwareOperation<TestData>
         {
-            public override void Execute(IExecution e, ITestData dataContext)
+            public override void Execute(IExecution e, TestData dataContext)
             {
                 if (dataContext.Counter == 1)
                 {
@@ -92,29 +93,40 @@ namespace PVM.Core.Test.Workflows
                 }
                 else
                 {
-                    Logger.Info("COUNTER == 0");
-                    dataContext.Counter = 1;
+                    Logger.Info("COUNTER == " + dataContext.Counter);
+                    dataContext.Counter++;
                     e.Proceed("intermediateToStart");
                 }
             }
         }
 
-        private class StartData : ITestData
+        [WorkflowData]
+        public class StartData
         {
-            public StartData()
+            private int counter;
+
+            [Out]
+            public int Counter
             {
-                Counter = 0;
+                get { return counter; }
+                set { counter = value; }
             }
 
-            public int Counter { get; set; }
+            [Out]
+            public string Text { get; set; }
         }
 
         [WorkflowData]
-        public interface ITestData
+        public class TestData
         {
-            [In]
-            [Out]
-            int Counter { get; set; }
+            private int counter;
+
+            [In, Out]
+            public virtual int Counter
+            {
+                get { return counter; }
+                set { counter = value + 2; }
+            }
         }
     }
 }

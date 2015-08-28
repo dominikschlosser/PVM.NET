@@ -54,16 +54,16 @@ namespace PVM.Core.Test.Workflows
 
             var workflowDefinition = builder
                 .AddNode()
-                .WithName("start")
-                .IsStartNode()
-                .AddTransition()
-                .WithName("transition")
-                .To("end")
-                .BuildTransition()
+                    .WithName("start")
+                    .IsStartNode()
+                    .AddTransition()
+                        .WithName("transition")
+                        .To("end")
+                    .BuildTransition()
                 .BuildMockNode(e => executed = e)
                 .AddNode()
-                .WithName("end")
-                .IsEndNode()
+                    .WithName("end")
+                    .IsEndNode()
                 .BuildNode()
                 .BuildWorkflow();
 
