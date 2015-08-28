@@ -1,7 +1,26 @@
-﻿using log4net;
-using PVM.Core.Definition;
+﻿// -------------------------------------------------------------------------------
+//  <copyright file="WorkflowDefinitionBuilder.cs" company="PVM.NET Project Contributors">
+//    Copyright (c) 2015 PVM.NET Project Contributors
+//    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
+//            
+//    Licensed under the Apache License, Version 2.0 (the "License");
+//    you may not use this file except in compliance with the License.
+//    You may obtain a copy of the License at
+// 
+//    	http://www.apache.org/licenses/LICENSE-2.0
+// 
+//    Unless required by applicable law or agreed to in writing, software
+//    distributed under the License is distributed on an "AS IS" BASIS,
+//    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//    See the License for the specific language governing permissions and
+//    limitations under the License.
+//  </copyright>
+// -------------------------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
+using log4net;
+using PVM.Core.Definition;
 
 namespace PVM.Core.Builder
 {
@@ -11,7 +30,10 @@ namespace PVM.Core.Builder
 
         private readonly IDictionary<string, INode> endNodes = new Dictionary<string, INode>();
         private readonly IDictionary<string, INode> nodes = new Dictionary<string, INode>();
-        private readonly IDictionary<string, List<TransitionData>> transitions = new Dictionary<string, List<TransitionData>>();
+
+        private readonly IDictionary<string, List<TransitionData>> transitions =
+            new Dictionary<string, List<TransitionData>>();
+
         private string identifier = Guid.NewGuid().ToString();
         private INode startNode;
 
@@ -33,10 +55,10 @@ namespace PVM.Core.Builder
 
             return
                 new WorkflowDefinition<T>.Builder().WithIdentifier(identifier)
-                                                .WithInitialNode(startNode)
-                                                .WithNodes(nodes.Values)
-                                                .WithEndNodes(endNodes.Values)
-                                                .Build();
+                    .WithInitialNode(startNode)
+                    .WithNodes(nodes.Values)
+                    .WithEndNodes(endNodes.Values)
+                    .Build();
         }
 
         public WorkflowDefinition<object> BuildWorkflow()
@@ -58,11 +80,11 @@ namespace PVM.Core.Builder
 
                 foreach (var transitionData in transition.Value)
                 {
-
                     var targetNode = nodes[transitionData.Target];
                     Logger.DebugFormat("  - Source: {0}, Target: {1}", sourceNode.Identifier, targetNode.Identifier);
 
-                    var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, sourceNode, targetNode);
+                    var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, sourceNode,
+                        targetNode);
                     sourceNode.AddOutgoingTransition(transitionToAdd);
                     targetNode.AddIncomingTransition(transitionToAdd);
                 }
