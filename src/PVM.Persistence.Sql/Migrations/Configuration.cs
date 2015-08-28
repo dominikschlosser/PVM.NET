@@ -25,7 +25,7 @@ namespace PVM.Persistence.Sql.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(PVM.Persistence.Sql.PvmContext context)
