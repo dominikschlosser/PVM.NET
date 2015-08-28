@@ -35,18 +35,18 @@ namespace PVM.Persistence.Sql.Test
 
             var workflowDefinition = builder
                 .AddNode()
-                .WithName("start")
-                .WithOperation(new TestOperation())
-                .IsStartNode()
-                .AddTransition()
-                .WithName("transition")
-                .To("end")
-                .BuildTransition()
+                    .WithName("start")
+                    .WithOperation(new TestOperation())
+                    .IsStartNode()
+                    .AddTransition()
+                        .WithName("transition")
+                        .To("end")
+                    .BuildTransition()
                 .BuildNode()
                 .AddNode()
-                .WithName("end")
-                .IsEndNode()
-                .BuildNode()
+                    .WithName("end")
+                    .IsEndNode()
+                    .BuildNode()
                 .BuildWorkflow<TestData>();
 
             var instance =
