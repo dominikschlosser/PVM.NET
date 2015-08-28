@@ -47,7 +47,7 @@ namespace PVM.Persistence.Sql.Test
                 .WithName("end")
                 .IsEndNode()
                 .BuildNode()
-                .BuildWorkflow<ITestData>();
+                .BuildWorkflow<TestData>();
 
             var instance =
                 new WorkflowEngineBuilder().ConfigureServiceLocator()
@@ -55,7 +55,7 @@ namespace PVM.Persistence.Sql.Test
                     .Build()
                     .CreateNewInstance(workflowDefinition);
 
-            instance.Start(new StartData());
+            instance.Start(new TestData());
 
             Assert.False(instance.IsFinished);
         }
@@ -68,28 +68,17 @@ namespace PVM.Persistence.Sql.Test
             }
         }
 
-        private class StartData : ITestData
+        [WorkflowData]
+        private class TestData
         {
-            public StartData()
+            public TestData()
             {
                 Counter = 0;
                 Data = new NestedTestClass() {Name = "bla", Value = 42.3f};
             }
 
-            public int Counter { get; set; }
-            public NestedTestClass Data { get; set; }
-        }
-
-        [WorkflowData]
-        public interface ITestData
-        {
-            [In]
-            [Out]
-            int Counter { get; set; }
-
-            [In]
-            [Out]
-            NestedTestClass Data { get; set; }
+            public virtual int Counter { get; set; }
+            public virtual NestedTestClass Data { get; set; }
         }
 
         public class NestedTestClass
