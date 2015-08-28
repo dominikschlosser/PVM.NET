@@ -11,19 +11,19 @@ namespace PVM.Core.Builder
     {
         private readonly IKernel kernel = new StandardKernel(new PvmModule());
 
-        public NinjectServiceLocatorBuilder WithPersistenceProvider<T>() where T : IPersistenceProvider
+        public NinjectServiceLocatorBuilder OverridePersistenceProvider<T>() where T : IPersistenceProvider
         {
             kernel.Rebind<IPersistenceProvider>().To<T>();
             return this;
         }
 
-        public NinjectServiceLocatorBuilder WithObjectSerializer<T>() where T : IObjectSerializer
+        public NinjectServiceLocatorBuilder OverrideObjectSerializer<T>() where T : IObjectSerializer
         {
             kernel.Rebind<IObjectSerializer>().To<T>();
             return this;
         }
 
-        public NinjectServiceLocatorBuilder WithModule(NinjectModule module)
+        public NinjectServiceLocatorBuilder ImportModule(NinjectModule module)
         {
             kernel.Load(module);
             return this;

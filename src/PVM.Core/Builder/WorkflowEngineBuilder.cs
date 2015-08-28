@@ -12,10 +12,10 @@ namespace PVM.Core.Builder
 
         public WorkflowEngine Build()
         {
-            return WithNinject().Build();
+            return ConfigureServiceLocator().Build();
         }
 
-        public NinjectServiceLocatorBuilder WithNinject()
+        public NinjectServiceLocatorBuilder ConfigureServiceLocator()
         {
             return new NinjectServiceLocatorBuilder();
         }
