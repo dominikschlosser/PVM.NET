@@ -21,6 +21,6 @@ addons:
       name: "dkschlos/PVM.NET"
       description: "Build submitted via Travis CI"
     notification_email: dominik.schlosser@gmail.com
-    build_command_prepend: "msbuild.exe /t:Clean;.\\.nuget\\nuget.exe restore .\\PVM.NET.sln"
-    build_command:   "msbuild.exe /t:Rebuild"
+    build_command_prepend: ".\\.msbuild\\msbuild.exe /t:Clean;.\\.nuget\\nuget.exe restore .\\PVM.NET.sln"
+    build_command:   ".\\.msbuild\\msbuild.exe /t:Rebuild"
     branch_pattern: coverity_scan
