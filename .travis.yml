@@ -8,11 +8,12 @@ before_install:
   - sudo apt-get install nunit-console
 before_script:
   - nuget restore PVM.NET.sln
+  
 env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
-   - secure: "OAtlqK9VB6D2VD/Mv3ia7ccP0Qr25MU2MPRqg3LHfr3zF9BcJndsamEUjNqDy1X7N8Z5Hn6sjjbpg/Yz7M8ChgYQovNk5gSOjhazHcmawZNW8CIrVRWFoyQvPZ4xpITTO7AOMbOAe2nnes+gEkr52Aw2fQX/lycqNONxKyHOkqJg0O2DFnSOqrmq4B2DDmqJQKXgJL/VhHo2K83tjUUBQAmaqTyEj1K3lL2Ju9HM3bEtbXMb+QOUEs6SvzYCPBaKdtuI+WE1N1ytMYZ3I2+mLyuheZU5jydxH0ggiVJAhxlcplBAB8nWaT01+YXuXIDPMGKevwEF7oNIhqcBIJd4MUK8U6pVKcE3muc7V7KG/Ar0UOeNIm3++A0pVecQHxLtlvzTa4WcoI6MGc+c4aoFa2a0he1BgVEfn5CGTB/DOUIude7H8bDGLdM78OK6o93GJ9YnAKwCkFcZRPBUg5SRF56nyFXzI6I7Y5Zw0WpNIbBaGq0j445V2h2OgcMVkMa2z4XtFSFLDKC/zCL+3aDOk9Djr0xKlaLC0BPkl9v7st01qBgZ26lTa8K/WjTZfGnNksj9+js8W9006Z0feo+HwuVpMfastg4IPn0v1p1yy7XaF/IuxlKyFw6W1mCT0V+hw0j1teEKmMx5oKtopZkji1dnZ4B2dEFqCJzg7ocI7jk="
+   - secure: "NmY9Pun0fam3T2TovrmBJog6hIdUm0CzIr0bxAW9RURPP/L2zXrjI5BLEBs2o4c7xzqpKAJeMNGmVA3yMBtcGFtHtD3ZCjuvvyegR7PYx3AjxOzgpnZKGURg+VVXpUi3nzbcMRdbdAXQrO9dIWk1WITXjrZm56GyMnbQJPeBj40UizmC/AhQbTYO17Ruu3Vh1DvGtL6QU+1hOJLaRljNMuOaZg5YssBvIOLY+to4SbePRzRto8zQRrWo/llA+PckMwfMXe9DY9tCP2tuDYHyUe+wHOgydblIXKX63sdQNbhyjV/tthkMT5BfuWekjMQ3xLFkfpLevygW3ZAEBzoCs3NMq/OyBqByW22v0maiIjt4l6CbaxATNDS4V7vVpPnp9nC/7kEHd0o68j5kiIqoBg9+Fz5eJ5GjpqpIq3StJLujYU6IcAtj22jIIrfyny7fi6VlNRO0JkoqOZjwv4uqiaVlyt04e7YGsnsfDyh1/gJLiPJZ4BKnnnYnVUZllusggrVDHAuXPaztDFxhDfhXG7Rw+BIB2IHlp1LaXw2ikLOu42ccOkUh6rITFiQGVHHCNwiKbA95oDhOKvPK7Zak+BkDfbDn3grOy4METwwd/6EYCDFXDPRYKm6ostcCQlapNqnYQ0c2nijwhRti2RsiaO25Rsv+jTeGa6EF8oL0nks="
 
 addons:
   coverity_scan:
@@ -20,6 +21,6 @@ addons:
       name: "dkschlos/PVM.NET"
       description: "Build submitted via Travis CI"
     notification_email: dominik.schlosser@gmail.com
-    build_command_prepend: "nuget restore PVM.NET.sln"
-    build_command:   "msbuild PVM.NET.sln /property:Configuration=Release"
+    build_command_prepend: "msbuild /t:Clean;.\.nuget\nuget.exe restore .\PVM.NET.sln"
+    build_command:   "msbuild /t:Rebuild"
     branch_pattern: coverity_scan
