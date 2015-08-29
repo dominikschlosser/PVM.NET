@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="NestedSubWorkflow.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using NUnit.Framework;
 using PVM.Core.Builder;
@@ -33,36 +37,36 @@ namespace PVM.Core.Test.Workflows
 
             var workflowDefinition = builder
                 .AddNode()
-                    .WithName("start")
-                    .IsStartNode()
-                    .AddTransition()
-                        .WithName("transition")
-                        .To("startSub")
-                    .BuildTransition()
+                .WithName("start")
+                .IsStartNode()
+                .AddTransition()
+                .WithName("transition")
+                .To("startSub")
+                .BuildTransition()
                 .BuildNode()
                 .AddNode()
-                    .WithName("startSub")
-                    .AddTransition()
-                    .WithName("toEnd")
-                        .To("end")
-                    .BuildTransition()
+                .WithName("startSub")
+                .AddTransition()
+                .WithName("toEnd")
+                .To("end")
+                .BuildTransition()
                 .BuildSubWorkflow(new WorkflowDefinitionBuilder()
                     .AddNode()
-                        .WithName("subStart")
-                        .IsStartNode()
-                        .AddTransition()
-                            .WithName("subToEnd")
-                            .To("subEnd")
-                        .BuildTransition()
+                    .WithName("subStart")
+                    .IsStartNode()
+                    .AddTransition()
+                    .WithName("subToEnd")
+                    .To("subEnd")
+                    .BuildTransition()
                     .BuildNode()
                     .AddNode()
-                        .WithName("subEnd")
-                        .IsEndNode()
+                    .WithName("subEnd")
+                    .IsEndNode()
                     .BuildNode()
                     .AsDefinitionBuilder())
                 .AddNode()
-                    .WithName("end")
-                    .IsEndNode()
+                .WithName("end")
+                .IsEndNode()
                 .BuildMockNode(e => executed = true)
                 .BuildWorkflow();
 

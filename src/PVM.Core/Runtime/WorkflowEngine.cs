@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="WorkflowEngine.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using System;
 using Microsoft.Practices.ServiceLocation;
@@ -32,11 +36,6 @@ namespace PVM.Core.Runtime
             this.serviceLocator = serviceLocator;
         }
 
-        public WorkflowInstance CreateNewInstance(IWorkflowDefinition definition)
-        {
-            return new WorkflowInstance(definition, serviceLocator);
-        }
-
         public void Dispose()
         {
             if (serviceLocator != null)
@@ -49,6 +48,11 @@ namespace PVM.Core.Runtime
 
                 serviceLocator = null;
             }
+        }
+
+        public WorkflowInstance CreateNewInstance(IWorkflowDefinition definition)
+        {
+            return new WorkflowInstance(definition, serviceLocator);
         }
     }
 }

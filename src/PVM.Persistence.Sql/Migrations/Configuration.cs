@@ -1,3 +1,5 @@
+#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="Configuration.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,18 +19,20 @@
 //  </copyright>
 // -------------------------------------------------------------------------------
 
+#endregion
+
 using System.Data.Entity.Migrations;
 
 namespace PVM.Persistence.Sql.Migrations
 {
-    internal sealed class Configuration : DbMigrationsConfiguration<PVM.Persistence.Sql.PvmContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<PvmContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(PVM.Persistence.Sql.PvmContext context)
+        protected override void Seed(PvmContext context)
         {
             //  This method will be called after migrating to the latest version.
 

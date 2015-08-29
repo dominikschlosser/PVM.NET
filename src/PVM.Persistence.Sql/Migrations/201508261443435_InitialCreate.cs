@@ -1,3 +1,5 @@
+#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="201508261443435_InitialCreate.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using System.Data.Entity.Migrations;
 
@@ -29,10 +33,10 @@ namespace PVM.Persistence.Sql.Migrations
                 "dbo.ExecutionModels",
                 c => new
                 {
-                    Identifier = c.String(nullable: false, maxLength: 128),
+                    Identifier = c.String(false, 128),
                     CurrentNodeIdentifier = c.String(),
-                    IsActive = c.Boolean(nullable: false),
-                    Parent_Identifier = c.String(maxLength: 128),
+                    IsActive = c.Boolean(false),
+                    Parent_Identifier = c.String(maxLength: 128)
                 })
                 .PrimaryKey(t => t.Identifier)
                 .ForeignKey("dbo.ExecutionModels", t => t.Parent_Identifier)
@@ -42,11 +46,11 @@ namespace PVM.Persistence.Sql.Migrations
                 "dbo.ExecutionVariableModels",
                 c => new
                 {
-                    Identifier = c.Int(nullable: false, identity: true),
+                    Identifier = c.Int(false, true),
                     Key = c.String(),
                     SerializedValue = c.String(),
                     ValueType = c.String(),
-                    ExecutionModel_Identifier = c.String(maxLength: 128),
+                    ExecutionModel_Identifier = c.String(maxLength: 128)
                 })
                 .PrimaryKey(t => t.Identifier)
                 .ForeignKey("dbo.ExecutionModels", t => t.ExecutionModel_Identifier)
@@ -56,10 +60,10 @@ namespace PVM.Persistence.Sql.Migrations
                 "dbo.NodeModels",
                 c => new
                 {
-                    Identifier = c.String(nullable: false, maxLength: 128),
+                    Identifier = c.String(false, 128),
                     OperationType = c.String(),
-                    Discriminator = c.String(nullable: false, maxLength: 128),
-                    WorkflowDefinitionModel_Identifier = c.String(maxLength: 128),
+                    Discriminator = c.String(false, 128),
+                    WorkflowDefinitionModel_Identifier = c.String(maxLength: 128)
                 })
                 .PrimaryKey(t => t.Identifier)
                 .ForeignKey("dbo.NodeModels", t => t.WorkflowDefinitionModel_Identifier)
@@ -69,12 +73,12 @@ namespace PVM.Persistence.Sql.Migrations
                 "dbo.TransitionModels",
                 c => new
                 {
-                    Identifier = c.String(nullable: false, maxLength: 128),
+                    Identifier = c.String(false, 128),
                     Source = c.String(),
                     Destination = c.String(),
-                    Executed = c.Boolean(nullable: false),
-                    IsDefault = c.Boolean(nullable: false),
-                    NodeModel_Identifier = c.String(maxLength: 128),
+                    Executed = c.Boolean(false),
+                    IsDefault = c.Boolean(false),
+                    NodeModel_Identifier = c.String(maxLength: 128)
                 })
                 .PrimaryKey(t => t.Identifier)
                 .ForeignKey("dbo.NodeModels", t => t.NodeModel_Identifier)

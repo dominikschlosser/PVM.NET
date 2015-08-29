@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="WorkflowDefinitionBuilder.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -27,7 +31,6 @@ namespace PVM.Core.Builder
     public class WorkflowDefinitionBuilder : IWorkflowPathBuilder
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (WorkflowDefinitionBuilder));
-
         private readonly IDictionary<string, INode> endNodes = new Dictionary<string, INode>();
         private readonly IDictionary<string, INode> nodes = new Dictionary<string, INode>();
 
@@ -42,23 +45,16 @@ namespace PVM.Core.Builder
             return new NodeBuilder(this);
         }
 
-        public IWorkflowPathBuilder WithIdentifier(string id)
-        {
-            identifier = id;
-
-            return this;
-        }
-
         public WorkflowDefinition<T> BuildWorkflow<T>() where T : class
         {
             AssembleTransitions();
 
             return
                 new WorkflowDefinition<T>.Builder().WithIdentifier(identifier)
-                    .WithInitialNode(startNode)
-                    .WithNodes(nodes.Values)
-                    .WithEndNodes(endNodes.Values)
-                    .Build();
+                                                   .WithInitialNode(startNode)
+                                                   .WithNodes(nodes.Values)
+                                                   .WithEndNodes(endNodes.Values)
+                                                   .Build();
         }
 
         public WorkflowDefinition<object> BuildWorkflow()
@@ -68,6 +64,13 @@ namespace PVM.Core.Builder
 
         public WorkflowDefinitionBuilder AsDefinitionBuilder()
         {
+            return this;
+        }
+
+        public IWorkflowPathBuilder WithIdentifier(string id)
+        {
+            identifier = id;
+
             return this;
         }
 

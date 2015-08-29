@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="NinjectServiceLocator.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -33,6 +37,15 @@ namespace PVM.Core.Inject
             this.kernel = kernel;
         }
 
+        public void Dispose()
+        {
+            if (kernel != null && !kernel.IsDisposed)
+            {
+                kernel.Dispose();
+                kernel = null;
+            }
+        }
+
         protected override object DoGetInstance(Type serviceType, string key)
         {
             if (key == null)
@@ -45,15 +58,6 @@ namespace PVM.Core.Inject
         protected override IEnumerable<object> DoGetAllInstances(Type serviceType)
         {
             return kernel.GetAll(serviceType);
-        }
-
-        public void Dispose()
-        {
-            if (kernel != null && !kernel.IsDisposed)
-            {
-                kernel.Dispose();
-                kernel = null;
-            }
         }
     }
 }

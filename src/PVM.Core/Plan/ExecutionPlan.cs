@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="ExecutionPlan.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -35,8 +39,8 @@ namespace PVM.Core.Plan
     public class ExecutionPlan : IExecutionPlan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
-        private readonly IWorkflowDefinition workflowDefinition;
         private readonly IServiceLocator serviceLocator;
+        private readonly IWorkflowDefinition workflowDefinition;
 
         public ExecutionPlan(IWorkflowDefinition workflowDefinition, IServiceLocator serviceLocator)
         {
@@ -110,21 +114,21 @@ namespace PVM.Core.Plan
                 }
 
                 Type genericOperationInterface = operation.GetType()
-                    .GetInterfaces()
-                    .FirstOrDefault(
-                        i =>
-                            i.IsGenericType &&
-                            i.GetGenericTypeDefinition() == typeof (IOperation<>));
+                                                          .GetInterfaces()
+                                                          .FirstOrDefault(
+                                                              i =>
+                                                                  i.IsGenericType &&
+                                                                  i.GetGenericTypeDefinition() == typeof (IOperation<>));
                 if (
                     genericOperationInterface != null)
                 {
                     Type genericType =
                         genericOperationInterface.GetGenericArguments()
-                            .First(t => t.HasAttribute<WorkflowDataAttribute>());
+                                                 .First(t => t.HasAttribute<WorkflowDataAttribute>());
                     object dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
 
                     operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
-                        .Invoke(operation, new[] {execution, dataContext});
+                             .Invoke(operation, new[] {execution, dataContext});
                 }
                 else
                 {

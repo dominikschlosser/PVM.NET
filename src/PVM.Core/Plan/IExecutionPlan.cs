@@ -1,3 +1,5 @@
+#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="IExecutionPlan.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +19,8 @@
 //  </copyright>
 // -------------------------------------------------------------------------------
 
+#endregion
+
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
 
@@ -25,11 +29,11 @@ namespace PVM.Core.Plan
     public interface IExecutionPlan
     {
         IWorkflowDefinition Definition { get; }
+        bool IsFinished { get; }
         void Proceed(IExecution execution, string operationType);
         void OnExecutionStarting(Execution execution);
         void OnExecutionStopped(Execution execution);
         void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier);
-        bool IsFinished { get; }
         void OnExecutionResuming(Execution execution);
         void OnExecutionReachesWaitState(Execution execution);
     }

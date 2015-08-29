@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="CircularWorkflow.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using log4net;
 using NUnit.Framework;
@@ -30,57 +34,6 @@ namespace PVM.Core.Test.Workflows
     public class CircularWorkflow
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (CircularWorkflow));
-
-        [Test]
-        public void Executes()
-        {
-            var builder = new WorkflowDefinitionBuilder();
-            bool executed = false;
-
-            var workflowDefinition = builder
-                .AddNode()
-                    .WithName("start")
-                    .IsStartNode()
-                    .AddTransition()
-                        .WithName("toJoin")
-                        .To("join")
-                    .BuildTransition()
-                    .AddTransition()
-                        .WithName("toIntermediate")
-                        .To("intermediate")
-                    .BuildTransition()
-                .BuildParallelSplit()
-                .AddNode()
-                    .WithName("intermediate")
-                    .WithOperation(new CounterGateway())
-                    .AddTransition()
-                        .WithName("intermediateToJoin")
-                        .To("join")
-                    .BuildTransition()
-                    .AddTransition()
-                        .WithName("intermediateToStart")
-                        .To("start")
-                    .BuildTransition()
-                .BuildNode()
-                .AddNode()
-                    .WithName("join")
-                    .AddTransition()
-                        .WithName("endTransition")
-                        .To("end")
-                    .BuildTransition()
-                .BuildParallelJoin()
-                .AddNode()
-                    .WithName("end")
-                    .IsEndNode()
-                .BuildMockNode(e => executed = e)
-                .BuildWorkflow<TestData>();
-
-            var instance = new WorkflowEngineBuilder().Build().CreateNewInstance(workflowDefinition);
-            instance.Start(new StartData(){Counter = -5});
-
-            Assert.That(executed);
-            Assert.That(instance.IsFinished);
-        }
 
         private class CounterGateway : DataAwareOperation<TestData>
         {
@@ -127,6 +80,57 @@ namespace PVM.Core.Test.Workflows
                 get { return counter; }
                 set { counter = value + 2; }
             }
+        }
+
+        [Test]
+        public void Executes()
+        {
+            var builder = new WorkflowDefinitionBuilder();
+            bool executed = false;
+
+            var workflowDefinition = builder
+                .AddNode()
+                .WithName("start")
+                .IsStartNode()
+                .AddTransition()
+                .WithName("toJoin")
+                .To("join")
+                .BuildTransition()
+                .AddTransition()
+                .WithName("toIntermediate")
+                .To("intermediate")
+                .BuildTransition()
+                .BuildParallelSplit()
+                .AddNode()
+                .WithName("intermediate")
+                .WithOperation(new CounterGateway())
+                .AddTransition()
+                .WithName("intermediateToJoin")
+                .To("join")
+                .BuildTransition()
+                .AddTransition()
+                .WithName("intermediateToStart")
+                .To("start")
+                .BuildTransition()
+                .BuildNode()
+                .AddNode()
+                .WithName("join")
+                .AddTransition()
+                .WithName("endTransition")
+                .To("end")
+                .BuildTransition()
+                .BuildParallelJoin()
+                .AddNode()
+                .WithName("end")
+                .IsEndNode()
+                .BuildMockNode(e => executed = e)
+                .BuildWorkflow<TestData>();
+
+            var instance = new WorkflowEngineBuilder().Build().CreateNewInstance(workflowDefinition);
+            instance.Start(new StartData {Counter = -5});
+
+            Assert.That(executed);
+            Assert.That(instance.IsFinished);
         }
     }
 }

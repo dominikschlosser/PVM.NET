@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="DataInterceptor.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using System;
 using System.Collections.Generic;
@@ -40,7 +44,7 @@ namespace PVM.Core.Data.Proxy
         {
             PropertyInfo setter =
                 invocation.Method.DeclaringType.GetProperties()
-                    .FirstOrDefault(p => p.GetSetMethod() == invocation.Method);
+                          .FirstOrDefault(p => p.GetSetMethod() == invocation.Method);
 
             if (setter != null && setter.HasAttribute<OutAttribute>())
             {
@@ -59,7 +63,7 @@ namespace PVM.Core.Data.Proxy
 
             PropertyInfo getter =
                 invocation.Method.DeclaringType.GetProperties()
-                    .FirstOrDefault(p => p.GetGetMethod() == invocation.Method);
+                          .FirstOrDefault(p => p.GetGetMethod() == invocation.Method);
 
             if (getter != null && getter.HasAttribute<InAttribute>())
             {

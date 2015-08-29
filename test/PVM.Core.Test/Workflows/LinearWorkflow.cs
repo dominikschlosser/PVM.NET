@@ -1,4 +1,6 @@
-﻿// -------------------------------------------------------------------------------
+﻿#region License
+
+// -------------------------------------------------------------------------------
 //  <copyright file="LinearWorkflow.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
@@ -7,7 +9,7 @@
 //    you may not use this file except in compliance with the License.
 //    You may obtain a copy of the License at
 // 
-//    	http://www.apache.org/licenses/LICENSE-2.0
+//      http://www.apache.org/licenses/LICENSE-2.0
 // 
 //    Unless required by applicable law or agreed to in writing, software
 //    distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +18,8 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
+#endregion
 
 using NUnit.Framework;
 using PVM.Core.Builder;
@@ -33,11 +37,11 @@ namespace PVM.Core.Test.Workflows
 
             var workflowDefinition =
                 builder.AddNode()
-                    .WithName("start")
-                    .IsStartNode()
-                    .IsEndNode()
-                    .BuildMockNode(e => executed = e)
-                    .BuildWorkflow();
+                       .WithName("start")
+                       .IsStartNode()
+                       .IsEndNode()
+                       .BuildMockNode(e => executed = e)
+                       .BuildWorkflow();
 
             var instance = new WorkflowEngineBuilder().Build().CreateNewInstance(workflowDefinition);
             instance.Start();
@@ -54,16 +58,16 @@ namespace PVM.Core.Test.Workflows
 
             var workflowDefinition = builder
                 .AddNode()
-                    .WithName("start")
-                    .IsStartNode()
-                    .AddTransition()
-                        .WithName("transition")
-                        .To("end")
-                    .BuildTransition()
+                .WithName("start")
+                .IsStartNode()
+                .AddTransition()
+                .WithName("transition")
+                .To("end")
+                .BuildTransition()
                 .BuildMockNode(e => executed = e)
                 .AddNode()
-                    .WithName("end")
-                    .IsEndNode()
+                .WithName("end")
+                .IsEndNode()
                 .BuildNode()
                 .BuildWorkflow();
 
