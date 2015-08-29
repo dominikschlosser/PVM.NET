@@ -1,7 +1,7 @@
 # PVM.NET
 Process Virtual Machine
 
-[![Build Status](https://travis-ci.org/dkschlos/PVM.NET.svg?branch=master)](https://travis-ci.org/dkschlos/PVM.NET)
+[![Build status](https://ci.appveyor.com/api/projects/status/64m0osbpv40eknaa?svg=true)](https://ci.appveyor.com/project/dkschlos/pvm-net)
 <a href="https://scan.coverity.com/projects/dkschlos-pvm-net">
   <img alt="Coverity Scan Build Status"
        src="https://scan.coverity.com/projects/6186/badge.svg"/>
