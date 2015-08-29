@@ -18,8 +18,8 @@ addons:
   coverity_scan:
     project:
       name: "dkschlos/PVM.NET"
-      description: "Process Virtual Machine"
+      description: "Build submitted via Travis CI"
     notification_email: dominik.schlosser@gmail.com
     build_command_prepend: "nuget restore PVM.NET.sln"
-    build_command:   "xbuild /p:Configuration=Release PVM.NET.sln"
-    branch_pattern: master
+    build_command:   "msbuild"
+    branch_pattern: coverity_scan
