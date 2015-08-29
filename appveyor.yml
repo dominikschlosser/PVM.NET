@@ -137,18 +137,18 @@ test_script:
 - ps: |
     # Wait for completion of "EnableWindowsFeatures" job.
     Wait-Job -Name "EnableWindowsFeatures"
-	
-	$startPath = "$($env:appveyor_build_folder)\bin\Release"
-	$sqlInstance = "(local)\SQL2012SP1"
-	$dbName = "Pvm"
 
-	# replace the db connection with the local instance
-	$config = join-path $startPath "PVM.Persistence.Sql.Test.dll.config"
-	$doc = (gc $config) -as [xml]
-	$doc.SelectSingleNode('//connectionStrings/add[@name="PvmContext"]').connectionString = "Server=$sqlInstance; Database=$dbName; Trusted_connection=true"
-	$doc.Save($config)
+    $startPath = "$($env:appveyor_build_folder)\bin\Release"
+    $sqlInstance = "(local)\SQL2012SP1"
+    $dbName = "Pvm"
 
-	sqlcmd -S "$sqlInstance" -Q "Use [master]; CREATE DATABASE [$dbName]"
+    # replace the db connection with the local instance
+    $config = join-path $startPath "PVM.Persistence.Sql.Test.dll.config"
+    $doc = (gc $config) -as [xml]
+    $doc.SelectSingleNode('//connectionStrings/add[@name="PvmContext"]').connectionString = "Server=$sqlInstance; Database=$dbName; Trusted_connection=true"
+    $doc.Save($config)
+
+    sqlcmd -S "$sqlInstance" -Q "Use [master]; CREATE DATABASE [$dbName]"
 
     # Discover tests.
     $tests =
