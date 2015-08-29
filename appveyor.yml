@@ -22,7 +22,7 @@ matrix:
   fast_finish: true
  
 services:
-- mssql2008r2sp2
+- mssql2012sp1
 
 install:
 - ps: |
