@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Client.Console", "src\PVM.Client.Console\PVM.Client.Console.csproj", "{39BCC454-EFF3-4993-BD1F-8B22BD91AD27}"
 EndProject
@@ -12,6 +12,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Persistence.Sql", "src\PVM.Persistence.Sql\PVM.Persistence.Sql.csproj", "{95D54E23-3E9C-4241-A530-C019EC75820E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVM.Persistence.Sql.Test", "src\PVM.Persistence.Sql.Test\PVM.Persistence.Sql.Test.csproj", "{BB054747-A54B-4B74-8D89-51B036196921}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{37C24443-59D2-4ED5-BC09-27E686BC2D40}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\NuGet.Config = .nuget\NuGet.Config
+		.nuget\NuGet.exe = .nuget\NuGet.exe
+		.nuget\NuGet.targets = .nuget\NuGet.targets
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
