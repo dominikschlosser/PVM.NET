@@ -19,6 +19,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{37C244
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".msbuild", ".msbuild", "{385F294F-8E32-4DDD-8301-8550FE651CE0}"
+	ProjectSection(SolutionItems) = preProject
+		.msbuild\MSBuild.exe = .msbuild\MSBuild.exe
+		.msbuild\msbuild.exe.config = .msbuild\msbuild.exe.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
