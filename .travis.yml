@@ -8,3 +8,18 @@ before_install:
   - sudo apt-get install nunit-console
 before_script:
   - nuget restore PVM.NET.sln
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+   - secure: "OAtlqK9VB6D2VD/Mv3ia7ccP0Qr25MU2MPRqg3LHfr3zF9BcJndsamEUjNqDy1X7N8Z5Hn6sjjbpg/Yz7M8ChgYQovNk5gSOjhazHcmawZNW8CIrVRWFoyQvPZ4xpITTO7AOMbOAe2nnes+gEkr52Aw2fQX/lycqNONxKyHOkqJg0O2DFnSOqrmq4B2DDmqJQKXgJL/VhHo2K83tjUUBQAmaqTyEj1K3lL2Ju9HM3bEtbXMb+QOUEs6SvzYCPBaKdtuI+WE1N1ytMYZ3I2+mLyuheZU5jydxH0ggiVJAhxlcplBAB8nWaT01+YXuXIDPMGKevwEF7oNIhqcBIJd4MUK8U6pVKcE3muc7V7KG/Ar0UOeNIm3++A0pVecQHxLtlvzTa4WcoI6MGc+c4aoFa2a0he1BgVEfn5CGTB/DOUIude7H8bDGLdM78OK6o93GJ9YnAKwCkFcZRPBUg5SRF56nyFXzI6I7Y5Zw0WpNIbBaGq0j445V2h2OgcMVkMa2z4XtFSFLDKC/zCL+3aDOk9Djr0xKlaLC0BPkl9v7st01qBgZ26lTa8K/WjTZfGnNksj9+js8W9006Z0feo+HwuVpMfastg4IPn0v1p1yy7XaF/IuxlKyFw6W1mCT0V+hw0j1teEKmMx5oKtopZkji1dnZ4B2dEFqCJzg7ocI7jk="
+
+addons:
+  coverity_scan:
+    project:
+      name: "dkschlos/PVM.NET"
+      description: "Process Virtual Machine"
+    notification_email: dominik.schlosser@gmail.com
+    build_command_prepend: "nuget restore PVM.NET.sln"
+    build_command:   "xbuild /p:Configuration=Release PVM.NET.sln"
+    branch_pattern: main
