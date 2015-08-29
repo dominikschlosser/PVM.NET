@@ -22,4 +22,4 @@ addons:
     notification_email: dominik.schlosser@gmail.com
     build_command_prepend: "nuget restore PVM.NET.sln"
     build_command:   "xbuild /p:Configuration=Release PVM.NET.sln"
-    branch_pattern: main
+    branch_pattern: master
