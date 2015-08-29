@@ -21,5 +21,5 @@ addons:
       description: "Build submitted via Travis CI"
     notification_email: dominik.schlosser@gmail.com
     build_command_prepend: "nuget restore PVM.NET.sln"
-    build_command:   "msbuild"
+    build_command:   "msbuild PVM.NET.sln /property:Configuration=Release"
     branch_pattern: coverity_scan
