@@ -19,7 +19,7 @@
     <add
       name="PvmContext"
       providerName="System.Data.SqlClient"
-      connectionString="Server=RE0931\SQL2014;Database=Pvm;User Id=dkschlos;Password=dkschlos;"/>
+      connectionString="Server=localhost;Database=Pvm;User Id=dkschlos;Password=dkschlos;"/>
   </connectionStrings>
   <entityFramework>
     <providers>
