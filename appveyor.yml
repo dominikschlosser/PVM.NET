@@ -147,10 +147,8 @@ test_script:
     $tests =
       (Get-ChildItem -Path $env:BuildDir -Recurse -Filter *-test.dll).FullName
     # Run tests.
-    vstest.console $tests `
-      /Settings:$env:APPVEYOR_BUILD_FOLDER\.runsettings `
-      /InIsolation `
-      /Logger:Appveyor
+    nunit-console $tests `
+
 # Artifacts configuration. ----------------------------------------------------
 
 #artifacts:
