@@ -40,9 +40,6 @@ install:
     }
 # Build configuration. --------------------------------------------------------
 
-platform:
-- x86
-- x64
 
 configuration:
 - Release
@@ -55,8 +52,7 @@ build_script:
     $buildArgs = @(
       "/m",
       "/l:C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll",
-      "/p:Configuration=$env:CONFIGURATION",
-      "/p:Platform=$env:PLATFORM")
+      "/p:Configuration=$env:CONFIGURATION")
     
     # If build is not a scheduled one, than simply build project with MSBuild.
     if ($env:APPVEYOR_SCHEDULED_BUILD -ne "True") {
@@ -157,7 +153,6 @@ test_script:
     vstest.console $tests `
       /Settings:$env:APPVEYOR_BUILD_FOLDER\.runsettings `
       /InIsolation `
-      /Platform:$env:PLATFORM `
       /Logger:Appveyor
 # Artifacts configuration. ----------------------------------------------------
 
@@ -174,7 +169,6 @@ deploy:
     $(VersionMajor).$(VersionMinor).$(VersionPatch)+$(VersionBuild)
   on:
     branch: master
-    PLATFORM: x86
     CONFIGURATION: Release
 
 # Other configuration. --------------------------------------------------------
