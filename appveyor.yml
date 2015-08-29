@@ -131,9 +131,6 @@ build_script:
   
 test_script:
 - ps: |
-    # Wait for completion of "EnableWindowsFeatures" job.
-    Wait-Job -Name "EnableWindowsFeatures"
-
     $startPath = "$($env:appveyor_build_folder)\bin\Release"
     $sqlInstance = "(local)\SQL2012SP1"
     $dbName = "Pvm"
