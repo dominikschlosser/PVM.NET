@@ -1,0 +1,186 @@
+version: "{build}-ci"
+
+# Do not build on Git tags.
+skip_tags: true
+
+environment:
+  VersionMajor: 0
+  VersionMinor: 1
+  VersionPatch: 0
+  CoverityProjectToken:
+    secure: NG2FHpTkouOP6QWKMYKJGA
+    
+init:
+- ps: |
+    $env:BuildDir = "$env:APPVEYOR_BUILD_FOLDER\.OUTPUT"
+    $env:VersionBuild = "$env:APPVEYOR_BUILD_NUMBER"
+    $env:VersionStage = "$env:APPVEYOR_REPO_BRANCH"
+    $env:VersionTag = "$env:APPVEYOR_REPO_COMMIT"
+  
+matrix:
+  # Fail whole build on first error.
+  fast_finish: true
+ 
+services:
+- mssql2008r2sp2
+
+install:
+- ps: |
+    # Download Coverity Scan toolset, if we are doing scheduled build.
+    if ($env:APPVEYOR_SCHEDULED_BUILD -eq "True") {
+      Invoke-WebRequest `
+        -Uri "https://scan.coverity.com/download/cxx/win_64" `
+        -Body @{ project = "$env:APPVEYOR_REPO_NAME";
+                 token = "$env:CoverityProjectToken" } `
+        -OutFile "$env:APPVEYOR_BUILD_FOLDER\coverity.zip"
+      Add-Type -AssemblyName "System.IO.Compression.FileSystem"
+      [IO.Compression.ZipFile]::ExtractToDirectory(
+        "$env:APPVEYOR_BUILD_FOLDER\coverity.zip",
+        "$env:APPVEYOR_BUILD_FOLDER")
+    }
+# Build configuration. --------------------------------------------------------
+
+platform:
+- x86
+- x64
+
+configuration:
+- Release
+
+build_script:
+- ps: |
+    nuget restore
+    
+    $buildCmd = "C:\Program Files (x86)\MSBuild\12.0\bin\msbuild.exe"
+    $buildArgs = @(
+      "/m",
+      "/l:C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll",
+      "/p:Configuration=$env:CONFIGURATION",
+      "/p:Platform=$env:PLATFORM")
+    
+    # If build is not a scheduled one, than simply build project with MSBuild.
+    if ($env:APPVEYOR_SCHEDULED_BUILD -ne "True") {
+      & $buildCmd $buildArgs
+      return
+    }
+    
+    # Else, build project with Coverity Scan.
+    "Building project with Coverity..."
+    & ".\cov-analysis-win64-7.6.0\bin\cov-build.exe" `
+      --dir cov-int `
+      --encoding=UTF-8 `
+      $buildCmd $buildArgs
+      
+    # Compress results.
+    "Compressing Coverity results..."
+    $zipEncoderDef = @'
+      namespace AnalyzeCode {
+        public class PortableFileNameEncoder: System.Text.UTF8Encoding {
+          public PortableFileNameEncoder() {}
+          public override byte[] GetBytes(string entry) {
+            return base.GetBytes(entry.Replace("\\", "/"));
+          }
+        }
+      }
+    '@
+    Add-Type -TypeDefinition $zipEncoderDef
+    [IO.Compression.ZipFile]::CreateFromDirectory(
+      "$env:APPVEYOR_BUILD_FOLDER\cov-int",
+      "$env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip",
+      [IO.Compression.CompressionLevel]::Optimal,
+      $true,  # include root directory
+      (New-Object AnalyzeCode.PortableFileNameEncoder))
+    
+    # Upload results to Coverity server.
+    "Uploading Coverity results..."
+    Add-Type -AssemblyName "System.Net.Http"
+    $client = New-Object Net.Http.HttpClient
+    $client.Timeout = [TimeSpan]::FromMinutes(30)
+    $form = New-Object Net.Http.MultipartFormDataContent
+    # Fill token field.
+    [Net.Http.HttpContent]$formField =
+      New-Object Net.Http.StringContent($env:CoverityProjectToken)
+    $form.Add($formField, "token")
+    # Fill email field.
+    $formField =
+      New-Object Net.Http.StringContent($env:CoverityNotificationEmail)
+    $form.Add($formField, "email")
+    # Fill file field.
+    $fs = New-Object IO.FileStream(
+      "$env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip",
+      [IO.FileMode]::Open,
+      [IO.FileAccess]::Read)
+    $formField = New-Object Net.Http.StreamContent($fs)
+    $form.Add($formField, "file", "$env:APPVEYOR_PROJECT_NAME.zip")
+    # Fill version field.
+    $version = "$env:VersionMajor.$env:VersionMinor.$env:VersionPatch" +
+      "-$env:VersionStage+$env:VersionBuild"
+    $formField = New-Object Net.Http.StringContent($version)
+    $form.Add($formField, "version")
+    # Fill description field.
+    $formField =
+      New-Object Net.Http.StringContent("Scheduled CI server build.")
+    $form.Add($formField, "description")
+    # Submit form.
+    $url = "https://scan.coverity.com/builds?project=$env:APPVEYOR_REPO_NAME"
+    $task = $client.PostAsync($url, $form)
+    try {
+      $task.Wait()  # throws AggregateException on time-out
+    } catch [AggregateException] {
+      throw $_.Exception.InnerException
+    }
+    $task.Result
+    $fs.Close()
+# Tests configuration. --------------------------------------------------------
+  
+test_script:
+- ps: |
+    # Wait for completion of "EnableWindowsFeatures" job.
+    Wait-Job -Name "EnableWindowsFeatures"
+	
+	$startPath = "$($env:appveyor_build_folder)\bin\Release"
+	$sqlInstance = "(local)\SQL2012SP1"
+	$dbName = "Pvm"
+
+	# replace the db connection with the local instance
+	$config = join-path $startPath "PVM.Persistence.Sql.Test.dll.config"
+	$doc = (gc $config) -as [xml]
+	$doc.SelectSingleNode('//connectionStrings/add[@name="PvmContext"]').connectionString = "Server=$sqlInstance; Database=$dbName; Trusted_connection=true"
+	$doc.Save($config)
+
+	sqlcmd -S "$sqlInstance" -Q "Use [master]; CREATE DATABASE [$dbName]"
+
+    # Discover tests.
+    $tests =
+      (Get-ChildItem -Path $env:BuildDir -Recurse -Filter *-test.dll).FullName
+    # Run tests.
+    vstest.console $tests `
+      /Settings:$env:APPVEYOR_BUILD_FOLDER\.runsettings `
+      /InIsolation `
+      /Platform:$env:PLATFORM `
+      /Logger:Appveyor
+# Artifacts configuration. ----------------------------------------------------
+
+#artifacts:
+#  - path: out\*.nupkg
+
+# Deployment configuration. ---------------------------------------------------
+
+deploy:    
+- provider: GitHub
+  auth_token:
+    secure: a2432d40a29056ea5158cd6a9e6823960f2deb07
+  release:
+    $(VersionMajor).$(VersionMinor).$(VersionPatch)+$(VersionBuild)
+  on:
+    branch: master
+    PLATFORM: x86
+    CONFIGURATION: Release
+
+# Other configuration. --------------------------------------------------------
+
+# Use GitHub API for fast repository fetching.
+shallow_clone: true
+
+# Keep directory with third party tools between builds.
+cache: third-party
