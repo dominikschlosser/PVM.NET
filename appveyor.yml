@@ -161,15 +161,16 @@ test_script:
 
 # Deployment configuration. ---------------------------------------------------
 
-deploy:    
-- provider: GitHub
+deploy:
+  provider: GitHub
   auth_token:
-    secure: 4d279edeb41779d459ef7019e5ec07135e3761d7
-  release:
-    $(VersionMajor).$(VersionMinor).$(VersionPatch)+$(VersionBuild)
+    secure: wA206g1o3a+l3RP0oweRIAWzSxtI81fVHdtiWpRWZWaK6/UOMvgqNIOLKo3/bZuk # your encrypted token from GitHub
+  artifact: /.*\.nupkg/            # upload all NuGet packages to release assets
+  draft: false
+  prerelease: false
   on:
-    branch: master
-    CONFIGURATION: Release
+    branch: master                 # release from master branch only
+    appveyor_repo_tag: true        # deploy on tag push only
 
 # Other configuration. --------------------------------------------------------
 
