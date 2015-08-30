@@ -164,7 +164,7 @@ test_script:
 deploy:    
 - provider: GitHub
   auth_token:
-    secure: a2432d40a29056ea5158cd6a9e6823960f2deb07
+    secure: 4d279edeb41779d459ef7019e5ec07135e3761d7
   release:
     $(VersionMajor).$(VersionMinor).$(VersionPatch)+$(VersionBuild)
   on:
