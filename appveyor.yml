@@ -24,20 +24,6 @@ matrix:
 services:
 - mssql2012sp1
 
-install:
-- ps: |
-    # Download Coverity Scan toolset, if we are doing scheduled build.
-    #if ($env:APPVEYOR_SCHEDULED_BUILD -eq "True") {
-      Invoke-WebRequest `
-        -Uri "https://scan.coverity.com/download/cxx/win_64" `
-        -Body @{ project = "$env:APPVEYOR_REPO_NAME";
-                 token = "$env:CoverityProjectToken" } `
-        -OutFile "$env:APPVEYOR_BUILD_FOLDER\coverity.zip"
-      Add-Type -AssemblyName "System.IO.Compression.FileSystem"
-      [IO.Compression.ZipFile]::ExtractToDirectory(
-        "$env:APPVEYOR_BUILD_FOLDER\coverity.zip",
-        "$env:APPVEYOR_BUILD_FOLDER")
-    #}
 # Build configuration. --------------------------------------------------------
 
 
@@ -63,7 +49,7 @@ build_script:
     #}
     
     # Else, build project with Coverity Scan.
-    $coverityBuildCmd = "$env:APPVEYOR_BUILD_FOLDER\coverity\bin\cov-build.exe"
+    $coverityBuildCmd = "C:\Tools\Coverity\bin\cov-build.exe"
     $coverityBuildArgs = @(
     "--dir $env:APPVEYOR_BUILD_FOLDER\cov-int",
     "--encoding=UTF-8",
