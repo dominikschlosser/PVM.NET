@@ -57,14 +57,16 @@ build_script:
         -i "$Env:APPVEYOR_BUILD_FOLDER\cov-int" `
         -o "$Env:APPVEYOR_BUILD_FOLDER\$Env:APPVEYOR_PROJECT_NAME.zip"
 
-      & .\packages\PublishCoverity\PublishCoverity.exe publish `
-        -t "$Env:CoverityProjectToken" `
-        -e "$Env:CoverityNotificationEmail" `
-        -r "$Env:APPVEYOR_REPO_NAME" `
-        -z "$Env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip" `
-        -d "CI server scheduled build." `
-       --codeVersion "$Env:VersionMajor.$Env:VersionMinor.$Env:VersionPatch" `
-       --nologo
+    Write-Host $Env:APPVEYOR_REPO_NAME
+
+    & .\packages\PublishCoverity\PublishCoverity.exe publish `
+    -t "$Env:CoverityProjectToken" `
+    -e "$Env:CoverityNotificationEmail" `
+    -r "$Env:APPVEYOR_REPO_NAME" `
+    -z "$Env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip" `
+    -d "CI server scheduled build." `
+    --codeVersion "$Env:VersionMajor.$Env:VersionMinor.$Env:VersionPatch" `
+    --nologo
     
 # Tests configuration. --------------------------------------------------------
   
