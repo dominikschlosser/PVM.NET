@@ -149,8 +149,6 @@ test_script:
     $tests =
       (Get-ChildItem -Path $startPath -Recurse -Filter *.Test.dll).FullName
     
-    Write-Host "BuildDir: $startPath Assemblies: $tests"
-    
     # Run tests.
     nunit-console $tests
 
@@ -176,6 +174,3 @@ deploy:
 
 # Use GitHub API for fast repository fetching.
 shallow_clone: true
-
-# Keep directory with third party tools between builds.
-cache: third-party
