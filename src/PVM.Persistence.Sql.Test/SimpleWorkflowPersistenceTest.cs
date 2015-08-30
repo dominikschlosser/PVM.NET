@@ -30,7 +30,7 @@ using PVM.Core.Runtime;
 namespace PVM.Persistence.Sql.Test
 {
     [TestFixture]
-    public class SimpleWorkflowPersistenceTest
+    public class SimpleWorkflowPersistenceTest : TestBase
     {
         private class TestOperation : IOperation
         {

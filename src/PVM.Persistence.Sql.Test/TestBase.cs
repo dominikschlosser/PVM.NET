@@ -1,7 +1,6 @@
-#region License
-
+﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="Configuration.cs" company="PVM.NET Project Contributors">
+//  <copyright file="TestBase.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,34 +17,21 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
 using System.Data.Entity.Migrations;
+using NUnit.Framework;
+using PVM.Persistence.Sql.Migrations;
 
-namespace PVM.Persistence.Sql.Migrations
+namespace PVM.Persistence.Sql.Test
 {
-    public sealed class Configuration : DbMigrationsConfiguration<PvmContext>
+    public abstract class TestBase
     {
-        public Configuration()
+        [TestFixtureSetUp]
+        public void Setup()
         {
-            AutomaticMigrationsEnabled = false;
+            new DbMigrator(new Configuration()).Update();
         }
-
-        protected override void Seed(PvmContext context)
-        {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
-        }
+         
     }
 }
