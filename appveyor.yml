@@ -8,7 +8,7 @@ environment:
   VersionMinor: 1
   VersionPatch: 0
   CoverityProjectToken:
-    secure: NG2FHpTkouOP6QWKMYKJGA
+    secure: aTAXxox4oroYvz56HikRyoY7/ZjP3pleh97XB4Q7skc=
     
 init:
 - ps: |
