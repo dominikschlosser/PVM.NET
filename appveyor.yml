@@ -62,7 +62,7 @@ build_script:
       & .\packages\PublishCoverity\PublishCoverity.exe publish `
         -t "$Env:CoverityProjectToken" `
         -e "$Env:CoverityNotificationEmail" `
-       -r "$Env:APPVEYOR_REPO_NAME" `
+       -r "$Env:CoverityProjectName" `
         -z "$Env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip" `
         -d "CI server scheduled build." `
        --codeVersion "$Env:VersionMajor.$Env:VersionMinor.$Env:VersionPatch" `
