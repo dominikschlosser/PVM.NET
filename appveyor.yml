@@ -9,6 +9,8 @@ environment:
   VersionPatch: 0
   CoverityProjectToken:
     secure: aTAXxox4oroYvz56HikRyoY7/ZjP3pleh97XB4Q7skc=
+  CoverityNotificationEmail:
+    dominik.schlosser@gmail.com
     
 init:
 - ps: |
