@@ -7,9 +7,7 @@ environment:
   CoverityProjectToken:
     secure: aTAXxox4oroYvz56HikRyoY7/ZjP3pleh97XB4Q7skc=
   CoverityNotificationEmail:
-    dominik.schlosser@gmail.com
-  CoverityProjectName:
-    dkschlos\PVM.NET
+    secure: 1EgaryX47nSc2j58xUqdbq0enWGMKG4KHa+FUdPXfVE=
     
 init:
 - ps: |
@@ -62,7 +60,7 @@ build_script:
       & .\packages\PublishCoverity\PublishCoverity.exe publish `
         -t "$Env:CoverityProjectToken" `
         -e "$Env:CoverityNotificationEmail" `
-       -r "$Env:CoverityProjectName" `
+        -r "$Env:APPVEYOR_REPO_NAME" `
         -z "$Env:APPVEYOR_BUILD_FOLDER\$env:APPVEYOR_PROJECT_NAME.zip" `
         -d "CI server scheduled build." `
        --codeVersion "$Env:VersionMajor.$Env:VersionMinor.$Env:VersionPatch" `
