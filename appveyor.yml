@@ -50,7 +50,7 @@ build_script:
     
     # Else, build project with Coverity Scan.
     "Building project with Coverity..."
-    & "C:\Tools\Coverity\bin\cov-build.exe --dir $env:APPVEYOR_BUILD_FOLDER\cov-int --encoding=UTF-8 $buildCmd $buildArgs"
+    & "C:\Tools\Coverity\bin\cov-build.exe" --dir $env:APPVEYOR_BUILD_FOLDER\cov-int --encoding=UTF-8 $buildCmd $buildArgs;
       
     # Compress results.
     "Compressing Coverity results..."
