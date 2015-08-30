@@ -44,6 +44,8 @@ install:
 configuration:
 - Release
 
+platform: Any CPU
+
 build_script:
 - ps: |
     nuget restore
@@ -147,7 +149,7 @@ test_script:
     $tests =
       (Get-ChildItem -Path $env:BuildDir -Recurse -Filter *.Test.dll).FullName
     
-    Write-Host $tests
+    Write-Host "Assemblies: $tests"
     
     # Run tests.
     nunit-console $tests
