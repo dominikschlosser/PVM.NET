@@ -27,7 +27,7 @@ services:
 install:
 - ps: |
     # Download Coverity Scan toolset, if we are doing scheduled build.
-    if ($env:APPVEYOR_SCHEDULED_BUILD -eq "True") {
+    #if ($env:APPVEYOR_SCHEDULED_BUILD -eq "True") {
       Invoke-WebRequest `
         -Uri "https://scan.coverity.com/download/cxx/win_64" `
         -Body @{ project = "$env:APPVEYOR_REPO_NAME";
@@ -37,7 +37,7 @@ install:
       [IO.Compression.ZipFile]::ExtractToDirectory(
         "$env:APPVEYOR_BUILD_FOLDER\coverity.zip",
         "$env:APPVEYOR_BUILD_FOLDER")
-    }
+    #}
 # Build configuration. --------------------------------------------------------
 
 
