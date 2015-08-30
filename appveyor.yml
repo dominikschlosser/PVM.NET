@@ -63,8 +63,14 @@ build_script:
     #}
     
     # Else, build project with Coverity Scan.
+    $coverityBuildCmd = "$env:APPVEYOR_BUILD_FOLDER\cov-analysis-win64-7.6.0\bin\cov-build.exe"
+    $coverityBuildArgs = @(
+    "--dir $env:APPVEYOR_BUILD_FOLDER\cov-int",
+    "--encoding=UTF-8",
+    "$buildCmd $buildArgs")
+    
     "Building project with Coverity..."
-    & "$env:APPVEYOR_BUILD_FOLDER\cov-analysis-win64-7.6.0\bin\cov-build.exe --dir cov-int --encoding=UTF-8 $buildCmd $buildArgs"
+    & $coverityBuildCmd $coverityBuildArgs
       
     # Compress results.
     "Compressing Coverity results..."
