@@ -147,7 +147,7 @@ test_script:
     $tests =
       (Get-ChildItem -Path $env:BuildDir -Recurse -Filter *.Test.dll).FullName
     
-    Write-Output $tests
+    Write-Host $tests
     
     # Run tests.
     nunit-console $tests
