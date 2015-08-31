@@ -31,7 +31,7 @@ namespace PVM.Core.Inject
     {
         public override void Load()
         {
-            Bind<IPersistenceProvider>().To<NullPersistenceProvider>();
+            Bind<IPersistenceProvider>().To<InMemoryPersistenceProvider>();
             Bind<IObjectSerializer>().To<JsonSerializer>();
         }
     }

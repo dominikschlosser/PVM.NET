@@ -24,16 +24,19 @@
 using System;
 using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Definition;
+using PVM.Core.Persistence;
 
 namespace PVM.Core.Runtime
 {
     public class WorkflowEngine : IDisposable
     {
         private IServiceLocator serviceLocator;
+        private readonly IPersistenceProvider persistenceProvider;
 
         public WorkflowEngine(IServiceLocator serviceLocator)
         {
             this.serviceLocator = serviceLocator;
+            this.persistenceProvider = serviceLocator.GetInstance<IPersistenceProvider>();
         }
 
         public void Dispose()
@@ -50,9 +53,26 @@ namespace PVM.Core.Runtime
             }
         }
 
+        public void RegisterNewWorkflowDefinition(IWorkflowDefinition definition)
+        {
+            persistenceProvider.Persist(definition);
+        }
+
+
         public WorkflowInstance CreateNewInstance(IWorkflowDefinition definition)
         {
-            return new WorkflowInstance(definition, serviceLocator);
+            RegisterNewWorkflowDefinition(definition);
+            return CreateNewInstance(definition.Identifier);
+        }
+
+        public WorkflowInstance CreateNewInstance(string workflowDefinitionIdentifier)
+        {
+            IWorkflowDefinition workflowDefinition = persistenceProvider.LoadWorkflowDefinition(workflowDefinitionIdentifier);
+            if (workflowDefinition == null)
+            {
+                throw new InvalidOperationException(string.Format("Workflow definition with identifier '{0}' not found", workflowDefinitionIdentifier));
+            }
+            return new WorkflowInstance(workflowDefinition, serviceLocator);
         }
     }
 }

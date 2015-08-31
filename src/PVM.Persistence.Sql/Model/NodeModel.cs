@@ -34,17 +34,37 @@ namespace PVM.Persistence.Sql.Model
         public string Identifier { get; set; }
 
         public string OperationType { get; set; }
-        public virtual IList<TransitionModel> IncomingTransitions { get; set; }
+        public bool IsEndNode { get; set; }
+        public bool IsInitialNode { get; set; }
         public virtual IList<TransitionModel> OutgoingTransitions { get; set; }
 
-        public static NodeModel FromNode(INode node)
+        protected bool Equals(NodeModel other)
+        {
+            return string.Equals(Identifier, other.Identifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((NodeModel) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Identifier != null ? Identifier.GetHashCode() : 0);
+        }
+
+        public static NodeModel FromNode(INode node, bool isEndNode, bool isInitialNode)
         {
             return new NodeModel
             {
                 Identifier = node.Identifier,
                 OperationType = node.OperationType,
-                IncomingTransitions = node.IncomingTransitions.Select(TransitionModel.FromTransition).ToList(),
-                OutgoingTransitions = node.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList()
+                OutgoingTransitions = node.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList(),
+                IsEndNode = isEndNode,
+                IsInitialNode = isInitialNode
             };
         }
     }

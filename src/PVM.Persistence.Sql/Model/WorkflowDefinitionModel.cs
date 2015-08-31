@@ -30,7 +30,6 @@ namespace PVM.Persistence.Sql.Model
     public class WorkflowDefinitionModel : NodeModel
     {
         public virtual IList<NodeModel> Nodes { get; set; }
-        public virtual IList<NodeModel> EndNodes { get; set; }
 
         public static WorkflowDefinitionModel FromWorkflowDefinition(IWorkflowDefinition workflowDefinition)
         {
@@ -38,12 +37,9 @@ namespace PVM.Persistence.Sql.Model
             {
                 Identifier = workflowDefinition.Identifier,
                 OperationType = workflowDefinition.OperationType,
-                IncomingTransitions =
-                    workflowDefinition.IncomingTransitions.Select(TransitionModel.FromTransition).ToList(),
                 OutgoingTransitions =
                     workflowDefinition.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList(),
-                Nodes = workflowDefinition.Nodes.Select(FromNode).ToList(),
-                EndNodes = workflowDefinition.Nodes.Select(FromNode).ToList()
+                Nodes = workflowDefinition.Nodes.Select(n => FromNode(n, workflowDefinition.EndNodes.Contains(n), workflowDefinition.InitialNode.Equals(n))).ToList(),
             };
         }
     }

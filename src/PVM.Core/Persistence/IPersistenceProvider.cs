@@ -21,6 +21,7 @@
 
 #endregion
 
+using JetBrains.Annotations;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
 
@@ -30,5 +31,8 @@ namespace PVM.Core.Persistence
     {
         void Persist(IExecution execution);
         void Persist(IWorkflowDefinition workflowDefinition);
+
+        [CanBeNull]
+        IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier);
     }
 }

@@ -21,6 +21,7 @@
 
 #endregion
 
+using System.Linq;
 using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Data.Attributes;
@@ -65,6 +66,7 @@ namespace PVM.Persistence.Sql.Test
             var builder = new WorkflowDefinitionBuilder();
 
             var workflowDefinition = builder
+                .WithIdentifier("testWorkflowDefinition")
                 .AddNode()
                     .WithName("start")
                     .WithOperation(new TestOperation())
@@ -87,6 +89,8 @@ namespace PVM.Persistence.Sql.Test
                                            .CreateNewInstance(workflowDefinition);
 
             instance.Start(new TestData());
+
+            Assert.That(TestDbContext.WorkflowDefinitions.Any(d => d.Identifier == workflowDefinition.Identifier));
 
             Assert.False(instance.IsFinished);
         }

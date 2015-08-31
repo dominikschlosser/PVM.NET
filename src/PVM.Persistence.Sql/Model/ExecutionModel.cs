@@ -40,6 +40,24 @@ namespace PVM.Persistence.Sql.Model
         public bool IsActive { get; set; }
         public virtual IList<ExecutionVariableModel> Variables { get; set; }
 
+        protected bool Equals(ExecutionModel other)
+        {
+            return string.Equals(Identifier, other.Identifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ExecutionModel) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Identifier != null ? Identifier.GetHashCode() : 0);
+        }
+
         public static ExecutionModel FromExecution(IExecution execution, IObjectSerializer serializer)
         {
             var variables =

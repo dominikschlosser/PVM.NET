@@ -36,6 +36,24 @@ namespace PVM.Persistence.Sql.Model
         public bool Executed { get; set; }
         public bool IsDefault { get; set; }
 
+        protected bool Equals(TransitionModel other)
+        {
+            return string.Equals(Identifier, other.Identifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((TransitionModel) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Identifier != null ? Identifier.GetHashCode() : 0);
+        }
+
         public static TransitionModel FromTransition(Transition transition)
         {
             return new TransitionModel

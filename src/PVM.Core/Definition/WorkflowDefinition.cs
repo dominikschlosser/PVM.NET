@@ -34,7 +34,7 @@ namespace PVM.Core.Definition
         INode InitialNode { get; }
     }
 
-    public class WorkflowDefinition<T> : Node, IWorkflowDefinition where T : class
+    public class WorkflowDefinition : Node, IWorkflowDefinition
     {
         public WorkflowDefinition(string identifier, INode initialNode, IList<INode> nodes,
             IList<INode> endNodes) : base(identifier, new StartSubProcessOperation())
@@ -91,9 +91,9 @@ namespace PVM.Core.Definition
                 return this;
             }
 
-            public WorkflowDefinition<T> Build()
+            public WorkflowDefinition Build()
             {
-                return new WorkflowDefinition<T>(identifier, initialNode, nodes, endNodes);
+                return new WorkflowDefinition(identifier, initialNode, nodes, endNodes);
             }
         }
     }

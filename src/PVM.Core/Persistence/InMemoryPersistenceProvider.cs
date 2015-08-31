@@ -21,13 +21,16 @@
 
 #endregion
 
+using System.Collections.Generic;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Persistence
 {
-    public class NullPersistenceProvider : IPersistenceProvider
+    public class InMemoryPersistenceProvider : IPersistenceProvider
     {
+        private readonly IDictionary<string, IWorkflowDefinition> workflowDefinitions = new Dictionary<string, IWorkflowDefinition>(); 
+
         public void Persist(IExecution execution)
         {
             // do nothing
@@ -35,7 +38,17 @@ namespace PVM.Core.Persistence
 
         public void Persist(IWorkflowDefinition workflowDefinition)
         {
-            // do nothing
+            workflowDefinitions.Add(workflowDefinition.Identifier, workflowDefinition);
+        }
+
+        public IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier)
+        {
+            if (!workflowDefinitions.ContainsKey(workflowDefinitionIdentifier))
+            {
+                return null;
+            }
+
+            return workflowDefinitions[workflowDefinitionIdentifier];
         }
     }
 }

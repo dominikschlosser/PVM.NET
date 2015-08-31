@@ -97,7 +97,7 @@
     <Compile Include="Inject\NinjectServiceLocator.cs" />
     <Compile Include="Inject\PvmModule.cs" />
     <Compile Include="Persistence\IPersistenceProvider.cs" />
-    <Compile Include="Persistence\NullPersistenceProvider.cs" />
+    <Compile Include="Persistence\InMemoryPersistenceProvider.cs" />
     <Compile Include="Plan\ExecutionVisitor.cs" />
     <Compile Include="Plan\Operations\Base\DataAwareOperation.cs" />
     <Compile Include="Plan\Operations\Base\IOperation.cs" />

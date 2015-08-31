@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="TestBase.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,6 +18,7 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
 using System.Data.Entity.Migrations;
@@ -27,11 +29,25 @@ namespace PVM.Persistence.Sql.Test
 {
     public abstract class TestBase
     {
+        protected PvmContext TestDbContext { get; private set; }
+
         [TestFixtureSetUp]
         public void Setup()
         {
             new DbMigrator(new Configuration()).Update();
         }
-         
+
+        [SetUp]
+        public void TestSetUp()
+        {
+            TestDbContext = new PvmContext();
+        }
+
+        [TearDown]
+        public void TestTearDown()
+        {
+            TestDbContext.Dispose();
+            TestDbContext = null;
+        }
     }
 }

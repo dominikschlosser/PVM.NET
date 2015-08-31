@@ -26,11 +26,17 @@ namespace PVM.Core.Definition
     public class Transition
     {
         public Transition(string identifier, bool isDefault, INode source, INode destination)
+            : this(identifier, isDefault, false, source, destination)
+        {
+        }
+
+        public Transition(string identifier, bool isDefault, bool executed, INode source, INode destination)
         {
             IsDefault = isDefault;
             Source = source;
             Destination = destination;
             Identifier = identifier;
+            Executed = executed;
         }
 
         public INode Source { get; private set; }

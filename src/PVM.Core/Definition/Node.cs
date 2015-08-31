@@ -51,11 +51,15 @@ namespace PVM.Core.Definition
         }
 
         public Node(string identifier, IOperation operation)
+            : this(identifier, operation.GetType().AssemblyQualifiedName)
         {
-            operationType = operation.GetType().AssemblyQualifiedName;
-            Identifier = identifier;
         }
 
+        public Node(string identifier, string operationType)
+        {
+            this.operationType = operationType;
+            Identifier = identifier;
+        }
         public string OperationType
         {
             get { return operationType; }

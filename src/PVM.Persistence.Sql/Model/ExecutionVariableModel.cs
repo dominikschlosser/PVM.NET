@@ -35,5 +35,23 @@ namespace PVM.Persistence.Sql.Model
         public string Key { get; set; }
         public string SerializedValue { get; set; }
         public string ValueType { get; set; }
+
+        protected bool Equals(ExecutionVariableModel other)
+        {
+            return Identifier == other.Identifier;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((ExecutionVariableModel) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return Identifier;
+        }
     }
 }

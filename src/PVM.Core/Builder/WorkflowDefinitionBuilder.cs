@@ -45,19 +45,20 @@ namespace PVM.Core.Builder
             return new NodeBuilder(this);
         }
 
-        public WorkflowDefinition<T> BuildWorkflow<T>() where T : class
+        // keep type to add validation later
+        public WorkflowDefinition BuildWorkflow<T>() where T : class
         {
             AssembleTransitions();
 
             return
-                new WorkflowDefinition<T>.Builder().WithIdentifier(identifier)
+                new WorkflowDefinition.Builder().WithIdentifier(identifier)
                                                    .WithInitialNode(startNode)
                                                    .WithNodes(nodes.Values)
                                                    .WithEndNodes(endNodes.Values)
                                                    .Build();
         }
 
-        public WorkflowDefinition<object> BuildWorkflow()
+        public WorkflowDefinition BuildWorkflow()
         {
             return BuildWorkflow<object>();
         }
