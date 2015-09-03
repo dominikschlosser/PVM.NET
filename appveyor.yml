@@ -43,8 +43,8 @@ build_script:
     
     # If build is not a scheduled one, than simply build project with MSBuild.
     #if ($env:APPVEYOR_SCHEDULED_BUILD -ne "True") {
-    #  & $buildCmd $buildArgs
-    #  return
+      & $buildCmd $buildArgs
+      return
     #}
     
     # Else, build project with Coverity Scan.
