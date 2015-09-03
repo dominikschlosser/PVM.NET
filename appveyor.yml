@@ -5,7 +5,7 @@ environment:
   VersionMinor: 1
   VersionPatch: 0
   CoverityProjectToken:
-    secure: aTAXxox4oroYvz56HikRyoY7/ZjP3pleh97XB4Q7skc=
+    secure: f7iNfjwQwEOxu0G2lLWvwfGPtfvvAug4L8zqmaTLTF4=
   CoverityNotificationEmail:
     secure: 1EgaryX47nSc2j58xUqdbq0enWGMKG4KHa+FUdPXfVE=
     
