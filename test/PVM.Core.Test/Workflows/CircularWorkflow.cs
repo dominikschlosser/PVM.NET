@@ -56,14 +56,8 @@ namespace PVM.Core.Test.Workflows
         [WorkflowData]
         public class StartData
         {
-            private int counter;
-
             [Out]
-            public int Counter
-            {
-                get { return counter; }
-                set { counter = value; }
-            }
+            public int Counter { get; set; }
 
             [Out]
             public string Text { get; set; }

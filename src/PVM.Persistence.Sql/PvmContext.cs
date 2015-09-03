@@ -30,7 +30,5 @@ namespace PVM.Persistence.Sql
     {
         public DbSet<ExecutionModel> Executions { get; set; }
         public DbSet<WorkflowDefinitionModel> WorkflowDefinitions { get; set; }
-        public DbSet<TransitionModel> Transitions { get; set; }
-        public DbSet<NodeModel> Nodes { get; set; }
     }
 }
