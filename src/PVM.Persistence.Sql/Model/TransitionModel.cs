@@ -22,7 +22,6 @@
 #endregion
 
 using System.ComponentModel.DataAnnotations;
-using PVM.Core.Definition;
 
 namespace PVM.Persistence.Sql.Model
 {
@@ -52,18 +51,6 @@ namespace PVM.Persistence.Sql.Model
         public override int GetHashCode()
         {
             return (Identifier != null ? Identifier.GetHashCode() : 0);
-        }
-
-        public static TransitionModel FromTransition(Transition transition)
-        {
-            return new TransitionModel
-            {
-                Identifier = transition.Identifier,
-                Source = transition.Source.Identifier,
-                Destination = transition.Destination == null ? null : transition.Destination.Identifier,
-                Executed = transition.Executed,
-                IsDefault = transition.IsDefault
-            };
         }
     }
 }

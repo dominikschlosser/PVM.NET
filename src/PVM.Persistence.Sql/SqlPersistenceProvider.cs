@@ -27,17 +27,21 @@ using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
+using PVM.Core.Utils;
 using PVM.Persistence.Sql.Model;
+using PVM.Persistence.Sql.Transform;
 
 namespace PVM.Persistence.Sql
 {
     public class SqlPersistenceProvider : IPersistenceProvider
     {
         private readonly IObjectSerializer objectSerializer;
+        private readonly IOperationResolver operationResolver;
 
-        public SqlPersistenceProvider(IObjectSerializer objectSerializer)
+        public SqlPersistenceProvider(IObjectSerializer objectSerializer, IOperationResolver operationResolver)
         {
             this.objectSerializer = objectSerializer;
+            this.operationResolver = operationResolver;
         }
 
         public void Persist(IExecution execution)
@@ -63,7 +67,8 @@ namespace PVM.Persistence.Sql
         {
             using (var db = new PvmContext())
             {
-                var entity = WorkflowDefinitionModel.FromWorkflowDefinition(workflowDefinition);
+                var transformer = new WorkflowDefinitionTransformer();
+                var entity = transformer.Transform(workflowDefinition);
 
                 if (db.WorkflowDefinitions.Any(d => d.Identifier == workflowDefinition.Identifier))
                 {
@@ -102,13 +107,13 @@ namespace PVM.Persistence.Sql
             }
         }
 
-        private static IDictionary<string, INode> MapNodes(WorkflowDefinitionModel model)
+        private IDictionary<string, INode> MapNodes(WorkflowDefinitionModel model)
         {
             IDictionary<string, INode> allNodes = new Dictionary<string, INode>();
 
             foreach (var nodeModel in model.Nodes)
             {
-                allNodes.Add(nodeModel.Identifier, new Node(nodeModel.Identifier, nodeModel.OperationType));
+                allNodes.Add(nodeModel.Identifier, new Node(nodeModel.Identifier, operationResolver.Resolve(nodeModel.OperationType)));
             }
 
             foreach (var nodeModel in model.Nodes)

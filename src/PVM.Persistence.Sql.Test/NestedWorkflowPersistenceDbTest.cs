@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="SimpleWorkflowPersistenceTest.cs" company="PVM.NET Project Contributors">
+//  <copyright file="NestedProcessPersistenceTest.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,22 +17,19 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
 using System.Linq;
 using NUnit.Framework;
 using PVM.Core.Builder;
-using PVM.Core.Data.Attributes;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
 namespace PVM.Persistence.Sql.Test
 {
-    [TestFixture]
-    public class SimpleWorkflowPersistenceTest : TestBase
+    public class NestedWorkflowPersistenceDbTest : DbTestBase
     {
-        private class TestOperation : IOperation
+        public class TestOperation : IOperation
         {
             public void Execute(IExecution execution)
             {
@@ -41,27 +37,8 @@ namespace PVM.Persistence.Sql.Test
             }
         }
 
-        [WorkflowData]
-        private class TestData
-        {
-            public TestData()
-            {
-                Counter = 0;
-                Data = new NestedTestClass {Name = "bla", Value = 42.3f};
-            }
-
-            public virtual int Counter { get; set; }
-            public virtual NestedTestClass Data { get; set; }
-        }
-
-        public class NestedTestClass
-        {
-            public string Name { get; set; }
-            public float Value { get; set; }
-        }
-
         [Test]
-        public void PersistSingleExecution()
+        public void PersistNestedWorkflow()
         {
             var builder = new WorkflowDefinitionBuilder();
 
@@ -73,14 +50,29 @@ namespace PVM.Persistence.Sql.Test
                     .IsStartNode()
                     .AddTransition()
                         .WithName("transition")
-                        .To("end")
+                        .To("nested")
                     .BuildTransition()
                 .BuildNode()
+                .AddNode()
+                    .WithName("nested")
+                    .AddTransition()
+                        .WithName("nestedToEnd")
+                        .To("end")
+                    .BuildTransition()
+                .BuildSubWorkflow(new WorkflowDefinitionBuilder()
+                    .WithIdentifier("subWorkflowDefinition")
+                    .AddNode()
+                        .IsStartNode()
+                        .IsEndNode()
+                        .WithName("subWorkflowNode")
+                        .WithOperation(new TestOperation())
+                    .BuildNode()
+                    .AsDefinitionBuilder())
                 .AddNode()
                     .WithName("end")
                     .IsEndNode()
                 .BuildNode()
-                .BuildWorkflow<TestData>();
+                .BuildWorkflow();
 
             var instance =
                 new WorkflowEngineBuilder().ConfigureServiceLocator()
@@ -88,11 +80,9 @@ namespace PVM.Persistence.Sql.Test
                                            .Build()
                                            .CreateNewInstance(workflowDefinition);
 
-            instance.Start(new TestData());
+            instance.Start();
 
-            Assert.That(TestDbContext.WorkflowDefinitions.Any(d => d.Identifier == workflowDefinition.Identifier));
-
-            Assert.False(instance.IsFinished);
+            Assert.That(TestDbContext.WorkflowDefinitions.Any(d => d.Identifier == "nested"));
         }
     }
 }

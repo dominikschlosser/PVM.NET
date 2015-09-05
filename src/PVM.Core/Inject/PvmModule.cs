@@ -24,6 +24,7 @@
 using Ninject.Modules;
 using PVM.Core.Persistence;
 using PVM.Core.Serialization;
+using PVM.Core.Utils;
 
 namespace PVM.Core.Inject
 {
@@ -33,6 +34,7 @@ namespace PVM.Core.Inject
         {
             Bind<IPersistenceProvider>().To<InMemoryPersistenceProvider>();
             Bind<IObjectSerializer>().To<JsonSerializer>();
+            Bind<IOperationResolver>().To<NinjectOperationResolver>();
         }
     }
 }

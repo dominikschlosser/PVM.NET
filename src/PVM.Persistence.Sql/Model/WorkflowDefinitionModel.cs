@@ -22,25 +22,11 @@
 #endregion
 
 using System.Collections.Generic;
-using System.Linq;
-using PVM.Core.Definition;
 
 namespace PVM.Persistence.Sql.Model
 {
     public class WorkflowDefinitionModel : NodeModel
     {
         public virtual IList<NodeModel> Nodes { get; set; }
-
-        public static WorkflowDefinitionModel FromWorkflowDefinition(IWorkflowDefinition workflowDefinition)
-        {
-            return new WorkflowDefinitionModel
-            {
-                Identifier = workflowDefinition.Identifier,
-                OperationType = workflowDefinition.OperationType,
-                OutgoingTransitions =
-                    workflowDefinition.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList(),
-                Nodes = workflowDefinition.Nodes.Select(n => FromNode(n, workflowDefinition.EndNodes.Contains(n), workflowDefinition.InitialNode.Equals(n))).ToList(),
-            };
-        }
     }
 }

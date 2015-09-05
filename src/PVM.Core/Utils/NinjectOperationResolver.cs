@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="TestBase.cs" company="PVM.NET Project Contributors">
+//  <copyright file="DefaultOperationResolver.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,36 +17,32 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using System.Data.Entity.Migrations;
-using NUnit.Framework;
-using PVM.Persistence.Sql.Migrations;
+using System;
+using Ninject;
+using PVM.Core.Plan.Operations.Base;
 
-namespace PVM.Persistence.Sql.Test
+namespace PVM.Core.Utils
 {
-    public abstract class TestBase
+    public class NinjectOperationResolver : IOperationResolver
     {
-        protected PvmContext TestDbContext { get; private set; }
+        private readonly IKernel ninjectKernel;
 
-        [TestFixtureSetUp]
-        public void Setup()
+        public NinjectOperationResolver(IKernel ninjectKernel)
         {
-            new DbMigrator(new Configuration()).Update();
+            this.ninjectKernel = ninjectKernel;
         }
 
-        [SetUp]
-        public void TestSetUp()
+        public IOperation Resolve(string name)
         {
-            TestDbContext = new PvmContext();
-        }
+            var operation = ninjectKernel.Get(Type.GetType(name)) as IOperation;
+            if (operation == null)
+            {
+                throw new InvalidOperationException(string.Format("Type '{0}' is not an operation", name));
+            }
 
-        [TearDown]
-        public void TestTearDown()
-        {
-            TestDbContext.Dispose();
-            TestDbContext = null;
+            return operation;
         }
     }
 }

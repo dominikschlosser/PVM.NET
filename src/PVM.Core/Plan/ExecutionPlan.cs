@@ -99,7 +99,7 @@ namespace PVM.Core.Plan
             get { return workflowDefinition; }
         }
 
-        public void Proceed(IExecution execution, string operationType)
+        public void Proceed(IExecution execution, IOperation operation)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
@@ -107,12 +107,6 @@ namespace PVM.Core.Plan
             }
             else
             {
-                var operation = serviceLocator.GetInstance(Type.GetType(operationType)) as IOperation;
-                if (operation == null)
-                {
-                    throw new InvalidOperationException(string.Format("Type '{0}' is not an operation", operationType));
-                }
-
                 Type genericOperationInterface = operation.GetType()
                                                           .GetInterfaces()
                                                           .FirstOrDefault(

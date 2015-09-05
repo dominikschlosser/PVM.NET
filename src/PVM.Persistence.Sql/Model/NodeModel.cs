@@ -55,17 +55,5 @@ namespace PVM.Persistence.Sql.Model
         {
             return (Identifier != null ? Identifier.GetHashCode() : 0);
         }
-
-        public static NodeModel FromNode(INode node, bool isEndNode, bool isInitialNode)
-        {
-            return new NodeModel
-            {
-                Identifier = node.Identifier,
-                OperationType = node.OperationType,
-                OutgoingTransitions = node.OutgoingTransitions.Select(TransitionModel.FromTransition).ToList(),
-                IsEndNode = isEndNode,
-                IsInitialNode = isInitialNode
-            };
-        }
     }
 }

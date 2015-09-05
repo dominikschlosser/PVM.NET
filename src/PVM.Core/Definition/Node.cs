@@ -30,7 +30,7 @@ namespace PVM.Core.Definition
 {
     public interface INode
     {
-        string OperationType { get; }
+        IOperation Operation { get; }
         IEnumerable<Transition> IncomingTransitions { get; }
         IEnumerable<Transition> OutgoingTransitions { get; }
         string Identifier { get; }
@@ -43,7 +43,7 @@ namespace PVM.Core.Definition
     public class Node : INode
     {
         private readonly List<Transition> incomingTransitions = new List<Transition>();
-        private readonly string operationType;
+        private readonly IOperation operation;
         private readonly List<Transition> outgoingTransitions = new List<Transition>();
 
         public Node(string identifier) : this(identifier, new TakeDefaultTransitionOperation())
@@ -51,18 +51,14 @@ namespace PVM.Core.Definition
         }
 
         public Node(string identifier, IOperation operation)
-            : this(identifier, operation.GetType().AssemblyQualifiedName)
         {
-        }
-
-        public Node(string identifier, string operationType)
-        {
-            this.operationType = operationType;
+            this.operation = operation;
             Identifier = identifier;
         }
-        public string OperationType
+
+        public IOperation Operation
         {
-            get { return operationType; }
+            get { return operation; }
         }
 
         public IEnumerable<Transition> IncomingTransitions
@@ -89,7 +85,7 @@ namespace PVM.Core.Definition
 
         public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
         {
-            executionPlan.Proceed(execution, operationType);
+            executionPlan.Proceed(execution, operation);
         }
 
         protected bool Equals(Node other)

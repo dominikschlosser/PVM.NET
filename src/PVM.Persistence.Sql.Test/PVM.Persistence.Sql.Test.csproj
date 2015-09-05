@@ -58,9 +58,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NestedWorkflowPersistenceDbTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleWorkflowPersistenceTest.cs" />
-    <Compile Include="TestBase.cs" />
+    <Compile Include="SimpleWorkflowPersistenceDbTest.cs" />
+    <Compile Include="DbTestBase.cs" />
+    <Compile Include="WorkflowDefinitionTransformerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PVM.Core\PVM.Core.csproj">
