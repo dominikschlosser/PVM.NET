@@ -23,19 +23,21 @@
 
 namespace PVM.Core.Builder
 {
-    internal class TransitionData
+    public class TransitionData
     {
-        public TransitionData(string name, bool isDefault, string target, string source)
+        public TransitionData(string name, bool isDefault, string target, string source, bool executed)
         {
             IsDefault = isDefault;
             Name = name;
             Target = target;
             Source = source;
+            Executed = executed;
         }
 
         public string Name { get; set; }
         public string Target { get; set; }
         public string Source { get; set; }
         public bool IsDefault { get; set; }
+        public bool Executed { get; set; }
     }
 }

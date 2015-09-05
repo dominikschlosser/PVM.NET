@@ -43,6 +43,11 @@ namespace PVM.Core.Builder
             this.parentWorkflowBuilder = parentWorkflowBuilder;
         }
 
+        public string Name
+        {
+            get { return name; }
+        }
+
         public NodeBuilder WithOperation(IOperation operation)
         {
             this.operation = operation;
@@ -66,7 +71,7 @@ namespace PVM.Core.Builder
             return new TransitionBuilder(this, name);
         }
 
-        internal void AddTransition(TransitionData data)
+        public void AddTransition(TransitionData data)
         {
             if (!transitions.Contains(data))
             {

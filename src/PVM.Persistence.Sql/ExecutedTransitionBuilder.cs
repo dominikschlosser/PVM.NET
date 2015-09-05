@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="WorkflowDefinitionModel.cs" company="PVM.NET Project Contributors">
+//  <copyright file="ExecutedTransitionBuilder.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,21 +17,22 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using System.Collections.Generic;
+using PVM.Core.Builder;
 
-namespace PVM.Persistence.Sql.Model
+namespace PVM.Persistence.Sql
 {
-    public class WorkflowDefinitionModel : NodeModel
+    internal class ExecutedTransitionBuilder : TransitionBuilder
     {
-        private IList<NodeModel> nodes = new List<NodeModel>();
-
-        public virtual IList<NodeModel> Nodes
+        public ExecutedTransitionBuilder(NodeBuilder parentNodeBuilder, string source) : base(parentNodeBuilder, source)
         {
-            get { return nodes; }
-            set { nodes = value; }
+        }
+
+        public override NodeBuilder BuildTransition()
+        {
+            ParentNodeBuilder.AddTransition(new TransitionData(Name, IsDefaultValue, Target, Source, true));
+            return ParentNodeBuilder;
         }
     }
 }

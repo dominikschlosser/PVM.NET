@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="WorkflowDefinitionTransformer.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,29 +18,38 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
 using System.Linq;
+using PVM.Core.Builder;
 using PVM.Core.Definition;
+using PVM.Core.Utils;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Transform
 {
     public class WorkflowDefinitionTransformer
     {
+        private readonly IOperationResolver operationResolver;
+
+        public WorkflowDefinitionTransformer(IOperationResolver operationResolver)
+        {
+            this.operationResolver = operationResolver;
+        }
+
         public WorkflowDefinitionModel Transform(IWorkflowDefinition workflowDefinition)
         {
             var workflowDefinitionModel = new WorkflowDefinitionModel
             {
                 Identifier = workflowDefinition.Identifier,
-                OperationType = workflowDefinition.Operation.GetType().AssemblyQualifiedName,
-                Nodes = new List<NodeModel>()
+                OperationType = workflowDefinition.Operation.GetType().AssemblyQualifiedName
             };
 
             foreach (var node in workflowDefinition.Nodes)
             {
-                NodeModel nodeModel = CreateNode(workflowDefinition, (dynamic)node);
+                NodeModel nodeModel = CreateNode(workflowDefinition, (dynamic) node);
                 workflowDefinitionModel.Nodes.Add(nodeModel);
             }
 
@@ -67,7 +77,7 @@ namespace PVM.Persistence.Sql.Transform
         {
             foreach (var transition in node.OutgoingTransitions)
             {
-                yield return new TransitionModel()
+                yield return new TransitionModel
                 {
                     Identifier = transition.Identifier,
                     Source = transition.Source.Identifier,
@@ -76,6 +86,60 @@ namespace PVM.Persistence.Sql.Transform
                     Executed = transition.Executed
                 };
             }
+        }
+
+        public IWorkflowDefinition TransformBack(WorkflowDefinitionModel model)
+        {
+            var builder = new WorkflowDefinitionBuilder();
+            return BuildWorkflowDefinition(builder, model).BuildWorkflow();
+        }
+
+        private WorkflowDefinitionBuilder BuildWorkflowDefinition(WorkflowDefinitionBuilder builder, WorkflowDefinitionModel model)
+        {
+            builder.WithIdentifier(model.Identifier);
+            foreach (var node in model.Nodes)
+            {
+                NodeBuilder nodeBuilder = builder.AddNode()
+                                                 .WithName(node.Identifier)
+                                                 .WithOperation(operationResolver.Resolve(node.OperationType));
+
+                if (node.IsInitialNode)
+                {
+                    nodeBuilder.IsStartNode();
+                }
+
+                if (node.IsEndNode)
+                {
+                    nodeBuilder.IsEndNode();
+                }
+
+                foreach (var transition in node.OutgoingTransitions)
+                {
+                    TransitionBuilder transitionBuilder = transition.Executed
+                        ? nodeBuilder.AddExecutedTransition()
+                        : nodeBuilder.AddTransition();
+                    transitionBuilder.WithName(transition.Identifier).To(transition.Destination);
+                    if (transition.IsDefault)
+                    {
+                        transitionBuilder.IsDefault();
+                    }
+
+                    transitionBuilder.BuildTransition();
+                }
+
+                BuildNode(builder, nodeBuilder, (dynamic) node);
+            }
+
+            return builder;
+        }
+        private void BuildNode(WorkflowDefinitionBuilder workflowBuilder, NodeBuilder nodeBuilder, NodeModel node)
+        {
+            nodeBuilder.BuildNode();
+        }
+
+        private void BuildNode(WorkflowDefinitionBuilder workflowBuilder, NodeBuilder nodeBuilder, WorkflowDefinitionModel node)
+        {
+            nodeBuilder.BuildSubWorkflow(BuildWorkflowDefinition(workflowBuilder, node));
         }
     }
 }

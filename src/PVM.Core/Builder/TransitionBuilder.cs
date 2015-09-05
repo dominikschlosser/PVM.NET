@@ -39,6 +39,31 @@ namespace PVM.Core.Builder
             this.source = source;
         }
 
+        protected string Target
+        {
+            get { return target; }
+        }
+
+        protected string Name
+        {
+            get { return name; }
+        }
+
+        protected bool IsDefaultValue
+        {
+            get { return isDefault; }
+        }
+
+        protected string Source
+        {
+            get { return source; }
+        }
+
+        protected NodeBuilder ParentNodeBuilder
+        {
+            get { return parentNodeBuilder; }
+        }
+
         public TransitionBuilder WithName(string name)
         {
             this.name = name;
@@ -60,9 +85,9 @@ namespace PVM.Core.Builder
             return this;
         }
 
-        public NodeBuilder BuildTransition()
+        public virtual NodeBuilder BuildTransition()
         {
-            parentNodeBuilder.AddTransition(new TransitionData(name, isDefault, target, source));
+            parentNodeBuilder.AddTransition(new TransitionData(name, isDefault, target, source, false));
             return parentNodeBuilder;
         }
     }
