@@ -21,34 +21,32 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Linq;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
 using PVM.Core.Utils;
-using PVM.Persistence.Sql.Model;
 using PVM.Persistence.Sql.Transform;
 
 namespace PVM.Persistence.Sql
 {
     public class SqlPersistenceProvider : IPersistenceProvider
     {
-        private readonly IObjectSerializer objectSerializer;
-        private readonly WorkflowDefinitionTransformer transformer;
+        private readonly ExecutionDefinitionTransformer executionTransformer;
+        private readonly WorkflowDefinitionTransformer workflowDefinitionTransformer;
 
         public SqlPersistenceProvider(IObjectSerializer objectSerializer, IOperationResolver operationResolver)
         {
-            this.objectSerializer = objectSerializer;
-            transformer = new WorkflowDefinitionTransformer(operationResolver);
+            workflowDefinitionTransformer = new WorkflowDefinitionTransformer(operationResolver);
+            executionTransformer = new ExecutionDefinitionTransformer(objectSerializer);
         }
 
         public void Persist(IExecution execution)
         {
             using (var db = new PvmContext())
             {
-                var entity = ExecutionModel.FromExecution(execution, objectSerializer);
+                var entity = executionTransformer.Transform(execution);
 
                 if (db.Executions.Any(e => e.Identifier == execution.Identifier))
                 {
@@ -67,7 +65,7 @@ namespace PVM.Persistence.Sql
         {
             using (var db = new PvmContext())
             {
-                var entity = transformer.Transform(workflowDefinition);
+                var entity = workflowDefinitionTransformer.Transform(workflowDefinition);
 
                 if (db.WorkflowDefinitions.Any(d => d.Identifier == workflowDefinition.Identifier))
                 {
@@ -93,7 +91,7 @@ namespace PVM.Persistence.Sql
                     return null;
                 }
 
-                return transformer.TransformBack(model);
+                return workflowDefinitionTransformer.TransformBack(model);
             }
         }
     }

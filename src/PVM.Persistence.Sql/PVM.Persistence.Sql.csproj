@@ -67,6 +67,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PvmContext.cs" />
     <Compile Include="SqlPersistenceProvider.cs" />
+    <Compile Include="Transform\ExecutionDefinitionTransformer.cs" />
     <Compile Include="Transform\WorkflowDefinitionTransformer.cs" />
   </ItemGroup>
   <ItemGroup>
