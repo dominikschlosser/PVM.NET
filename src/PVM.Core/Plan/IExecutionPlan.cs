@@ -37,5 +37,6 @@ namespace PVM.Core.Plan
         void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier);
         void OnExecutionResuming(IExecution execution);
         void OnExecutionReachesWaitState(IExecution execution);
+        void OnExecutionSignaled(IExecution execution);
     }
 }

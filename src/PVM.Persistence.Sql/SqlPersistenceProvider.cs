@@ -94,5 +94,10 @@ namespace PVM.Persistence.Sql
                 return workflowDefinitionTransformer.TransformBack(model);
             }
         }
+
+        public IExecution LoadExecution(string executionIdentifier)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

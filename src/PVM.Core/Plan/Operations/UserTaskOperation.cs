@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="IPersistenceProvider.cs" company="PVM.NET Project Contributors">
+//  <copyright file="UserTaskOperation.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,24 +17,29 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using JetBrains.Annotations;
-using PVM.Core.Definition;
+using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Core.Tasks;
 
-namespace PVM.Core.Persistence
+namespace PVM.Core.Plan.Operations
 {
-    public interface IPersistenceProvider
+    public class UserTaskOperation : IOperation
     {
-        void Persist(IExecution execution);
-        void Persist(IWorkflowDefinition workflowDefinition);
+        private readonly ITaskRepository taskRepository;
+        private readonly string taskIdentifier;
 
-        [CanBeNull]
-        IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier);
+        public UserTaskOperation(string taskIdentifier, ITaskRepository taskRepository)
+        {
+            this.taskRepository = taskRepository;
+            this.taskIdentifier = taskIdentifier;
+        }
 
-        [CanBeNull]
-        IExecution LoadExecution(string executionIdentifier);
+        public void Execute(IExecution execution)
+        {
+            taskRepository.Add(new UserTask(taskIdentifier, execution.Identifier));
+            execution.Wait();
+        }
     }
 }

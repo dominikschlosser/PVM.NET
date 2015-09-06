@@ -25,6 +25,7 @@ using System;
 using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
+using PVM.Core.Tasks;
 
 namespace PVM.Core.Runtime
 {
@@ -73,6 +74,17 @@ namespace PVM.Core.Runtime
                 throw new InvalidOperationException(string.Format("Workflow definition with identifier '{0}' not found", workflowDefinitionIdentifier));
             }
             return new WorkflowInstance(workflowDefinition, serviceLocator);
+        }
+
+        public void Complete(UserTask task)
+        {
+            IExecution execution = persistenceProvider.LoadExecution(task.ExecutionIdentifier);
+            if (execution == null)
+            {
+                throw new InvalidOperationException(string.Format("Execution with identifier '{0}' not found", task.ExecutionIdentifier));
+            }
+
+            execution.Signal();
         }
     }
 }

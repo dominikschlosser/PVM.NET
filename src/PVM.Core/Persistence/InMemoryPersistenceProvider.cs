@@ -29,11 +29,12 @@ namespace PVM.Core.Persistence
 {
     public class InMemoryPersistenceProvider : IPersistenceProvider
     {
-        private readonly IDictionary<string, IWorkflowDefinition> workflowDefinitions = new Dictionary<string, IWorkflowDefinition>(); 
+        private readonly IDictionary<string, IWorkflowDefinition> workflowDefinitions = new Dictionary<string, IWorkflowDefinition>();
+        private readonly IDictionary<string, IExecution> executions = new Dictionary<string, IExecution>(); 
 
         public void Persist(IExecution execution)
         {
-            // do nothing
+            executions.Add(execution.Identifier, execution);
         }
 
         public void Persist(IWorkflowDefinition workflowDefinition)
@@ -49,6 +50,11 @@ namespace PVM.Core.Persistence
             }
 
             return workflowDefinitions[workflowDefinitionIdentifier];
+        }
+
+        public IExecution LoadExecution(string executionIdentifier)
+        {
+            return executions[executionIdentifier];
         }
     }
 }

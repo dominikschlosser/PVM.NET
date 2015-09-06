@@ -33,7 +33,7 @@ namespace PVM.Persistence.Sql.Test
         {
             public void Execute(IExecution execution)
             {
-                execution.Wait("signal");
+                execution.Wait();
             }
         }
 

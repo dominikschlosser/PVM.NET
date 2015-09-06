@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="IPersistenceProvider.cs" company="PVM.NET Project Contributors">
+//  <copyright file="ITaskRepository.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,24 +17,17 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
 using JetBrains.Annotations;
-using PVM.Core.Definition;
-using PVM.Core.Runtime;
 
-namespace PVM.Core.Persistence
+namespace PVM.Core.Tasks
 {
-    public interface IPersistenceProvider
+    public interface ITaskRepository
     {
-        void Persist(IExecution execution);
-        void Persist(IWorkflowDefinition workflowDefinition);
+        void Add(UserTask userTask);
 
         [CanBeNull]
-        IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier);
-
-        [CanBeNull]
-        IExecution LoadExecution(string executionIdentifier);
+        UserTask FindTask(string taskid);
     }
 }

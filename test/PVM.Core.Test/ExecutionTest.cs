@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="IPersistenceProvider.cs" company="PVM.NET Project Contributors">
+//  <copyright file="ExecutionTest.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,24 +17,39 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using JetBrains.Annotations;
-using PVM.Core.Definition;
+using Moq;
+using NUnit.Framework;
+using PVM.Core.Plan;
 using PVM.Core.Runtime;
 
-namespace PVM.Core.Persistence
+namespace PVM.Core.Test
 {
-    public interface IPersistenceProvider
+    [TestFixture]
+    public class ExecutionTest
     {
-        void Persist(IExecution execution);
-        void Persist(IWorkflowDefinition workflowDefinition);
+        [Test]
+        public void WaitNotifiesExecutionPlanOfWaitState()
+        {
+            var executionPlan = new Mock<IExecutionPlan>();
+            var execution = new Execution("id", executionPlan.Object);
 
-        [CanBeNull]
-        IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier);
+            execution.Wait();
 
-        [CanBeNull]
-        IExecution LoadExecution(string executionIdentifier);
+            executionPlan.Verify(p => p.OnExecutionReachesWaitState(execution));
+        }
+
+        [Test]
+        public void SignalResumesExecution()
+        {
+            var executionPlan = new Mock<IExecutionPlan>();
+            var execution = new Execution("id", executionPlan.Object);
+            execution.Wait();
+
+            execution.Signal();
+
+            executionPlan.Verify(p => p.OnExecutionSignaled(execution));
+        }
     }
 }

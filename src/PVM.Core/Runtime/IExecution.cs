@@ -45,6 +45,7 @@ namespace PVM.Core.Runtime
         void CreateChildren(IEnumerable<INode> nodes);
         void Accept(IExecutionVisitor visitor);
         void Proceed(INode currentNode);
-        void Wait(string signal);
+        void Wait();
+        void Signal();
     }
 }

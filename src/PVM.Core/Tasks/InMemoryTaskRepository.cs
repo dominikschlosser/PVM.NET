@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="IPersistenceProvider.cs" company="PVM.NET Project Contributors">
+//  <copyright file="InMemoryTaskRepository.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,24 +17,24 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using JetBrains.Annotations;
-using PVM.Core.Definition;
-using PVM.Core.Runtime;
+using System.Collections.Generic;
 
-namespace PVM.Core.Persistence
+namespace PVM.Core.Tasks
 {
-    public interface IPersistenceProvider
+    public class InMemoryTaskRepository : ITaskRepository
     {
-        void Persist(IExecution execution);
-        void Persist(IWorkflowDefinition workflowDefinition);
+        private readonly IDictionary<string, UserTask> tasks = new Dictionary<string, UserTask>();
+ 
+        public void Add(UserTask userTask)
+        {
+            tasks.Add(userTask.TaskIdentifier, userTask);
+        }
 
-        [CanBeNull]
-        IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier);
-
-        [CanBeNull]
-        IExecution LoadExecution(string executionIdentifier);
+        public UserTask FindTask(string taskid)
+        {
+            return tasks[taskid];
+        }
     }
 }

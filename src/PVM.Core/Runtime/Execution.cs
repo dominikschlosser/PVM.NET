@@ -185,8 +185,9 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void Wait(string signal)
+        public void Wait()
         {
+            Logger.InfoFormat("Execution '{0}' is reaching wait state", Identifier);
             Stop();
             executionPlan.OnExecutionReachesWaitState(this);
         }
@@ -212,6 +213,12 @@ namespace PVM.Core.Runtime
             {
                 throw new ExecutionInactiveException(string.Format("Execution '{0}' is inactive.", Identifier));
             }
+        }
+
+        public void Signal()
+        {
+            Logger.InfoFormat("Signaling Execution '{0}'", Identifier);
+            executionPlan.OnExecutionSignaled(this);
         }
     }
 }

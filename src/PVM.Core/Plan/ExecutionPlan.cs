@@ -94,6 +94,11 @@ namespace PVM.Core.Plan
             serviceLocator.GetInstance<IPersistenceProvider>().Persist(execution);
         }
 
+        public void OnExecutionSignaled(IExecution execution)
+        {
+            execution.Resume();
+        }
+
         public IWorkflowDefinition Definition
         {
             get { return workflowDefinition; }
