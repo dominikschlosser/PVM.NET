@@ -27,6 +27,7 @@ using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
 using Castle.DynamicProxy;
+using JetBrains.Annotations;
 using PVM.Core.Data.Attributes;
 
 namespace PVM.Core.Data.Proxy
@@ -39,9 +40,15 @@ namespace PVM.Core.Data.Proxy
             return generator.CreateClassProxyWithTarget(type, Activator.CreateInstance(type), new DataInterceptor(data));
         }
 
-        public static IDictionary<string, object> ExtractData(object data)
+        public static IDictionary<string, object> ExtractData([CanBeNull] object data)
         {
             IDictionary<string, object> result = new Dictionary<string, object>();
+
+            if (data == null)
+            {
+                return result;
+            }
+
             var type = data.GetType();
 
             if (type.HasAttribute<WorkflowDataAttribute>())

@@ -21,7 +21,6 @@
 
 #endregion
 
-using PVM.Core.Definition;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -29,8 +28,6 @@ namespace PVM.Core.Plan
 {
     public interface IExecutionPlan
     {
-        IWorkflowDefinition Definition { get; }
-        bool IsFinished { get; }
         void Proceed(IExecution execution, IOperation operation);
         void OnExecutionStarting(IExecution execution);
         void OnExecutionStopped(IExecution execution);

@@ -53,8 +53,7 @@ namespace PVM.Core.Test.Workflows
                 .BuildWorkflow();
 
             var workflowEngine = new WorkflowEngineBuilder().Build();
-            var instance = workflowEngine.CreateNewInstance(workflowDefinition);
-            instance.Start();
+            var instance = workflowEngine.StartNewInstance(workflowDefinition);
 
             Assert.False(executed);
 

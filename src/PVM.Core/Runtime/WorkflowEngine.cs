@@ -22,9 +22,12 @@
 #endregion
 
 using System;
+using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
+using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
+using PVM.Core.Plan;
 using PVM.Core.Tasks;
 
 namespace PVM.Core.Runtime
@@ -59,21 +62,34 @@ namespace PVM.Core.Runtime
             persistenceProvider.Persist(definition);
         }
 
-
-        public WorkflowInstance CreateNewInstance(IWorkflowDefinition definition)
+        public IExecution StartNewInstance(IWorkflowDefinition definition)
         {
-            RegisterNewWorkflowDefinition(definition);
-            return CreateNewInstance(definition.Identifier);
+            return StartNewInstance(definition, null);
         }
 
-        public WorkflowInstance CreateNewInstance(string workflowDefinitionIdentifier)
+        public IExecution StartNewInstance(IWorkflowDefinition definition, object data)
+        {
+            RegisterNewWorkflowDefinition(definition);
+            return StartNewInstance(definition.Identifier, data);
+        }
+
+        public IExecution StartNewInstance(string workflowDefinitionIdentifier)
+        {
+            return StartNewInstance(workflowDefinitionIdentifier, null);
+        }
+        public IExecution StartNewInstance(string workflowDefinitionIdentifier, [CanBeNull] object data)
         {
             IWorkflowDefinition workflowDefinition = persistenceProvider.LoadWorkflowDefinition(workflowDefinitionIdentifier);
             if (workflowDefinition == null)
             {
                 throw new InvalidOperationException(string.Format("Workflow definition with identifier '{0}' not found", workflowDefinitionIdentifier));
             }
-            return new WorkflowInstance(workflowDefinition, serviceLocator);
+
+            var executionPlan = new ExecutionPlan(workflowDefinition, serviceLocator);
+            var execution = new Execution(workflowDefinitionIdentifier + "_" + Guid.NewGuid(), executionPlan);
+            execution.Start(workflowDefinition.InitialNode, DataMapper.ExtractData(data));
+
+            return execution;
         }
 
         public void Complete(UserTask task)

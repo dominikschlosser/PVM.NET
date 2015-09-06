@@ -58,8 +58,11 @@ namespace PVM.Core.Runtime
             get { return executionPlan; }
         }
 
+        public bool IsFinished { get; private set; }
+
         public string Identifier { get; private set; }
         public bool IsActive { get; private set; }
+        public bool IsPaused { get; private set; }
         public IDictionary<string, object> Data { get; private set; }
 
         public void Proceed()
@@ -189,6 +192,7 @@ namespace PVM.Core.Runtime
         {
             Logger.InfoFormat("Execution '{0}' is reaching wait state", Identifier);
             Stop();
+            IsPaused = true;
             executionPlan.OnExecutionReachesWaitState(this);
         }
 
@@ -209,6 +213,11 @@ namespace PVM.Core.Runtime
 
         private void RequireActive()
         {
+            if (IsFinished)
+            {
+                throw new ExecutionInactiveException(string.Format("Execution '{0}' is finished.", Identifier));
+            }
+
             if (!IsActive)
             {
                 throw new ExecutionInactiveException(string.Format("Execution '{0}' is inactive.", Identifier));
@@ -217,8 +226,16 @@ namespace PVM.Core.Runtime
 
         public void Signal()
         {
+            IsPaused = false;
             Logger.InfoFormat("Signaling Execution '{0}'", Identifier);
             executionPlan.OnExecutionSignaled(this);
+        }
+
+        public void Kill()
+        {
+            IsFinished = true;
+            IsActive = false;
+            Logger.InfoFormat("Execution '{0}' was killed.", Identifier);
         }
     }
 }

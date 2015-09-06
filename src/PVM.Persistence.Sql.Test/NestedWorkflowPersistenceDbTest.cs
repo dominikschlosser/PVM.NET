@@ -78,9 +78,8 @@ namespace PVM.Persistence.Sql.Test
                 new WorkflowEngineBuilder().ConfigureServiceLocator()
                                            .OverridePersistenceProvider<SqlPersistenceProvider>()
                                            .Build()
-                                           .CreateNewInstance(workflowDefinition);
+                                           .StartNewInstance(workflowDefinition);
 
-            instance.Start();
 
             Assert.That(TestDbContext.WorkflowDefinitions.Any(d => d.Identifier == "nested"));
         }

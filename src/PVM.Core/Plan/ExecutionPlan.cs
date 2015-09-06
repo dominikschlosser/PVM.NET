@@ -63,8 +63,23 @@ namespace PVM.Core.Plan
             }
             else if (!execution.CurrentNode.OutgoingTransitions.Any())
             {
-                IsFinished = true;
-                Logger.InfoFormat("Workflow instance with definition '{0}' ended", workflowDefinition.Identifier);
+                execution.Kill();
+                KillInactiveParentExecution(execution.Parent);
+            }
+            else
+            {
+                Logger.InfoFormat("Execution '{0}' stopped but has the following outgoing transitions: '{1}'",
+                    execution.Identifier,
+                    execution.CurrentNode.OutgoingTransitions.Select(t => t.Identifier).Aggregate((t1, t2) => t1 + ", " + t2));
+            }
+        }
+
+        private void KillInactiveParentExecution(IExecution parent)
+        {
+            if (parent != null && !parent.IsActive)
+            {
+                parent.Kill();
+                KillInactiveParentExecution(parent.Parent);
             }
         }
 
@@ -83,8 +98,6 @@ namespace PVM.Core.Plan
                 execution.CurrentNode.Identifier));
         }
 
-        public bool IsFinished { get; private set; }
-
         public void OnExecutionResuming(IExecution execution)
         {
         }
@@ -97,11 +110,6 @@ namespace PVM.Core.Plan
         public void OnExecutionSignaled(IExecution execution)
         {
             execution.Resume();
-        }
-
-        public IWorkflowDefinition Definition
-        {
-            get { return workflowDefinition; }
         }
 
         public void Proceed(IExecution execution, IOperation operation)
@@ -138,9 +146,8 @@ namespace PVM.Core.Plan
 
         private IList<IExecution> GetActiveExecutions(IExecution execution)
         {
-            IExecution root = FindRoot(execution);
             var results = new List<IExecution>();
-            root.Accept(new ExecutionVisitor(e =>
+            execution.Accept(new ExecutionVisitor(e =>
             {
                 if (e.IsActive)
                 {
@@ -149,16 +156,6 @@ namespace PVM.Core.Plan
             }));
 
             return results;
-        }
-
-        private IExecution FindRoot(IExecution execution)
-        {
-            if (execution.Parent == null)
-            {
-                return execution;
-            }
-
-            return FindRoot(execution.Parent);
         }
     }
 }

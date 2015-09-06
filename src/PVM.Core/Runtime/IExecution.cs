@@ -34,7 +34,9 @@ namespace PVM.Core.Runtime
         IList<IExecution> Children { get; }
         INode CurrentNode { get; }
         IExecutionPlan Plan { get; }
+        bool IsFinished { get; }
         bool IsActive { get; }
+        bool IsPaused { get; }
         IDictionary<string, object> Data { get; }
         void Proceed();
         void Proceed(string transitionName);
@@ -47,5 +49,6 @@ namespace PVM.Core.Runtime
         void Proceed(INode currentNode);
         void Wait();
         void Signal();
+        void Kill();
     }
 }
