@@ -82,8 +82,7 @@ namespace PVM.Persistence.Sql.Transform
                     Identifier = transition.Identifier,
                     Source = transition.Source.Identifier,
                     Destination = transition.Destination.Identifier,
-                    IsDefault = transition.IsDefault,
-                    Executed = transition.Executed
+                    IsDefault = transition.IsDefault
                 };
             }
         }
@@ -115,10 +114,10 @@ namespace PVM.Persistence.Sql.Transform
 
                 foreach (var transition in node.OutgoingTransitions)
                 {
-                    TransitionBuilder transitionBuilder = transition.Executed
-                        ? nodeBuilder.AddExecutedTransition()
-                        : nodeBuilder.AddTransition();
-                    transitionBuilder.WithName(transition.Identifier).To(transition.Destination);
+                    TransitionBuilder transitionBuilder = nodeBuilder.AddTransition()
+                        .WithName(transition.Identifier)
+                        .To(transition.Destination);
+
                     if (transition.IsDefault)
                     {
                         transitionBuilder.IsDefault();

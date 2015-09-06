@@ -162,7 +162,6 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             Assert.That(transition.Source, Is.EqualTo("node"));
             Assert.That(transition.Destination, Is.EqualTo("end"));
             Assert.False(transition.IsDefault);
-            Assert.False(transition.Executed);
         }
 
         [Test]
@@ -188,34 +187,6 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             var startNode = result.Nodes.First(n => n.Identifier == "node");
             var transition = startNode.OutgoingTransitions.First();
             Assert.That(transition.IsDefault);
-        }
-
-        [Test]
-        public void SetsExecutedPropertyOnTransition()
-        {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
-            var workflow = new WorkflowDefinitionBuilder()
-                    .AddNode()
-                        .WithName("node")
-                        .IsStartNode()
-                        .AddTransition()
-                            .WithName("toEnd")
-                            .To("end")
-                            .BuildTransition()
-                    .BuildNode()
-                    .AddNode()
-                        .WithName("end")
-                        .IsEndNode()
-                    .BuildNode()
-                .BuildWorkflow();
-            var workflowEngine = new WorkflowEngineBuilder().Build();
-            workflowEngine.CreateNewInstance(workflow).Start();
-
-            WorkflowDefinitionModel result = transformer.Transform(workflow);
-
-            var startNode = result.Nodes.First(n => n.Identifier == "node");
-            var transition = startNode.OutgoingTransitions.First();
-            Assert.That(transition.Executed);
         }
 
         [Test]

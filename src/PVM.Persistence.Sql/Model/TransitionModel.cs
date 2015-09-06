@@ -32,7 +32,6 @@ namespace PVM.Persistence.Sql.Model
 
         public string Source { get; set; }
         public string Destination { get; set; }
-        public bool Executed { get; set; }
         public bool IsDefault { get; set; }
 
         protected bool Equals(TransitionModel other)

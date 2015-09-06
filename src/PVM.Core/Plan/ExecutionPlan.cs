@@ -48,11 +48,11 @@ namespace PVM.Core.Plan
             this.serviceLocator = serviceLocator;
         }
 
-        public void OnExecutionStarting(Execution execution)
+        public void OnExecutionStarting(IExecution execution)
         {
         }
 
-        public void OnExecutionStopped(Execution execution)
+        public void OnExecutionStopped(IExecution execution)
         {
             IList<IExecution> activeExecutions = GetActiveExecutions(execution);
             if (activeExecutions.Any())
@@ -68,7 +68,7 @@ namespace PVM.Core.Plan
             }
         }
 
-        public void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier)
+        public void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
@@ -85,11 +85,11 @@ namespace PVM.Core.Plan
 
         public bool IsFinished { get; private set; }
 
-        public void OnExecutionResuming(Execution execution)
+        public void OnExecutionResuming(IExecution execution)
         {
         }
 
-        public void OnExecutionReachesWaitState(Execution execution)
+        public void OnExecutionReachesWaitState(IExecution execution)
         {
             serviceLocator.GetInstance<IPersistenceProvider>().Persist(execution);
         }

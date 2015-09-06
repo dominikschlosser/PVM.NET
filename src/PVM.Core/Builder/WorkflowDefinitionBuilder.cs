@@ -87,7 +87,7 @@ namespace PVM.Core.Builder
                     var targetNode = nodes[transitionData.Target];
                     Logger.DebugFormat("  - Source: {0}, Target: {1}", sourceNode.Identifier, targetNode.Identifier);
 
-                    var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, transitionData.Executed, sourceNode,
+                    var transitionToAdd = new Transition(transitionData.Name, transitionData.IsDefault, sourceNode,
                         targetNode);
                     sourceNode.AddOutgoingTransition(transitionToAdd);
                     targetNode.AddIncomingTransition(transitionToAdd);

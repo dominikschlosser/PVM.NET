@@ -54,10 +54,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExecutedTransitionBuilder.cs" />
-    <Compile Include="Migrations\201508310637072_InitialCreate.cs" />
-    <Compile Include="Migrations\201508310637072_InitialCreate.Designer.cs">
-      <DependentUpon>201508310637072_InitialCreate.cs</DependentUpon>
+    <Compile Include="Migrations\201509061056327_InitialCreate.cs" />
+    <Compile Include="Migrations\201509061056327_InitialCreate.Designer.cs">
+      <DependentUpon>201509061056327_InitialCreate.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Model\ExecutionModel.cs" />
@@ -69,7 +68,6 @@
     <Compile Include="PvmContext.cs" />
     <Compile Include="SqlPersistenceProvider.cs" />
     <Compile Include="Transform\WorkflowDefinitionTransformer.cs" />
-    <Compile Include="WorkflowBuilderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PVM.Core\PVM.Core.csproj">
@@ -81,8 +79,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201508310637072_InitialCreate.resx">
-      <DependentUpon>201508310637072_InitialCreate.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201509061056327_InitialCreate.resx">
+      <DependentUpon>201509061056327_InitialCreate.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

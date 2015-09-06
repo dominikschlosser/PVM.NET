@@ -32,10 +32,10 @@ namespace PVM.Core.Plan
         IWorkflowDefinition Definition { get; }
         bool IsFinished { get; }
         void Proceed(IExecution execution, IOperation operation);
-        void OnExecutionStarting(Execution execution);
-        void OnExecutionStopped(Execution execution);
-        void OnOutgoingTransitionIsNull(Execution execution, string transitionIdentifier);
-        void OnExecutionResuming(Execution execution);
-        void OnExecutionReachesWaitState(Execution execution);
+        void OnExecutionStarting(IExecution execution);
+        void OnExecutionStopped(IExecution execution);
+        void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier);
+        void OnExecutionResuming(IExecution execution);
+        void OnExecutionReachesWaitState(IExecution execution);
     }
 }

@@ -138,13 +138,26 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void CreateChild(INode startNode)
+        public void CreateChildren(IEnumerable<INode> nodes)
         {
             Stop();
-            var child = new Execution(this, Guid.NewGuid() + "_" + startNode.Identifier, executionPlan);
-            Children.Add(child);
 
-            child.Start(startNode, Data);
+            foreach (var node in nodes)
+            {
+                var child = new Execution(this, Guid.NewGuid() + "_" + node.Identifier, executionPlan);
+                child.CurrentNode = node;
+                child.IsActive = true;
+                child.Data = Data;
+                Children.Add(child);
+            }
+
+            foreach (var child in Children)
+            {
+                Logger.InfoFormat("Child-Execution '{0}' started.", child.Identifier);
+
+                executionPlan.OnExecutionStarting(child);
+                child.CurrentNode.Execute(child, executionPlan);
+            }
         }
 
         public void Accept(IExecutionVisitor visitor)
@@ -188,8 +201,6 @@ namespace PVM.Core.Runtime
 
             Logger.InfoFormat("Taking transition with name '{0}' to node '{1}'", transition.Identifier,
                 transition.Destination.Identifier);
-
-            transition.Executed = true;
 
             CurrentNode = transition.Destination;
             CurrentNode.Execute(this, executionPlan);

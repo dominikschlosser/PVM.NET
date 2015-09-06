@@ -71,7 +71,7 @@ namespace PVM.Core.Builder
             return new TransitionBuilder(this, name);
         }
 
-        public void AddTransition(TransitionData data)
+        internal void AddTransition(TransitionData data)
         {
             if (!transitions.Contains(data))
             {

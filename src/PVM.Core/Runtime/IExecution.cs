@@ -42,7 +42,7 @@ namespace PVM.Core.Runtime
         void Resume(INode currentNode);
         void Stop();
         void Start(INode startNode, IDictionary<string, object> data);
-        void CreateChild(INode startNode);
+        void CreateChildren(IEnumerable<INode> nodes);
         void Accept(IExecutionVisitor visitor);
         void Proceed(INode currentNode);
         void Wait(string signal);

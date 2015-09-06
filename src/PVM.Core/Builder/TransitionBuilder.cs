@@ -87,7 +87,7 @@ namespace PVM.Core.Builder
 
         public virtual NodeBuilder BuildTransition()
         {
-            parentNodeBuilder.AddTransition(new TransitionData(name, isDefault, target, source, false));
+            parentNodeBuilder.AddTransition(new TransitionData(name, isDefault, target, source));
             return parentNodeBuilder;
         }
     }

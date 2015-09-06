@@ -22,7 +22,6 @@
 #endregion
 
 using System.Linq;
-using log4net;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -30,8 +29,6 @@ namespace PVM.Core.Plan.Operations
 {
     public class ParallelSplitOperation : IOperation
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (ParallelSplitOperation));
-
         public void Execute(IExecution execution)
         {
             execution.Stop();
@@ -42,12 +39,7 @@ namespace PVM.Core.Plan.Operations
             }
             else
             {
-                foreach (var outgoingTransition in execution.CurrentNode.OutgoingTransitions)
-                {
-                    outgoingTransition.Executed = true;
-                    Logger.InfoFormat("Split to '{0}'", outgoingTransition.Identifier);
-                    execution.CreateChild(outgoingTransition.Destination);
-                }
+                execution.CreateChildren(execution.CurrentNode.OutgoingTransitions.Select(t => t.Destination));
             }
         }
     }

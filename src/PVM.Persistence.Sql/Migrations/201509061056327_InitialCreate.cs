@@ -56,7 +56,6 @@ namespace PVM.Persistence.Sql.Migrations
                         Identifier = c.String(nullable: false, maxLength: 128),
                         Source = c.String(),
                         Destination = c.String(),
-                        Executed = c.Boolean(nullable: false),
                         IsDefault = c.Boolean(nullable: false),
                         NodeModel_Identifier = c.String(maxLength: 128),
                     })

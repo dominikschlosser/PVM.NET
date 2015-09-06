@@ -36,12 +36,16 @@ namespace PVM.Core.Plan.Operations
         {
             execution.Stop();
 
-            foreach (var incomingTransition in execution.CurrentNode.IncomingTransitions)
+            if (execution.Parent != null)
             {
-                if (!incomingTransition.Executed)
+                foreach (var incomingExecution in execution.Parent.Children)
                 {
-                    Logger.InfoFormat("Transition '{0}' not taken yet. Waiting...", incomingTransition.Identifier);
-                    return;
+                    if (!incomingExecution.Identifier.Equals(execution.Identifier) && incomingExecution.IsActive)
+                    {
+                        Logger.InfoFormat("Transition from node '{0}' not taken yet. Waiting...",
+                            incomingExecution.CurrentNode.Identifier);
+                        return;
+                    }
                 }
             }
 
@@ -53,12 +57,7 @@ namespace PVM.Core.Plan.Operations
             }
             else
             {
-                foreach (var outgoingTransition in execution.CurrentNode.OutgoingTransitions)
-                {
-                    outgoingTransition.Executed = true;
-                    Logger.InfoFormat("Split to '{0}'", outgoingTransition.Identifier);
-                    owningExecution.CreateChild(outgoingTransition.Destination);
-                }
+                owningExecution.CreateChildren(execution.CurrentNode.OutgoingTransitions.Select(t => t.Destination));
             }
         }
     }

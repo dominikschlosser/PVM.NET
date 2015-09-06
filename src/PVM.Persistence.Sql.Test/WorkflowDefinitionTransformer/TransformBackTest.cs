@@ -188,33 +188,6 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         }
 
         [Test]
-        public void SetsExecutedPropertyOnTransition()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node",
-                OutgoingTransitions = new[]{new TransitionModel()
-                {
-                    Identifier = "transitionId",
-                    Executed = true,
-                    Source = "node",
-                    Destination = "destNode"
-                }}
-            });
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "destNode"
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            var transition = definition.Nodes.First(n => n.Identifier == "node").OutgoingTransitions.First();
-            Assert.That(transition.Executed);
-        }
-
-        [Test]
         public void AddsIncomingTransitionOnNode()
         {
             var model = new WorkflowDefinitionModel();
