@@ -62,6 +62,11 @@ namespace PVM.Core.Runtime
             persistenceProvider.Persist(definition);
         }
 
+        public ITaskRepository TaskRepository
+        {
+            get { return serviceLocator.GetInstance<ITaskRepository>(); }
+        }
+
         public IExecution StartNewInstance(IWorkflowDefinition definition)
         {
             return StartNewInstance(definition, null);

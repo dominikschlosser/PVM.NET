@@ -38,7 +38,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         public void ReturnsEmptyWorkflowDefinitionIfModelIsEmpty()
         {
             var model = new WorkflowDefinitionModel();
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -56,7 +56,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             {
                 Identifier = "node"
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -71,7 +71,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             {
                 Identifier = "node"
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -83,18 +83,16 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         public void AddsOperationToNode()
         {
             var model = new WorkflowDefinitionModel();
-            var operationResolver = new Mock<IOperationResolver>();
-            operationResolver.Setup(r => r.Resolve("myOperation")).Returns(new TestOperation());
             model.Nodes.Add(new NodeModel()
             {
                 Identifier = "node",
-                OperationType = "myOperation"
+                OperationType = typeof(TestOperation).AssemblyQualifiedName
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(operationResolver.Object);
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
-            Assert.That(definition.Nodes.First().Operation, Is.InstanceOf<TestOperation>());
+            Assert.That(definition.Nodes.First().Operation, Is.EqualTo(typeof(TestOperation)));
         }
 
         [Test]
@@ -106,7 +104,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
                 Identifier = "node",
                 IsInitialNode = true
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -123,7 +121,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
                 Identifier = "node",
                 IsEndNode = true
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -149,7 +147,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             {
                 Identifier = "destNode"
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -179,7 +177,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             {
                 Identifier = "destNode"
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -205,7 +203,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             {
                 Identifier = "destNode"
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 
@@ -236,7 +234,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
                 Identifier = "nested",
                 OperationType = typeof(StartSubProcessOperation).AssemblyQualifiedName
             });
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
 
             IWorkflowDefinition definition = transformer.TransformBack(model);
 

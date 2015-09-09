@@ -69,7 +69,7 @@ namespace PVM.Persistence.Sql.Test
                 .WithIdentifier("testWorkflowDefinition")
                 .AddNode()
                     .WithName("start")
-                    .WithOperation(new TestOperation())
+                    .WithOperation<TestOperation>()
                     .IsStartNode()
                     .AddTransition()
                         .WithName("transition")

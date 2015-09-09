@@ -33,6 +33,7 @@ using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Core.Utils;
 
 namespace PVM.Core.Plan
 {
@@ -112,7 +113,7 @@ namespace PVM.Core.Plan
             execution.Resume();
         }
 
-        public void Proceed(IExecution execution, IOperation operation)
+        public void Proceed(IExecution execution, INode node)
         {
             if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
@@ -120,6 +121,13 @@ namespace PVM.Core.Plan
             }
             else
             {
+                IOperation operation = serviceLocator.GetInstance(node.Operation) as IOperation;
+
+                if (operation == null)
+                {
+                    throw new InvalidOperationException(string.Format("'{0}' is not an operation", node.Operation.FullName));
+                }
+
                 Type genericOperationInterface = operation.GetType()
                                                           .GetInterfaces()
                                                           .FirstOrDefault(

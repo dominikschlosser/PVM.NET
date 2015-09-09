@@ -37,7 +37,7 @@ namespace PVM.Core.Definition
     public class WorkflowDefinition : Node, IWorkflowDefinition
     {
         public WorkflowDefinition(string identifier, INode initialNode, IList<INode> nodes,
-            IList<INode> endNodes) : base(identifier, new StartSubProcessOperation())
+            IList<INode> endNodes) : base(identifier, typeof(StartSubProcessOperation))
         {
             InitialNode = initialNode;
             Nodes = nodes;

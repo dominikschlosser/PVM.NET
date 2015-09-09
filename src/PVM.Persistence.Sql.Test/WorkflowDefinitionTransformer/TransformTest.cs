@@ -20,12 +20,10 @@
 #endregion
 
 using System.Linq;
-using Moq;
 using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
-using PVM.Core.Utils;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
@@ -36,7 +34,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void TransformsEmptyWorkflowDefinition()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var emptyWorkflow = new WorkflowDefinitionBuilder().BuildWorkflow();
 
             WorkflowDefinitionModel result = transformer.Transform(emptyWorkflow);
@@ -48,7 +46,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void TransformsSingleNodeWorkflowDefinition()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
@@ -65,7 +63,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void SetsInitialNodeProperty()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
@@ -80,7 +78,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void SetsWorkflowOperationTypeProperty()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
@@ -88,13 +86,13 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
                 .BuildWorkflow();
 
             WorkflowDefinitionModel result = transformer.Transform(workflow);
-            Assert.That(result.OperationType, Is.EqualTo(workflow.Operation.GetType().AssemblyQualifiedName));
+            Assert.That(result.OperationType, Is.EqualTo(workflow.Operation.AssemblyQualifiedName));
         }
 
         [Test]
         public void SetsEndNodeProperty()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
@@ -109,11 +107,11 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void SetsOperationTypeProperty()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
-                        .WithOperation(new TestOperation())
+                        .WithOperation<TestOperation>()
                     .BuildNode()
                 .BuildWorkflow();
 
@@ -124,7 +122,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void SetsIdentifierProperty()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .WithIdentifier("ident")
                     .AddNode()
@@ -139,7 +137,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void AddsOutgoingTransition()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
@@ -167,7 +165,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void SetDefaultPropertyOnTransition()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                     .AddNode()
                         .WithName("node")
@@ -192,7 +190,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         [Test]
         public void TransformsNestedWorkflow()
         {
-            var transformer = new Transform.WorkflowDefinitionTransformer(Mock.Of<IOperationResolver>());
+            var transformer = new Transform.WorkflowDefinitionTransformer();
             var workflow = new WorkflowDefinitionBuilder()
                 .WithIdentifier("testWorkflowDefinition")
                 .AddNode()

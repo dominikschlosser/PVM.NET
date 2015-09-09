@@ -21,30 +21,23 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PVM.Core.Builder;
 using PVM.Core.Definition;
-using PVM.Core.Utils;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Transform
 {
     public class WorkflowDefinitionTransformer
     {
-        private readonly IOperationResolver operationResolver;
-
-        public WorkflowDefinitionTransformer(IOperationResolver operationResolver)
-        {
-            this.operationResolver = operationResolver;
-        }
-
         public WorkflowDefinitionModel Transform(IWorkflowDefinition workflowDefinition)
         {
             var workflowDefinitionModel = new WorkflowDefinitionModel
             {
                 Identifier = workflowDefinition.Identifier,
-                OperationType = workflowDefinition.Operation.GetType().AssemblyQualifiedName
+                OperationType = workflowDefinition.Operation.AssemblyQualifiedName
             };
 
             foreach (var node in workflowDefinition.Nodes)
@@ -63,7 +56,7 @@ namespace PVM.Persistence.Sql.Transform
                 Identifier = node.Identifier,
                 IsInitialNode = Equals(parentWorkflow.InitialNode, node),
                 IsEndNode = parentWorkflow.EndNodes.Contains(node),
-                OperationType = node.Operation.GetType().AssemblyQualifiedName,
+                OperationType = node.Operation.AssemblyQualifiedName,
                 OutgoingTransitions = CreateOutgoingTransitions(node).ToList()
             };
         }
@@ -99,8 +92,12 @@ namespace PVM.Persistence.Sql.Transform
             foreach (var node in model.Nodes)
             {
                 NodeBuilder nodeBuilder = builder.AddNode()
-                                                 .WithName(node.Identifier)
-                                                 .WithOperation(operationResolver.Resolve(node.OperationType));
+                                                 .WithName(node.Identifier);
+
+                if (node.OperationType != null)
+                {
+                    nodeBuilder.WithOperation(Type.GetType(node.OperationType));
+                }
 
                 if (node.IsInitialNode)
                 {

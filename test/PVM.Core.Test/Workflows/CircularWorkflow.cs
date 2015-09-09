@@ -97,7 +97,7 @@ namespace PVM.Core.Test.Workflows
                 .BuildParallelSplit()
                 .AddNode()
                     .WithName("intermediate")
-                    .WithOperation(new CounterGateway())
+                    .WithOperation<CounterGateway>()
                     .AddTransition()
                         .WithName("intermediateToJoin")
                         .To("join")

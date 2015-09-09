@@ -124,9 +124,6 @@
     <Compile Include="Tasks\UserTask.cs" />
     <Compile Include="Utils\ContractException.cs" />
     <Compile Include="Utils\ContractExtensions.cs" />
-    <Compile Include="Utils\DefaultOperationResolver.cs" />
-    <Compile Include="Utils\NinjectOperationResolver.cs" />
-    <Compile Include="Utils\IOperationResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

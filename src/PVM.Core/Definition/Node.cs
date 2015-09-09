@@ -21,6 +21,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using PVM.Core.Plan;
 using PVM.Core.Plan.Operations.Base;
@@ -30,7 +31,7 @@ namespace PVM.Core.Definition
 {
     public interface INode
     {
-        IOperation Operation { get; }
+        Type Operation { get; }
         IEnumerable<Transition> IncomingTransitions { get; }
         IEnumerable<Transition> OutgoingTransitions { get; }
         string Identifier { get; }
@@ -43,20 +44,20 @@ namespace PVM.Core.Definition
     public class Node : INode
     {
         private readonly List<Transition> incomingTransitions = new List<Transition>();
-        private readonly IOperation operation;
+        private readonly Type operation;
         private readonly List<Transition> outgoingTransitions = new List<Transition>();
 
-        public Node(string identifier) : this(identifier, new TakeDefaultTransitionOperation())
+        public Node(string identifier) : this(identifier, typeof(TakeDefaultTransitionOperation))
         {
         }
 
-        public Node(string identifier, IOperation operation)
+        public Node(string identifier, Type operation)
         {
             this.operation = operation;
             Identifier = identifier;
         }
 
-        public IOperation Operation
+        public Type Operation
         {
             get { return operation; }
         }
@@ -85,7 +86,7 @@ namespace PVM.Core.Definition
 
         public virtual void Execute(IExecution execution, IExecutionPlan executionPlan)
         {
-            executionPlan.Proceed(execution, operation);
+            executionPlan.Proceed(execution, this);
         }
 
         protected bool Equals(Node other)

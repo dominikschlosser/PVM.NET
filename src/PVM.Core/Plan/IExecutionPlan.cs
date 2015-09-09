@@ -21,6 +21,7 @@
 
 #endregion
 
+using PVM.Core.Definition;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 
@@ -28,7 +29,7 @@ namespace PVM.Core.Plan
 {
     public interface IExecutionPlan
     {
-        void Proceed(IExecution execution, IOperation operation);
+        void Proceed(IExecution execution, INode node);
         void OnExecutionStarting(IExecution execution);
         void OnExecutionStopped(IExecution execution);
         void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier);

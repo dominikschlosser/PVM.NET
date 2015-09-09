@@ -26,7 +26,7 @@ using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
-using PVM.Core.Utils;
+
 using PVM.Persistence.Sql.Transform;
 
 namespace PVM.Persistence.Sql
@@ -36,9 +36,9 @@ namespace PVM.Persistence.Sql
         private readonly ExecutionDefinitionTransformer executionTransformer;
         private readonly WorkflowDefinitionTransformer workflowDefinitionTransformer;
 
-        public SqlPersistenceProvider(IObjectSerializer objectSerializer, IOperationResolver operationResolver)
+        public SqlPersistenceProvider(IObjectSerializer objectSerializer)
         {
-            workflowDefinitionTransformer = new WorkflowDefinitionTransformer(operationResolver);
+            workflowDefinitionTransformer = new WorkflowDefinitionTransformer();
             executionTransformer = new ExecutionDefinitionTransformer(objectSerializer);
         }
 

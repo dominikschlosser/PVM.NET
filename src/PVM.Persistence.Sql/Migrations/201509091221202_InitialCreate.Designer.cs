@@ -13,7 +13,7 @@ namespace PVM.Persistence.Sql.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201509061056327_InitialCreate"; }
+            get { return "201509091221202_InitialCreate"; }
         }
         
         string IMigrationMetadata.Source

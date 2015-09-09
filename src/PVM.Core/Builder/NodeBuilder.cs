@@ -36,7 +36,7 @@ namespace PVM.Core.Builder
         private bool isEndNode;
         private bool isStartNode;
         private string name = Guid.NewGuid().ToString();
-        private IOperation operation = new TakeDefaultTransitionOperation();
+        private Type operation = typeof(TakeDefaultTransitionOperation);
 
         public NodeBuilder(WorkflowDefinitionBuilder parentWorkflowBuilder)
         {
@@ -48,13 +48,23 @@ namespace PVM.Core.Builder
             get { return name; }
         }
 
-        public NodeBuilder WithOperation(IOperation operation)
+        public NodeBuilder WithOperation<T>() where T : IOperation
         {
-            this.operation = operation;
+            this.operation = typeof(T);
 
             return this;
         }
 
+        public NodeBuilder WithOperation(Type type)
+        {
+            if (!typeof (IOperation).IsAssignableFrom(type))
+            {
+                throw new ArgumentException(string.Format("Type '{0}' is not an operation"));
+            }
+
+            operation = type;
+            return this;
+        }
         public NodeBuilder WithName(string name)
         {
             this.name = name;
@@ -117,17 +127,17 @@ namespace PVM.Core.Builder
 
         public IWorkflowPathBuilder BuildParallelGateway()
         {
-            return BuildNode(n => new Node(n, new ParallelGatewayOperation()));
+            return BuildNode(n => new Node(n, typeof(ParallelGatewayOperation)));
         }
 
         public IWorkflowPathBuilder BuildParallelSplit()
         {
-            return BuildNode(n => new Node(n, new ParallelSplitOperation()));
+            return BuildNode(n => new Node(n, typeof(ParallelSplitOperation)));
         }
 
         public IWorkflowPathBuilder BuildParallelJoin()
         {
-            return BuildNode(n => new Node(n, new ParallelJoinOperation()));
+            return BuildNode(n => new Node(n, typeof(ParallelJoinOperation)));
         }
     }
 }

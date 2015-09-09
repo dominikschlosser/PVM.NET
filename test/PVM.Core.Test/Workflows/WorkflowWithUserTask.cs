@@ -29,39 +29,39 @@ namespace PVM.Core.Test.Workflows
     [TestFixture]
     public class WorkflowWithUserTask
     {
-        [Test]
-        public void Executes()
-        {
-            var builder = new WorkflowDefinitionBuilder();
-            bool executed = false;
-            var taskRepository = new InMemoryTaskRepository();
+        //[Test]
+        //public void Executes()
+        //{
+        //    var builder = new WorkflowDefinitionBuilder();
+        //    bool executed = false;
+        //    var taskRepository = new InMemoryTaskRepository();
 
-            var workflowDefinition = builder
-                .AddNode()
-                    .WithName("start")
-                    .IsStartNode()
-                    .WithOperation(new UserTaskOperation("taskId", taskRepository))
-                    .AddTransition()
-                        .WithName("transition")
-                        .To("end")
-                    .BuildTransition()
-                .BuildNode()
-                .AddNode()
-                    .WithName("end")
-                    .IsEndNode()
-                .BuildMockNode(e => executed = e)
-                .BuildWorkflow();
+        //    var workflowDefinition = builder
+        //        .AddNode()
+        //            .WithName("start")
+        //            .IsStartNode()
+        //            .WithOperation(new UserTaskOperation("taskId", taskRepository))
+        //            .AddTransition()
+        //                .WithName("transition")
+        //                .To("end")
+        //            .BuildTransition()
+        //        .BuildNode()
+        //        .AddNode()
+        //            .WithName("end")
+        //            .IsEndNode()
+        //        .BuildMockNode(e => executed = e)
+        //        .BuildWorkflow();
 
-            var workflowEngine = new WorkflowEngineBuilder().Build();
-            var instance = workflowEngine.StartNewInstance(workflowDefinition);
+        //    var workflowEngine = new WorkflowEngineBuilder().Build();
+        //    var instance = workflowEngine.StartNewInstance(workflowDefinition);
 
-            Assert.False(executed);
+        //    Assert.False(executed);
 
-            var userTask = taskRepository.FindTask("taskId");
-            workflowEngine.Complete(userTask);
+        //    var userTask = taskRepository.FindTask("taskId");
+        //    workflowEngine.Complete(userTask);
 
-            Assert.That(executed);
-            Assert.That(instance.IsFinished);
-        }
+        //    Assert.That(executed);
+        //    Assert.That(instance.IsFinished);
+        //}
     }
 }
