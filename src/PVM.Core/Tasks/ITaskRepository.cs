@@ -28,6 +28,6 @@ namespace PVM.Core.Tasks
         void Add(UserTask userTask);
 
         [CanBeNull]
-        UserTask FindTask(string taskid);
+        UserTask FindTask(string taskName);
     }
 }

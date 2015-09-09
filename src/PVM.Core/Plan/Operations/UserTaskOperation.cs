@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="UserTaskOperation.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,6 +18,7 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
 using PVM.Core.Plan.Operations.Base;
@@ -25,20 +27,18 @@ using PVM.Core.Tasks;
 
 namespace PVM.Core.Plan.Operations
 {
-    public class UserTaskOperation : IOperation
+    internal class UserTaskOperation : IOperation
     {
         private readonly ITaskRepository taskRepository;
-        private readonly string taskIdentifier;
 
-        public UserTaskOperation(string taskIdentifier, ITaskRepository taskRepository)
+        public UserTaskOperation(ITaskRepository taskRepository)
         {
             this.taskRepository = taskRepository;
-            this.taskIdentifier = taskIdentifier;
         }
 
         public void Execute(IExecution execution)
         {
-            taskRepository.Add(new UserTask(taskIdentifier, execution.Identifier));
+            taskRepository.Add(new UserTask(execution.CurrentNode.Identifier, execution.Identifier));
             execution.Wait();
         }
     }

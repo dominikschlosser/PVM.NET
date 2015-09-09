@@ -33,16 +33,16 @@ namespace PVM.Core.Plan.Operations
 
         public void Execute(IExecution execution)
         {
-            execution.Stop();
-
             if (execution.Parent != null)
             {
+                execution.Kill();
+
                 foreach (var incomingExecution in execution.Parent.Children)
                 {
-                    if (!incomingExecution.Identifier.Equals(execution.Identifier) && incomingExecution.IsActive)
+                    if (!incomingExecution.Identifier.Equals(execution.Identifier) && !incomingExecution.IsFinished)
                     {
-                        Logger.InfoFormat("Transition from node '{0}' not taken yet. Waiting...",
-                            incomingExecution.CurrentNode.Identifier);
+                        Logger.InfoFormat("Transition from node '{0}' in execution '{1}' not taken yet. Waiting...",
+                            incomingExecution.CurrentNode.Identifier, incomingExecution.Identifier);
                         return;
                     }
                 }
@@ -51,7 +51,8 @@ namespace PVM.Core.Plan.Operations
             }
             else
             {
-                execution.Resume();
+                // If we are here this operation is not actually used to join execution paths. TODO: Maybe throw?
+                execution.Proceed();
             }
 
             

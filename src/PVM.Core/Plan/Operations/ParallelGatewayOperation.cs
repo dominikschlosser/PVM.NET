@@ -34,30 +34,39 @@ namespace PVM.Core.Plan.Operations
 
         public void Execute(IExecution execution)
         {
-            execution.Stop();
-
-            if (execution.Parent != null)
+            if (execution.Parent == null)
             {
-                foreach (var incomingExecution in execution.Parent.Children)
-                {
-                    if (!incomingExecution.Identifier.Equals(execution.Identifier) && incomingExecution.IsActive)
-                    {
-                        Logger.InfoFormat("Transition from node '{0}' not taken yet. Waiting...",
-                            incomingExecution.CurrentNode.Identifier);
-                        return;
-                    }
-                }
-            }
+                execution.Stop();
 
-            var owningExecution = execution.Parent ?? execution;
-
-            if (execution.CurrentNode.OutgoingTransitions.Count() == 1)
-            {
-                owningExecution.Resume(execution.CurrentNode);
+                Split(execution, execution);
             }
             else
             {
-                owningExecution.CreateChildren(execution.CurrentNode.OutgoingTransitions.Select(t => t.Destination));
+                execution.Kill();
+
+                foreach (var incomingExecution in execution.Parent.Children)
+                {
+                    if (!incomingExecution.Identifier.Equals(execution.Identifier) && !incomingExecution.IsFinished)
+                    {
+                        Logger.InfoFormat("Transition from node '{0}' in execution '{1}' not taken yet. Waiting...",
+                            incomingExecution.CurrentNode.Identifier, incomingExecution.Identifier);
+                        return;
+                    }
+                }
+
+                Split(execution, execution.Parent);
+            }
+        }
+
+        private void Split(IExecution execution, IExecution owning)
+        {
+            if (execution.CurrentNode.OutgoingTransitions.Count() == 1)
+            {
+                owning.Resume(execution.CurrentNode);
+            }
+            else
+            {
+                owning.CreateChildren(execution.CurrentNode.OutgoingTransitions.Select(t => t.Destination));
             }
         }
     }

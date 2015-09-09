@@ -80,5 +80,57 @@ namespace PVM.Core.Test.Workflows
             Assert.That(executed);
             Assert.That(instance.IsFinished);
         }
+
+        [Test]
+        public void WithExplicitSplitAndJoinOperations()
+        {
+            var builder = new WorkflowDefinitionBuilder();
+            bool executed = false;
+
+            var workflowDefinition = builder
+                .AddNode()
+                    .WithName("split")
+                    .IsStartNode()
+                 .AddTransition()
+                        .WithName("transition1")
+                        .To("subNode1")
+                    .BuildTransition()
+                    .AddTransition()
+                        .WithName("transition2")
+                        .To("subNode2")
+                    .BuildTransition()
+                .BuildParallelSplit()
+                .AddNode()
+                    .WithName("subNode1")
+                    .AddTransition()
+                        .WithName("subNodeToEnd")
+                        .To("join")
+                    .BuildTransition()
+                .BuildNode()
+                .AddNode()
+                    .WithName("subNode2")
+                    .AddTransition()
+                        .WithName("subNode2ToEnd")
+                        .To("join")
+                    .BuildTransition()
+                .BuildNode()
+                .AddNode()
+                    .WithName("join")
+                    .AddTransition()
+                        .WithName("joinToEnd")
+                        .To("end")
+                    .BuildTransition()
+                .BuildParallelJoin()
+                .AddNode()
+                    .WithName("end")
+                    .IsEndNode()
+                .BuildMockNode(e => executed = e)
+                .BuildWorkflow();
+
+            var instance = new WorkflowEngineBuilder().Build().StartNewInstance(workflowDefinition);
+
+            Assert.That(executed);
+            Assert.That(instance.IsFinished);
+        }
     }
 }

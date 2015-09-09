@@ -36,7 +36,6 @@ namespace PVM.Core.Runtime
         IExecutionPlan Plan { get; }
         bool IsFinished { get; }
         bool IsActive { get; }
-        bool IsPaused { get; }
         IDictionary<string, object> Data { get; }
         void Proceed();
         void Proceed(string transitionName);

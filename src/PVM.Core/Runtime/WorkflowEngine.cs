@@ -107,5 +107,11 @@ namespace PVM.Core.Runtime
 
             execution.Signal();
         }
+
+        [CanBeNull]
+        public UserTask FindTask(string taskName)
+        {
+            return TaskRepository.FindTask(taskName);
+        }
     }
 }

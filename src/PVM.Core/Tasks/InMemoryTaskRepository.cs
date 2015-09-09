@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="InMemoryTaskRepository.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,6 +18,7 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
 using System.Collections.Generic;
@@ -25,8 +27,8 @@ namespace PVM.Core.Tasks
 {
     public class InMemoryTaskRepository : ITaskRepository
     {
-        private readonly IDictionary<string, UserTask> tasks = new Dictionary<string, UserTask>();
- 
+        private IDictionary<string, UserTask> tasks = new Dictionary<string, UserTask>();
+
         public void Add(UserTask userTask)
         {
             tasks.Add(userTask.TaskIdentifier, userTask);
