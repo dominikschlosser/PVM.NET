@@ -130,19 +130,9 @@ namespace PVM.Core.Builder
             return BuildNode(n => new Node(n, typeof(ParallelGatewayOperation)));
         }
 
-        public IWorkflowPathBuilder BuildParallelSplit()
-        {
-            return BuildNode(n => new Node(n, typeof(ParallelSplitOperation)));
-        }
-
         public IWorkflowPathBuilder BuildUserTask()
         {
             return BuildNode(n => new Node(n, typeof(UserTaskOperation)));
-        }
-
-        public IWorkflowPathBuilder BuildParallelJoin()
-        {
-            return BuildNode(n => new Node(n, typeof(ParallelJoinOperation)));
         }
     }
 }

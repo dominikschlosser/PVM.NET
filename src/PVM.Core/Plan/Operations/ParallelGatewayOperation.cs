@@ -25,6 +25,7 @@ using System.Linq;
 using log4net;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Algorithms;
 
 namespace PVM.Core.Plan.Operations
 {
@@ -34,40 +35,34 @@ namespace PVM.Core.Plan.Operations
 
         public void Execute(IExecution execution)
         {
-            if (execution.Parent == null)
-            {
-                execution.Stop();
+            execution.Stop();
 
-                Split(execution, execution);
+            var root = execution.Parent ?? execution;
+
+            int incomingTransitionCount = execution.CurrentNode.IncomingTransitions.Count();
+
+            // start node
+            if (incomingTransitionCount == 0)
+            {
+                incomingTransitionCount = 1;
+            }
+
+            var executionCollector = new ExecutionCollector(e => !e.IsActive && e.CurrentNode == execution.CurrentNode);
+            root.Accept(executionCollector);
+            int joinedTransitionCount = executionCollector.Result.Count;
+
+            if (incomingTransitionCount == joinedTransitionCount)
+            {
+
+                root.ProceedConcurrently(execution.CurrentNode);
             }
             else
             {
-                execution.Kill();
-
-                foreach (var incomingExecution in execution.Parent.Children)
-                {
-                    if (!incomingExecution.Identifier.Equals(execution.Identifier) && !incomingExecution.IsFinished)
-                    {
-                        Logger.InfoFormat("Transition from node '{0}' in execution '{1}' not taken yet. Waiting...",
-                            incomingExecution.CurrentNode.Identifier, incomingExecution.Identifier);
-                        return;
-                    }
-                }
-
-                Split(execution, execution.Parent);
+                Logger.InfoFormat("Cannot join in node '{0}' yet. Joined: {1}, To join: {2}. Waiting...",
+                            execution.CurrentNode.Identifier, joinedTransitionCount, incomingTransitionCount);
             }
+
         }
 
-        private void Split(IExecution execution, IExecution owning)
-        {
-            if (execution.CurrentNode.OutgoingTransitions.Count() == 1)
-            {
-                owning.Resume(execution.CurrentNode);
-            }
-            else
-            {
-                owning.CreateChildren(execution.CurrentNode.OutgoingTransitions.Select(t => t.Destination));
-            }
-        }
     }
 }

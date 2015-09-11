@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="ParallelSplitOperation.cs" company="PVM.NET Project Contributors">
+//  <copyright file="IExecutionVisitor.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,26 +21,10 @@
 
 #endregion
 
-using System.Linq;
-using PVM.Core.Plan.Operations.Base;
-using PVM.Core.Runtime;
-
-namespace PVM.Core.Plan.Operations
+namespace PVM.Core.Runtime.Algorithms
 {
-    public class ParallelSplitOperation : IOperation
+    public interface IExecutionVisitor
     {
-        public void Execute(IExecution execution)
-        {
-            execution.Stop();
-
-            if (execution.CurrentNode.OutgoingTransitions.Count() == 1)
-            {
-                execution.Resume();
-            }
-            else
-            {
-                execution.CreateChildren(execution.CurrentNode.OutgoingTransitions.Select(t => t.Destination));
-            }
-        }
+        void Visit(IExecution execution);
     }
 }

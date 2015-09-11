@@ -28,6 +28,7 @@ using JetBrains.Annotations;
 using log4net;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
+using PVM.Core.Runtime.Algorithms;
 
 namespace PVM.Core.Runtime
 {
@@ -140,25 +141,36 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void CreateChildren(IEnumerable<INode> nodes)
+        public void ProceedConcurrently(INode node)
         {
             Stop();
 
-            foreach (var node in nodes)
+            if (node.OutgoingTransitions.Count() == 1)
             {
-                var child = new Execution(this, Guid.NewGuid() + "_" + node.Identifier, executionPlan);
-                child.CurrentNode = node;
+                Resume(node);
+                return;
+            }
+
+            var outgoingExecutions = new List<IExecution>();
+            Children.Clear();
+
+            foreach (var outgoingTransition in node.OutgoingTransitions)
+            {
+                var outgoingNode = outgoingTransition.Destination;
+                var child = new Execution(this, Guid.NewGuid() + "_" + outgoingNode.Identifier, executionPlan);
+                child.CurrentNode = outgoingNode;
                 child.IsActive = true;
                 child.Data = Data;
+                outgoingExecutions.Add(child);
                 Children.Add(child);
             }
 
-            foreach (var child in Children)
+            foreach (var outgoing in outgoingExecutions)
             {
-                Logger.InfoFormat("Child-Execution '{0}' started.", child.Identifier);
+                Logger.InfoFormat("Child-Execution '{0}' started.", outgoing.Identifier);
 
-                executionPlan.OnExecutionStarting(child);
-                child.CurrentNode.Execute(child, executionPlan);
+                executionPlan.OnExecutionStarting(outgoing);
+                outgoing.CurrentNode.Execute(outgoing, executionPlan);
             }
         }
 
@@ -233,6 +245,11 @@ namespace PVM.Core.Runtime
             IsFinished = true;
             IsActive = false;
             Logger.InfoFormat("Execution '{0}' was killed.", Identifier);
+
+            foreach (var child in Children)
+            {
+                child.Kill();
+            }
         }
     }
 }

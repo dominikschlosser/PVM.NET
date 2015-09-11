@@ -55,48 +55,30 @@ namespace PVM.Core.Plan
 
         public void OnExecutionStopped(IExecution execution)
         {
-            IList<IExecution> activeExecutions = GetActiveExecutions(execution);
-            if (activeExecutions.Any())
-            {
-                Logger.InfoFormat("Execution '{0}' stopped but the following are still active: '{1}'",
-                    execution.Identifier,
-                    activeExecutions.Select(e => e.Identifier).Aggregate((e1, e2) => e1 + ", " + e2));
-            }
-            else if (!execution.CurrentNode.OutgoingTransitions.Any())
-            {
-                execution.Kill();
-                KillInactiveParentExecution(execution.Parent);
-            }
-            else
-            {
-                Logger.InfoFormat("Execution '{0}' stopped but has the following outgoing transitions: '{1}'",
-                    execution.Identifier,
-                    execution.CurrentNode.OutgoingTransitions.Select(t => t.Identifier).Aggregate((t1, t2) => t1 + ", " + t2));
-            }
+            CheckIfEnded(execution);
         }
 
-        private void KillInactiveParentExecution(IExecution parent)
+        private bool CheckIfEnded(IExecution execution)
         {
-            if (parent != null && !parent.IsActive)
+            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
             {
-                parent.Kill();
-                KillInactiveParentExecution(parent.Parent);
+                Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
+                execution.Kill();
+
+                return true;
             }
+
+            return false;
         }
 
         public void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier)
         {
-            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
+            if (!CheckIfEnded(execution))
             {
-                Logger.InfoFormat("Execution '{0}' ended in null transition. Stopping...", execution.Identifier);
-                execution.Stop();
-
-                return;
+                throw new TransitionNotFoundException(string.Format(
+                    "Outgoing transition with name '{0}' not found for node {1}", transitionIdentifier,
+                    execution.CurrentNode.Identifier));
             }
-
-            throw new TransitionNotFoundException(string.Format(
-                "Outgoing transition with name '{0}' not found for node {1}", transitionIdentifier,
-                execution.CurrentNode.Identifier));
         }
 
         public void OnExecutionResuming(IExecution execution)
@@ -121,7 +103,7 @@ namespace PVM.Core.Plan
             }
             else
             {
-                IOperation operation = serviceLocator.GetInstance(node.Operation) as IOperation;
+                var operation = serviceLocator.GetInstance(node.Operation) as IOperation;
 
                 if (operation == null)
                 {
@@ -150,20 +132,6 @@ namespace PVM.Core.Plan
                     operation.Execute(execution);
                 }
             }
-        }
-
-        private IList<IExecution> GetActiveExecutions(IExecution execution)
-        {
-            var results = new List<IExecution>();
-            execution.Accept(new ExecutionVisitor(e =>
-            {
-                if (e.IsActive)
-                {
-                    results.Add(e);
-                }
-            }));
-
-            return results;
         }
     }
 }

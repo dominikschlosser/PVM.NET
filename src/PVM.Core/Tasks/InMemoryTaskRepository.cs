@@ -27,7 +27,7 @@ namespace PVM.Core.Tasks
 {
     public class InMemoryTaskRepository : ITaskRepository
     {
-        private IDictionary<string, UserTask> tasks = new Dictionary<string, UserTask>();
+        private readonly IDictionary<string, UserTask> tasks = new Dictionary<string, UserTask>();
 
         public void Add(UserTask userTask)
         {
@@ -36,6 +36,10 @@ namespace PVM.Core.Tasks
 
         public UserTask FindTask(string taskid)
         {
+            if (!tasks.ContainsKey(taskid))
+            {
+                return null;
+            }
             return tasks[taskid];
         }
     }

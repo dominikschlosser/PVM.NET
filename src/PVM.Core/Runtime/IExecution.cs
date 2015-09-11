@@ -24,6 +24,7 @@
 using System.Collections.Generic;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
+using PVM.Core.Runtime.Algorithms;
 
 namespace PVM.Core.Runtime
 {
@@ -43,7 +44,7 @@ namespace PVM.Core.Runtime
         void Resume(INode currentNode);
         void Stop();
         void Start(INode startNode, IDictionary<string, object> data);
-        void CreateChildren(IEnumerable<INode> nodes);
+        void ProceedConcurrently(INode node);
         void Accept(IExecutionVisitor visitor);
         void Proceed(INode currentNode);
         void Wait();

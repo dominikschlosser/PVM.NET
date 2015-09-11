@@ -117,5 +117,83 @@ namespace PVM.Core.Test.Workflows
             Assert.That(executed);
             Assert.That(instance.IsFinished);
         }
+
+        [Test]
+        public void JoinWaitsOnNestedTask()
+        {
+            var builder = new WorkflowDefinitionBuilder();
+            bool executed = false;
+
+            var workflowDefinition = builder
+                .AddNode()
+                    .WithName("start")
+                    .IsStartNode()
+                    .AddTransition()
+                        .To("task1")
+                   .BuildTransition()
+                   .AddTransition()
+                        .To("path2")
+                    .BuildTransition()
+                .BuildParallelGateway()
+                .AddNode()
+                    .WithName("task1")
+                    .AddTransition()
+                        .To("join")
+                    .BuildTransition()
+                .BuildUserTask()
+                .AddNode()
+                    .WithName("path2")
+                    .AddTransition()
+                        .To("nestedSplit")
+                    .BuildTransition()
+                .BuildNode()
+                .AddNode()
+                    .WithName("nestedSplit")
+                    .AddTransition()
+                        .To("nestedTask")
+                    .BuildTransition()
+                    .AddTransition()
+                        .To("nestedPath2")
+                    .BuildTransition()
+                .BuildParallelGateway()
+                .AddNode()
+                    .WithName("nestedTask")
+                    .AddTransition()
+                        .To("join")
+                    .BuildTransition()
+                .BuildUserTask()
+                .AddNode()
+                    .WithName("nestedPath2")
+                    .AddTransition()
+                        .To("join")
+                    .BuildTransition()
+                .BuildNode()
+                .AddNode()
+                    .WithName("join")
+                    .AddTransition()
+                        .To("end")
+                    .BuildTransition()
+                .BuildParallelGateway()
+                .AddNode()
+                    .WithName("end")
+                    .IsEndNode()
+                .BuildMockNode(e => executed = e)
+                .BuildWorkflow();
+
+            var workflowEngine = new WorkflowEngineBuilder().Build();
+            var instance = workflowEngine.StartNewInstance(workflowDefinition);
+
+            Assert.False(executed);
+
+            var userTask = workflowEngine.FindTask("task1");
+            workflowEngine.Complete(userTask);
+
+            Assert.False(executed);
+
+            var nestedTask = workflowEngine.FindTask("nestedTask");
+            workflowEngine.Complete(nestedTask);
+
+            Assert.That(instance.IsFinished);
+        }
     }
 }
