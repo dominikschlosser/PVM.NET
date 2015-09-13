@@ -39,10 +39,17 @@ namespace PVM.Core.Plan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
         private readonly IServiceLocator serviceLocator;
+        private readonly IWorkflowDefinition workflowDefinition;
 
-        public ExecutionPlan(IServiceLocator serviceLocator)
+        public ExecutionPlan(IServiceLocator serviceLocator, IWorkflowDefinition workflowDefinition)
         {
             this.serviceLocator = serviceLocator;
+            this.workflowDefinition = workflowDefinition;
+        }
+
+        public IWorkflowDefinition WorkflowDefinition
+        {
+            get { return workflowDefinition; }
         }
 
         public void OnExecutionStarting(IExecution execution)
@@ -70,7 +77,7 @@ namespace PVM.Core.Plan
 
         public void OnExecutionReachesWaitState(IExecution execution)
         {
-            serviceLocator.GetInstance<IPersistenceProvider>().Persist(execution);
+            serviceLocator.GetInstance<IPersistenceProvider>().Persist(execution, workflowDefinition);
         }
 
         public void OnExecutionSignaled(IExecution execution)

@@ -36,47 +36,44 @@ namespace PVM.Persistence.Sql.Transform
     public class ExecutionDefinitionTransformer
     {
         private readonly IObjectSerializer serializer;
-        private readonly IWorkflowDefinitionTransformer workflowDefinitionTransformer;
 
-        public ExecutionDefinitionTransformer(IObjectSerializer serializer,
-            IWorkflowDefinitionTransformer workflowDefinitionTransformer)
+        public ExecutionDefinitionTransformer(IObjectSerializer serializer)
         {
             this.serializer = serializer;
-            this.workflowDefinitionTransformer = workflowDefinitionTransformer;
         }
 
-        public ExecutionModel Transform(IExecution execution)
+        public ExecutionModel Transform(IExecution execution, IWorkflowDefinition definition)
         {
-            return CreateExecutionModel((dynamic)execution);
+            return CreateExecutionModel((dynamic)execution, definition);
         }
 
-        private ExecutionModel CreateExecutionModel(IExecution execution)
+        private ExecutionModel CreateExecutionModel(IExecution execution, IWorkflowDefinition definition)
         {
             var executionModel = new ExecutionModel();
-            PopulateExecutionModel(executionModel, execution);
+            PopulateExecutionModel(executionModel, execution, definition);
             return executionModel;
         }
 
-        private ExecutionModel CreateExecutionModel(IWorkflowInstance workflowInstance)
+        private ExecutionModel CreateExecutionModel(IWorkflowInstance workflowInstance, IWorkflowDefinition definition)
         {
             var workflowInstanceModel = new WorkflowInstanceModel
             {
-                WorkflowDefinition = workflowDefinitionTransformer.Transform(workflowInstance.Definition)
+                WorkflowDefinitionIdentifier = definition.Identifier
             };
-            PopulateExecutionModel(workflowInstanceModel, workflowInstance);
+            PopulateExecutionModel(workflowInstanceModel, workflowInstance, definition);
             return workflowInstanceModel;
 
         }
 
-        private void PopulateExecutionModel(ExecutionModel model, IExecution execution)
+        private void PopulateExecutionModel(ExecutionModel model, IExecution execution, IWorkflowDefinition definition)
         {
             model.Identifier = execution.Identifier;
             model.IsActive = execution.IsActive;
             model.IsFinished = execution.IsFinished;
             model.IncomingTransition = execution.IncomingTransition;
             model.CurrentNodeIdentifier = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier;
-            model.Parent = execution.Parent != null ? Transform(execution.Parent) : null;
-            model.Children = execution.Children.Select(Transform).ToList();
+            model.Parent = execution.Parent != null ? Transform(execution.Parent, definition) : null;
+            model.Children = execution.Children.Select(c => Transform(c, definition)).ToList();
             model.Variables = execution.Data.Select(entry => new ExecutionVariableModel
             {
                 Key = entry.Key,
@@ -100,15 +97,14 @@ namespace PVM.Persistence.Sql.Transform
                 throw new InvalidOperationException(string.Format("Execution root ({0}) is not of type workflow instance. (Requested execution id: {1})", root.Identifier, model.Identifier));
             }
 
-            var workflowDefinition = workflowDefinitionTransformer.TransformBack(workflowInstance.WorkflowDefinition);
-            var transformedRoot = TransformBack(root, null, workflowDefinition, plan);
+            var transformedRoot = TransformBack(root, null, plan);
 
             var collector = new ExecutionCollector(e => e.Identifier == model.Identifier);
             transformedRoot.Accept(collector);
             return collector.Result.First();
         }
 
-        private IExecution TransformBack(ExecutionModel model, IExecution parent, IWorkflowDefinition definition, IExecutionPlan plan)
+        private IExecution TransformBack(ExecutionModel model, IExecution parent, IExecutionPlan plan)
         {
             IDictionary<string, object> data = new Dictionary<string, object>();
             foreach (var variable in model.Variables)
@@ -118,11 +114,11 @@ namespace PVM.Persistence.Sql.Transform
             }
 
             IList<IExecution> children = new List<IExecution>();
-            var execution = new Execution(parent, definition.Nodes.FirstOrDefault(n => n.Identifier == model.CurrentNodeIdentifier), model.IsActive, model.IsFinished, data, model.IncomingTransition, model.Identifier, plan,
+            var execution = new Execution(parent, plan.WorkflowDefinition.Nodes.FirstOrDefault(n => n.Identifier == model.CurrentNodeIdentifier), model.IsActive, model.IsFinished, data, model.IncomingTransition, model.Identifier, plan,
                 children);
             foreach (var child in model.Children)
             {
-                children.Add(TransformBack(child, execution, definition, plan));
+                children.Add(TransformBack(child, execution, plan));
             }
 
             return execution;

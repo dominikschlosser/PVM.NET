@@ -50,12 +50,16 @@ namespace PVM.Core.Builder
         {
             AssembleTransitions();
 
-            return
-                new WorkflowDefinition.Builder().WithIdentifier(identifier)
-                                                   .WithInitialNode(startNode)
-                                                   .WithNodes(nodes.Values)
-                                                   .WithEndNodes(endNodes.Values)
-                                                   .Build();
+            var workflowDefinition = new WorkflowDefinition.Builder().WithIdentifier(identifier)
+                                                                                    .WithNodes(nodes.Values)
+                                                                                    .WithInitialNode(startNode)
+                                                                                    .WithEndNodes(endNodes.Values)
+                                                                                    .Build();
+
+            workflowDefinition.AddStartTransition();
+
+            
+            return workflowDefinition;
         }
 
         public WorkflowDefinition BuildWorkflow()

@@ -40,14 +40,14 @@ namespace PVM.Persistence.Sql
         public SqlPersistenceProvider(IObjectSerializer objectSerializer)
         {
             workflowDefinitionTransformer = new WorkflowDefinitionTransformer();
-            executionTransformer = new ExecutionDefinitionTransformer(objectSerializer, workflowDefinitionTransformer);
+            executionTransformer = new ExecutionDefinitionTransformer(objectSerializer);
         }
 
-        public void Persist(IExecution execution)
+        public void Persist(IExecution execution, IWorkflowDefinition definition)
         {
             using (var db = new PvmContext())
             {
-                var entity = executionTransformer.Transform(execution);
+                var entity = executionTransformer.Transform(execution, definition);
 
                 if (db.Executions.Any(e => e.Identifier == execution.Identifier))
                 {

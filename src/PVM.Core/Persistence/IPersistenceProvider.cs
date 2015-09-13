@@ -30,7 +30,7 @@ namespace PVM.Core.Persistence
 {
     public interface IPersistenceProvider
     {
-        void Persist(IExecution execution);
+        void Persist(IExecution execution, IWorkflowDefinition definition);
         void Persist(IWorkflowDefinition workflowDefinition);
 
         [CanBeNull]

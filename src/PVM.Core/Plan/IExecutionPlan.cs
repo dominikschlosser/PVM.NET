@@ -36,5 +36,6 @@ namespace PVM.Core.Plan
         void OnExecutionResuming(IExecution execution);
         void OnExecutionReachesWaitState(IExecution execution);
         void OnExecutionSignaled(IExecution execution);
+        IWorkflowDefinition WorkflowDefinition { get; }
     }
 }

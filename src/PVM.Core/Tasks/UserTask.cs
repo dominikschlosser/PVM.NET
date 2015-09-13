@@ -24,11 +24,13 @@ namespace PVM.Core.Tasks
     {
         private readonly string executionIdentifier;
         private readonly string taskIdentifier;
+        private readonly string workflowDefinitionIdentifier;
 
-        public UserTask(string taskIdentifier, string executionIdentifier)
+        public UserTask(string taskIdentifier, string executionIdentifier, string workflowDefinitionIdentifier)
         {
             this.taskIdentifier = taskIdentifier;
             this.executionIdentifier = executionIdentifier;
+            this.workflowDefinitionIdentifier = workflowDefinitionIdentifier;
         }
 
         public string ExecutionIdentifier
@@ -39,6 +41,11 @@ namespace PVM.Core.Tasks
         public string TaskIdentifier
         {
             get { return taskIdentifier; }
+        }
+
+        public string WorkflowDefinitionIdentifier
+        {
+            get { return workflowDefinitionIdentifier; }
         }
     }
 }

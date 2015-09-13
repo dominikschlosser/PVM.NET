@@ -104,7 +104,6 @@
     <Compile Include="Plan\Operations\ParallelGatewayOperation.cs" />
     <Compile Include="Plan\Operations\Base\TakeDefaultTransitionOperation.cs" />
     <Compile Include="Plan\IExecutionPlan.cs" />
-    <Compile Include="Plan\Operations\StartSubProcessOperation.cs" />
     <Compile Include="Plan\ExecutionPlan.cs" />
     <Compile Include="Plan\Operations\UserTaskOperation.cs" />
     <Compile Include="Plan\TransitionNotFoundException.cs" />

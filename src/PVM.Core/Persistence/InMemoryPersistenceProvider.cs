@@ -33,13 +33,22 @@ namespace PVM.Core.Persistence
         private readonly IDictionary<string, IWorkflowDefinition> workflowDefinitions = new Dictionary<string, IWorkflowDefinition>();
         private readonly IDictionary<string, IExecution> executions = new Dictionary<string, IExecution>(); 
 
-        public void Persist(IExecution execution)
+        public void Persist(IExecution execution, IWorkflowDefinition definition)
         {
+            if (executions.ContainsKey(execution.Identifier))
+            {
+                executions.Remove(execution.Identifier);
+            }
+
             executions.Add(execution.Identifier, execution);
         }
 
         public void Persist(IWorkflowDefinition workflowDefinition)
         {
+            if (workflowDefinitions.ContainsKey(workflowDefinition.Identifier))
+            {
+                workflowDefinitions.Remove(workflowDefinition.Identifier);
+            }
             workflowDefinitions.Add(workflowDefinition.Identifier, workflowDefinition);
         }
 

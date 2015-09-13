@@ -90,18 +90,19 @@ namespace PVM.Core.Runtime
                 throw new InvalidOperationException(string.Format("Workflow definition with identifier '{0}' not found", workflowDefinitionIdentifier));
             }
 
-            var executionPlan = new ExecutionPlan(serviceLocator);
+            var executionPlan = new ExecutionPlan(serviceLocator, workflowDefinition);
             var execution = new WorkflowInstance(workflowDefinitionIdentifier + "_" + Guid.NewGuid(), workflowDefinition, executionPlan);
             
-            persistenceProvider.Persist(execution);
-            execution.Start(workflowDefinition.InitialNode, DataMapper.ExtractData(data));
+            persistenceProvider.Persist(execution, workflowDefinition);
+            execution.Start(workflowDefinition, DataMapper.ExtractData(data));
 
             return execution;
         }
 
         public void Complete(UserTask task)
         {
-            IExecution execution = persistenceProvider.LoadExecution(task.ExecutionIdentifier, new ExecutionPlan(serviceLocator));
+            IWorkflowDefinition workflowDefinition = persistenceProvider.LoadWorkflowDefinition(task.WorkflowDefinitionIdentifier);
+            IExecution execution = persistenceProvider.LoadExecution(task.ExecutionIdentifier, new ExecutionPlan(serviceLocator, workflowDefinition));
             if (execution == null)
             {
                 throw new InvalidOperationException(string.Format("Execution with identifier '{0}' not found", task.ExecutionIdentifier));

@@ -94,7 +94,7 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             model.Nodes.Add(new WorkflowDefinitionModel
             {
                 Identifier = "nested",
-                OperationType = typeof (StartSubProcessOperation).AssemblyQualifiedName
+                OperationType = typeof (TakeDefaultTransitionOperation).AssemblyQualifiedName
             });
             var transformer = new Transform.WorkflowDefinitionTransformer();
 

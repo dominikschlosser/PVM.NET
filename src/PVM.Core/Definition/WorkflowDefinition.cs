@@ -23,7 +23,8 @@
 
 using System;
 using System.Collections.Generic;
-using PVM.Core.Plan.Operations;
+using System.Linq;
+using PVM.Core.Plan.Operations.Base;
 
 namespace PVM.Core.Definition
 {
@@ -36,33 +37,25 @@ namespace PVM.Core.Definition
 
     public class WorkflowDefinition : Node, IWorkflowDefinition
     {
-        public WorkflowDefinition(string identifier, INode initialNode, IList<INode> nodes,
-            IList<INode> endNodes) : base(identifier, typeof(StartSubProcessOperation))
+        public WorkflowDefinition(string identifier, IList<INode> nodes, IList<INode> endNodes, INode initialNode)
+            : base(identifier, typeof (TakeDefaultTransitionOperation))
         {
-            InitialNode = initialNode;
             Nodes = nodes;
             EndNodes = endNodes;
+            InitialNode = initialNode;
         }
+
 
         public IList<INode> Nodes { get; private set; }
         public IList<INode> EndNodes { get; private set; }
         public INode InitialNode { get; private set; }
 
-        public override void AddOutgoingTransition(Transition transition)
-        {
-            base.AddOutgoingTransition(transition);
-            foreach (INode endNode in EndNodes)
-            {
-                endNode.AddOutgoingTransition(transition);
-            }
-        }
-
         public class Builder
         {
-            private readonly List<INode> endNodes = new List<INode>();
             private readonly List<INode> nodes = new List<INode>();
-            private string identifier = Guid.NewGuid().ToString();
+            private readonly List<INode> endNodes = new List<INode>();
             private INode initialNode;
+            private string identifier = Guid.NewGuid().ToString();
 
             public Builder WithNodes(IEnumerable<INode> nodes)
             {
@@ -70,17 +63,10 @@ namespace PVM.Core.Definition
 
                 return this;
             }
-
+            
             public Builder WithEndNodes(IEnumerable<INode> nodes)
             {
-                endNodes.AddRange(nodes);
-
-                return this;
-            }
-
-            public Builder WithInitialNode(INode initial)
-            {
-                initialNode = initial;
+                this.endNodes.AddRange(nodes);
 
                 return this;
             }
@@ -92,9 +78,30 @@ namespace PVM.Core.Definition
                 return this;
             }
 
+            public Builder WithInitialNode(INode node)
+            {
+                initialNode = node;
+                return this;
+            }
             public WorkflowDefinition Build()
             {
-                return new WorkflowDefinition(identifier, initialNode, nodes, endNodes);
+                return new WorkflowDefinition(identifier, nodes, endNodes, initialNode);
+            }
+        }
+
+        public void AddStartTransition()
+        {
+            if (InitialNode != null)
+            {
+                base.AddOutgoingTransition(new Transition(Identifier + "_startTransition", true, this, InitialNode));
+            }
+        }
+
+        public override void AddOutgoingTransition(Transition transition)
+        {
+            foreach (INode node in EndNodes)
+            {
+                node.AddOutgoingTransition(new Transition(transition.Identifier, transition.IsDefault, node, transition.Destination));
             }
         }
     }

@@ -16,15 +16,13 @@ namespace PVM.Persistence.Sql.Migrations
                         IsActive = c.Boolean(nullable: false),
                         IsFinished = c.Boolean(nullable: false),
                         IncomingTransition = c.String(),
+                        WorkflowDefinitionIdentifier = c.String(),
                         Discriminator = c.String(nullable: false, maxLength: 128),
                         Parent_Identifier = c.String(maxLength: 128),
-                        WorkflowDefinition_Identifier = c.String(maxLength: 128),
                     })
                 .PrimaryKey(t => t.Identifier)
                 .ForeignKey("dbo.ExecutionModels", t => t.Parent_Identifier)
-                .ForeignKey("dbo.NodeModels", t => t.WorkflowDefinition_Identifier)
-                .Index(t => t.Parent_Identifier)
-                .Index(t => t.WorkflowDefinition_Identifier);
+                .Index(t => t.Parent_Identifier);
             
             CreateTable(
                 "dbo.ExecutionVariableModels",
@@ -73,7 +71,6 @@ namespace PVM.Persistence.Sql.Migrations
         
         public override void Down()
         {
-            DropForeignKey("dbo.ExecutionModels", "WorkflowDefinition_Identifier", "dbo.NodeModels");
             DropForeignKey("dbo.NodeModels", "WorkflowDefinitionModel_Identifier", "dbo.NodeModels");
             DropForeignKey("dbo.TransitionModels", "NodeModel_Identifier", "dbo.NodeModels");
             DropForeignKey("dbo.ExecutionVariableModels", "ExecutionModel_Identifier", "dbo.ExecutionModels");
@@ -81,7 +78,6 @@ namespace PVM.Persistence.Sql.Migrations
             DropIndex("dbo.TransitionModels", new[] { "NodeModel_Identifier" });
             DropIndex("dbo.NodeModels", new[] { "WorkflowDefinitionModel_Identifier" });
             DropIndex("dbo.ExecutionVariableModels", new[] { "ExecutionModel_Identifier" });
-            DropIndex("dbo.ExecutionModels", new[] { "WorkflowDefinition_Identifier" });
             DropIndex("dbo.ExecutionModels", new[] { "Parent_Identifier" });
             DropTable("dbo.TransitionModels");
             DropTable("dbo.NodeModels");

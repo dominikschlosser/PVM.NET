@@ -44,12 +44,13 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             private string incomingTransition = "incomingTransition";
             private bool finished;
             private bool active;
-            private IExecutionPlan plan = Mock.Of<IExecutionPlan>();
+            private Mock<IExecutionPlan> plan = new Mock<IExecutionPlan>();
             private readonly IList<ExecutionVariableModel> variables = new List<ExecutionVariableModel>();
             private IObjectSerializer objectSerializer = Mock.Of<IObjectSerializer>();
 
             public TestContext()
             {
+                plan.SetupGet(p => p.WorkflowDefinition).Returns(workflowDefinition.Object);
                 workflowDefinition.SetupGet(w => w.Nodes).Returns(workflowDefinitionNodes);
                 workflowDefinitionTransformer.Setup(t => t.TransformBack(It.IsAny<WorkflowDefinitionModel>()))
                                         .Returns(workflowDefinition.Object);
@@ -62,16 +63,15 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
 
             public IExecution ExecuteTransform(ExecutionModel executionModel)
             {
-                var transformer = new Transform.ExecutionDefinitionTransformer(objectSerializer, workflowDefinitionTransformer.Object);
+                var transformer = new Transform.ExecutionDefinitionTransformer(objectSerializer);
 
-                return transformer.TransformBack(executionModel, plan);
+                return transformer.TransformBack(executionModel, plan.Object);
             }
 
             private WorkflowInstanceModel BuildWorkflowInstanceModel()
             {
                 return new WorkflowInstanceModel()
                 {
-                    WorkflowDefinition = new WorkflowDefinitionModel(),
                     Identifier = identifier,
                     CurrentNodeIdentifier = currentNode,
                     Variables = variables,
@@ -113,12 +113,6 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             public TestContext Active()
             {
                 active = true;
-                return this;
-            }
-
-            public TestContext WithPlan(IExecutionPlan plan)
-            {
-                this.plan = plan;
                 return this;
             }
 
@@ -165,15 +159,6 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             IExecution result = new TestContext().Active().ExecuteTransform();
 
             Assert.That(result.IsActive);
-        }
-
-        [Test]
-        public void SetsPlan()
-        {
-            var plan = Mock.Of<IExecutionPlan>();
-            IExecution result = new TestContext().WithPlan(plan).ExecuteTransform();
-
-            Assert.That(result.Plan, Is.SameAs(plan));
         }
 
         [Test]
