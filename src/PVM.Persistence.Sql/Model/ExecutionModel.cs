@@ -23,9 +23,6 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using PVM.Core.Runtime;
-using PVM.Core.Serialization;
 
 namespace PVM.Persistence.Sql.Model
 {
@@ -38,6 +35,8 @@ namespace PVM.Persistence.Sql.Model
         public virtual IList<ExecutionModel> Children { get; set; }
         public virtual string CurrentNodeIdentifier { get; set; }
         public bool IsActive { get; set; }
+        public bool IsFinished { get; set; }
+        public string IncomingTransition { get; set; }
         public virtual IList<ExecutionVariableModel> Variables { get; set; }
 
         protected bool Equals(ExecutionModel other)
@@ -49,7 +48,7 @@ namespace PVM.Persistence.Sql.Model
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((ExecutionModel) obj);
         }
 

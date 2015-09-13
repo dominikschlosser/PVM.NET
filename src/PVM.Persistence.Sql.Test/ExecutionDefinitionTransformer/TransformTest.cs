@@ -42,7 +42,9 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             private string executionIdentifier;
             private IExecution parent;
             private readonly IList<IExecution> children = new List<IExecution>(); 
-            private IDictionary<string, object> variables = new Dictionary<string, object>(); 
+            private IDictionary<string, object> variables = new Dictionary<string, object>();
+            private bool finished;
+            private string incomingTransition;
 
             public TestExecutionBuilder WithIdentifier(string identifier)
             {
@@ -65,6 +67,8 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
                 execution.SetupGet(e => e.Parent).Returns(parent);
                 execution.SetupGet(e => e.Children).Returns(children);
                 execution.SetupGet(e => e.Data).Returns(variables);
+                execution.SetupGet(e => e.IsFinished).Returns(true);
+                execution.SetupGet(e => e.IncomingTransition).Returns(incomingTransition);
 
                 return execution.Object;
             }
@@ -90,6 +94,19 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             public TestExecutionBuilder WithVariables(Dictionary<string, object> variables)
             {
                 this.variables = variables;
+                return this;
+                
+            }
+
+            public TestExecutionBuilder IsFinished()
+            {
+                finished = true;
+                return this;
+            }
+
+            public TestExecutionBuilder WithIncomingTransition(string transitionName)
+            {
+                incomingTransition = transitionName;
                 return this;
                 
             }
@@ -190,6 +207,28 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             Assert.That(result.Variables.First().ValueType, Is.EqualTo(typeof(ComplexVariableType).AssemblyQualifiedName));
         }
 
+        [Test]
+        public void SetsIsFinishedProperty()
+        {
+            var execution = new TestExecutionBuilder().IsFinished().BuildExecution();
+            var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
+
+            ExecutionModel result = transformer.Transform(execution);
+
+            Assert.That(result.IsFinished, Is.True);
+        }
+
+        [Test]
+        public void SetsIncomingTransitionProperty()
+        {
+            string transitionName = "tansitionName";
+            var execution = new TestExecutionBuilder().WithIncomingTransition(transitionName).BuildExecution();
+            var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
+
+            ExecutionModel result = transformer.Transform(execution);
+
+            Assert.That(result.IncomingTransition, Is.EqualTo(transitionName));
+        }
         private class ComplexVariableType
         {
             public string Identifier { get; set; }

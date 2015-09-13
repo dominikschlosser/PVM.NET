@@ -41,6 +41,8 @@ namespace PVM.Persistence.Sql.Transform
             {
                 Identifier = execution.Identifier,
                 IsActive = execution.IsActive,
+                IsFinished = execution.IsFinished,
+                IncomingTransition = execution.IncomingTransition,
                 CurrentNodeIdentifier = execution.CurrentNode.Identifier,
                 Parent = execution.Parent != null ? Transform(execution.Parent) : null,
                 Children = execution.Children.Select(Transform).ToList(),
