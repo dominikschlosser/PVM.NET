@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExecutionDefinitionTransformer\TransformBackTest.cs" />
     <Compile Include="ExecutionDefinitionTransformer\TransformTest.cs" />
     <Compile Include="NestedWorkflowPersistenceDbTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

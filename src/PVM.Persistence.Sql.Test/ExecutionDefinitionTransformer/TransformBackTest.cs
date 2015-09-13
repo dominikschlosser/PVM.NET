@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="IPersistenceProvider.cs" company="PVM.NET Project Contributors">
+//  <copyright file="TransformBackTest.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,25 +17,29 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using JetBrains.Annotations;
-using PVM.Core.Definition;
+using Moq;
+using NUnit.Framework;
 using PVM.Core.Plan;
 using PVM.Core.Runtime;
+using PVM.Core.Serialization;
+using PVM.Persistence.Sql.Model;
 
-namespace PVM.Core.Persistence
+namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
 {
-    public interface IPersistenceProvider
+    [TestFixture]
+    public class TransformBackTest
     {
-        void Persist(IExecution execution);
-        void Persist(IWorkflowDefinition workflowDefinition);
+        [Test]
+        public void SetsIdentifier()
+        {
+            var model = new ExecutionModel() {Identifier = "myIdentifier"};
+            var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-        [CanBeNull]
-        IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier);
+            IExecution result = transformer.TransformBack(model, Mock.Of<IExecutionPlan>());
 
-        [CanBeNull]
-        IExecution LoadExecution(string executionIdentifier, IExecutionPlan executionPlan);
+            Assert.That(result.Identifier, Is.EqualTo("myIdentifier"));
+        }
     }
 }

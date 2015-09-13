@@ -50,6 +50,7 @@ namespace PVM.Core.Definition
 
         public override void AddOutgoingTransition(Transition transition)
         {
+            base.AddOutgoingTransition(transition);
             foreach (INode endNode in EndNodes)
             {
                 endNode.AddOutgoingTransition(transition);

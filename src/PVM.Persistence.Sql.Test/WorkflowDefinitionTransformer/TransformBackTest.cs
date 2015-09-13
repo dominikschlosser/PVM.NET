@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="TransformBackTest.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,16 +18,15 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
 using System.Linq;
-using Moq;
 using NUnit.Framework;
 using PVM.Core.Definition;
 using PVM.Core.Plan.Operations;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
-using PVM.Core.Utils;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
@@ -34,172 +34,31 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
     [TestFixture]
     public class TransformBackTest
     {
-        [Test]
-        public void ReturnsEmptyWorkflowDefinitionIfModelIsEmpty()
+        private class TestOperation : IOperation
         {
-            var model = new WorkflowDefinitionModel();
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            Assert.That(definition, Is.Not.Null);
-            Assert.That(definition.Nodes, Is.Empty);
-            Assert.That(definition.OutgoingTransitions, Is.Empty);
-            Assert.That(definition.IncomingTransitions, Is.Empty);
-        }
-
-        [Test]
-        public void SetsWorkflowIdentifier()
-        {
-            var model = new WorkflowDefinitionModel() {Identifier = "identifier"};
-            model.Nodes.Add(new NodeModel()
+            public void Execute(IExecution execution)
             {
-                Identifier = "node"
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            Assert.That(definition.Identifier, Is.EqualTo("identifier"));
-        }
-
-        [Test]
-        public void AddsNode()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node"
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            Assert.That(definition.Nodes.Count, Is.EqualTo(1));
-            Assert.That(definition.Nodes.First().Identifier, Is.EqualTo("node"));
-        }
-
-        [Test]
-        public void AddsOperationToNode()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node",
-                OperationType = typeof(TestOperation).AssemblyQualifiedName
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            Assert.That(definition.Nodes.First().Operation, Is.EqualTo(typeof(TestOperation)));
-        }
-
-        [Test]
-        public void SetsStartNodePropertyOnNode()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node",
-                IsInitialNode = true
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            var node = definition.Nodes.First();
-            Assert.That(definition.InitialNode, Is.EqualTo(node));
-        }
-
-        [Test]
-        public void SetsEndNodePropertyOnNode()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node",
-                IsEndNode = true
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            var node = definition.Nodes.First();
-            Assert.That(definition.EndNodes.Contains(node));
-        }
-
-        [Test]
-        public void AddsOutgoingTransitionOnNode()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node",
-                OutgoingTransitions = new []{new TransitionModel()
-                {
-                    Identifier = "transitionId",
-                    Source = "node",
-                    Destination = "destNode"
-                }}
-            });
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "destNode"
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            var node = definition.Nodes.First(n => n.Identifier == "node");
-            Assert.That(node.OutgoingTransitions.Count(), Is.EqualTo(1));
-            var transition = node.OutgoingTransitions.First();
-            Assert.That(transition.Identifier, Is.EqualTo("transitionId"));
-            Assert.That(transition.Destination.Identifier, Is.EqualTo("destNode"));
-        }
-
-        [Test]
-        public void SetsDefaultPropertyOnTransition()
-        {
-            var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "node",
-                OutgoingTransitions = new[]{new TransitionModel()
-                {
-                    Identifier = "transitionId",
-                    IsDefault = true,
-                    Source = "node",
-                    Destination = "destNode"
-                }}
-            });
-            model.Nodes.Add(new NodeModel()
-            {
-                Identifier = "destNode"
-            });
-            var transformer = new Transform.WorkflowDefinitionTransformer();
-
-            IWorkflowDefinition definition = transformer.TransformBack(model);
-
-            var transition = definition.Nodes.First(n => n.Identifier == "node").OutgoingTransitions.First();
-            Assert.That(transition.IsDefault);
+            }
         }
 
         [Test]
         public void AddsIncomingTransitionOnNode()
         {
             var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
+            model.Nodes.Add(new NodeModel
             {
                 Identifier = "node",
-                OutgoingTransitions = new[]{new TransitionModel()
+                OutgoingTransitions = new[]
                 {
-                    Identifier = "transitionId",
-                    Source = "node",
-                    Destination = "destNode"
-                }}
+                    new TransitionModel
+                    {
+                        Identifier = "transitionId",
+                        Source = "node",
+                        Destination = "destNode"
+                    }
+                }
             });
-            model.Nodes.Add(new NodeModel()
+            model.Nodes.Add(new NodeModel
             {
                 Identifier = "destNode"
             });
@@ -219,20 +78,23 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
         public void AddsNestedWorkflow()
         {
             var model = new WorkflowDefinitionModel();
-            model.Nodes.Add(new NodeModel()
+            model.Nodes.Add(new NodeModel
             {
                 Identifier = "node",
-                OutgoingTransitions = new[]{new TransitionModel()
+                OutgoingTransitions = new[]
                 {
-                    Identifier = "transitionId",
-                    Source = "node",
-                    Destination = "nested"
-                }}
+                    new TransitionModel
+                    {
+                        Identifier = "transitionId",
+                        Source = "node",
+                        Destination = "nested"
+                    }
+                }
             });
-            model.Nodes.Add(new WorkflowDefinitionModel()
+            model.Nodes.Add(new WorkflowDefinitionModel
             {
                 Identifier = "nested",
-                OperationType = typeof(StartSubProcessOperation).AssemblyQualifiedName
+                OperationType = typeof (StartSubProcessOperation).AssemblyQualifiedName
             });
             var transformer = new Transform.WorkflowDefinitionTransformer();
 
@@ -243,12 +105,161 @@ namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer
             Assert.That(nestedWorkflow, Is.InstanceOf<IWorkflowDefinition>());
         }
 
-        private class TestOperation : IOperation
+        [Test]
+        public void AddsNode()
         {
-            public void Execute(IExecution execution)
+            var model = new WorkflowDefinitionModel();
+            model.Nodes.Add(new NodeModel
             {
-                
-            }
+                Identifier = "node"
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            Assert.That(definition.Nodes.Count, Is.EqualTo(1));
+            Assert.That(definition.Nodes.First().Identifier, Is.EqualTo("node"));
+        }
+
+        [Test]
+        public void AddsOperationToNode()
+        {
+            var model = new WorkflowDefinitionModel();
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "node",
+                OperationType = typeof (TestOperation).AssemblyQualifiedName
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            Assert.That(definition.Nodes.First().Operation, Is.EqualTo(typeof (TestOperation)));
+        }
+
+        [Test]
+        public void AddsOutgoingTransitionOnNode()
+        {
+            var model = new WorkflowDefinitionModel();
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "node",
+                OutgoingTransitions = new[]
+                {
+                    new TransitionModel
+                    {
+                        Identifier = "transitionId",
+                        Source = "node",
+                        Destination = "destNode"
+                    }
+                }
+            });
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "destNode"
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            var node = definition.Nodes.First(n => n.Identifier == "node");
+            Assert.That(node.OutgoingTransitions.Count(), Is.EqualTo(1));
+            var transition = node.OutgoingTransitions.First();
+            Assert.That(transition.Identifier, Is.EqualTo("transitionId"));
+            Assert.That(transition.Destination.Identifier, Is.EqualTo("destNode"));
+        }
+
+        [Test]
+        public void ReturnsEmptyWorkflowDefinitionIfModelIsEmpty()
+        {
+            var model = new WorkflowDefinitionModel();
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            Assert.That(definition, Is.Not.Null);
+            Assert.That(definition.Nodes, Is.Empty);
+            Assert.That(definition.OutgoingTransitions, Is.Empty);
+            Assert.That(definition.IncomingTransitions, Is.Empty);
+        }
+
+        [Test]
+        public void SetsDefaultPropertyOnTransition()
+        {
+            var model = new WorkflowDefinitionModel();
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "node",
+                OutgoingTransitions = new[]
+                {
+                    new TransitionModel
+                    {
+                        Identifier = "transitionId",
+                        IsDefault = true,
+                        Source = "node",
+                        Destination = "destNode"
+                    }
+                }
+            });
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "destNode"
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            var transition = definition.Nodes.First(n => n.Identifier == "node").OutgoingTransitions.First();
+            Assert.That(transition.IsDefault);
+        }
+
+        [Test]
+        public void SetsEndNodePropertyOnNode()
+        {
+            var model = new WorkflowDefinitionModel();
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "node",
+                IsEndNode = true
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            var node = definition.Nodes.First();
+            Assert.That(definition.EndNodes.Contains(node));
+        }
+
+        [Test]
+        public void SetsStartNodePropertyOnNode()
+        {
+            var model = new WorkflowDefinitionModel();
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "node",
+                IsInitialNode = true
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            var node = definition.Nodes.First();
+            Assert.That(definition.InitialNode, Is.EqualTo(node));
+        }
+
+        [Test]
+        public void SetsWorkflowIdentifier()
+        {
+            var model = new WorkflowDefinitionModel {Identifier = "identifier"};
+            model.Nodes.Add(new NodeModel
+            {
+                Identifier = "node"
+            });
+            var transformer = new Transform.WorkflowDefinitionTransformer();
+
+            IWorkflowDefinition definition = transformer.TransformBack(model);
+
+            Assert.That(definition.Identifier, Is.EqualTo("identifier"));
         }
     }
 }

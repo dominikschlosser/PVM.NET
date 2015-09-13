@@ -20,6 +20,7 @@
 #endregion
 
 using System.Linq;
+using PVM.Core.Plan;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
 using PVM.Persistence.Sql.Model;
@@ -53,6 +54,11 @@ namespace PVM.Persistence.Sql.Transform
                     ValueType = entry.Value.GetType().AssemblyQualifiedName
                 }).ToList()
             };
+        }
+
+        public IExecution TransformBack(ExecutionModel model, IExecutionPlan plan)
+        {
+            return new Execution(model.Identifier, plan);
         }
     }
 }

@@ -23,6 +23,7 @@
 
 using System.Collections.Generic;
 using PVM.Core.Definition;
+using PVM.Core.Plan;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Persistence
@@ -52,7 +53,7 @@ namespace PVM.Core.Persistence
             return workflowDefinitions[workflowDefinitionIdentifier];
         }
 
-        public IExecution LoadExecution(string executionIdentifier)
+        public IExecution LoadExecution(string executionIdentifier, IExecutionPlan plan)
         {
             return executions[executionIdentifier];
         }

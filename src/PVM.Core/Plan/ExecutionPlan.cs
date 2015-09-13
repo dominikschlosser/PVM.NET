@@ -39,11 +39,9 @@ namespace PVM.Core.Plan
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
         private readonly IServiceLocator serviceLocator;
-        private readonly IWorkflowDefinition workflowDefinition;
 
-        public ExecutionPlan(IWorkflowDefinition workflowDefinition, IServiceLocator serviceLocator)
+        public ExecutionPlan(IServiceLocator serviceLocator)
         {
-            this.workflowDefinition = workflowDefinition;
             this.serviceLocator = serviceLocator;
         }
 
@@ -53,17 +51,17 @@ namespace PVM.Core.Plan
 
         public void OnExecutionStopped(IExecution execution)
         {
-            CheckIfEnded(execution);
+            if (!execution.CurrentNode.OutgoingTransitions.Any())
+            {
+                Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
+                execution.Kill();
+            }
         }
 
         public void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier)
         {
-            if (!CheckIfEnded(execution))
-            {
-                throw new TransitionNotFoundException(string.Format(
-                    "Outgoing transition with name '{0}' not found for node {1}", transitionIdentifier,
-                    execution.CurrentNode.Identifier));
-            }
+            Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
+            execution.Kill();
         }
 
         public void OnExecutionResuming(IExecution execution)
@@ -82,55 +80,43 @@ namespace PVM.Core.Plan
 
         public void Proceed(IExecution execution, INode node)
         {
-            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
-            {
-                execution.Stop();
-            }
-            else
-            {
-                var operation = serviceLocator.GetInstance(node.Operation) as IOperation;
-
-                if (operation == null)
-                {
-                    throw new InvalidOperationException(string.Format("'{0}' is not an operation",
-                        node.Operation.FullName));
-                }
-
-                Type genericOperationInterface = operation.GetType()
-                                                          .GetInterfaces()
-                                                          .FirstOrDefault(
-                                                              i =>
-                                                                  i.IsGenericType &&
-                                                                  i.GetGenericTypeDefinition() == typeof (IOperation<>));
-                if (
-                    genericOperationInterface != null)
-                {
-                    Type genericType =
-                        genericOperationInterface.GetGenericArguments()
-                                                 .First(t => t.HasAttribute<WorkflowDataAttribute>());
-                    object dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
-
-                    operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
-                             .Invoke(operation, new[] {execution, dataContext});
-                }
-                else
-                {
-                    operation.Execute(execution);
-                }
-            }
-        }
-
-        private bool CheckIfEnded(IExecution execution)
-        {
-            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
+            if (!execution.CurrentNode.OutgoingTransitions.Any())
             {
                 Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
                 execution.Kill();
-
-                return true;
+                return;
             }
 
-            return false;
+            var operation = serviceLocator.GetInstance(node.Operation) as IOperation;
+
+            if (operation == null)
+            {
+                throw new InvalidOperationException(string.Format("'{0}' is not an operation",
+                    node.Operation.FullName));
+            }
+
+            Type genericOperationInterface = operation.GetType()
+                                                      .GetInterfaces()
+                                                      .FirstOrDefault(
+                                                          i =>
+                                                              i.IsGenericType &&
+                                                              i.GetGenericTypeDefinition() == typeof (IOperation<>));
+            if (
+                genericOperationInterface != null)
+            {
+                Type genericType =
+                    genericOperationInterface.GetGenericArguments()
+                                             .First(t => t.HasAttribute<WorkflowDataAttribute>());
+                object dataContext = DataMapper.CreateProxyFor(genericType, execution.Data);
+
+                operation.GetType().GetMethod("Execute", new[] {typeof (IExecution), genericType})
+                         .Invoke(operation, new[] {execution, dataContext});
+            }
+            else
+            {
+                operation.Execute(execution);
+            }
+
         }
     }
 }

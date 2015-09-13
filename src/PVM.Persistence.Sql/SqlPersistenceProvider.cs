@@ -24,6 +24,7 @@
 using System.Linq;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
+using PVM.Core.Plan;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
 
@@ -95,7 +96,7 @@ namespace PVM.Persistence.Sql
             }
         }
 
-        public IExecution LoadExecution(string executionIdentifier)
+        public IExecution LoadExecution(string executionIdentifier, IExecutionPlan executionPlan)
         {
             throw new System.NotImplementedException();
         }
