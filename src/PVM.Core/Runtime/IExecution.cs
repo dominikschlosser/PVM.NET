@@ -48,7 +48,6 @@ namespace PVM.Core.Runtime
         void Resume();
         void Resume(INode currentNode);
         void Stop();
-        void Start(INode startNode, IDictionary<string, object> data);
         void Split(INode node);
         void Accept(IExecutionVisitor visitor);
         void Proceed(INode currentNode);

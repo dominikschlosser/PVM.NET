@@ -115,7 +115,9 @@
     <Compile Include="Runtime\IExecution.cs" />
     <Compile Include="Runtime\Algorithms\IExecutionVisitor.cs" />
     <Compile Include="Runtime\InvalidExecutionStateException.cs" />
+    <Compile Include="Runtime\IWorkflowInstance.cs" />
     <Compile Include="Runtime\WorkflowEngine.cs" />
+    <Compile Include="Runtime\WorkflowInstance.cs" />
     <Compile Include="Serialization\IObjectSerializer.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Tasks\InMemoryTaskRepository.cs" />

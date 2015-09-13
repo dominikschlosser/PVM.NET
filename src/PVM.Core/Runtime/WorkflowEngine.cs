@@ -91,7 +91,9 @@ namespace PVM.Core.Runtime
             }
 
             var executionPlan = new ExecutionPlan(serviceLocator);
-            var execution = new Execution(workflowDefinitionIdentifier + "_" + Guid.NewGuid(), executionPlan);
+            var execution = new WorkflowInstance(workflowDefinitionIdentifier + "_" + Guid.NewGuid(), workflowDefinition, executionPlan);
+            
+            persistenceProvider.Persist(execution);
             execution.Start(workflowDefinition.InitialNode, DataMapper.ExtractData(data));
 
             return execution;

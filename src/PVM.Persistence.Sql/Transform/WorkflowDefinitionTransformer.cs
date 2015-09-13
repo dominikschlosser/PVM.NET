@@ -30,7 +30,7 @@ using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Transform
 {
-    public class WorkflowDefinitionTransformer
+    public class WorkflowDefinitionTransformer : IWorkflowDefinitionTransformer
     {
         public WorkflowDefinitionModel Transform(IWorkflowDefinition workflowDefinition)
         {

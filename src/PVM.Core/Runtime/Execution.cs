@@ -42,30 +42,37 @@ namespace PVM.Core.Runtime
             Identifier = identifier;
             Children = new List<IExecution>();
             this.executionPlan = executionPlan;
+            Data = new Dictionary<string, object>();
         }
 
-        public Execution(IExecution parent, Transition incomingTransition, string identifier, IExecutionPlan executionPlan)
+        // TODO: builder
+        public Execution(IExecution parent, INode currentNode, bool isActive, bool isFinished, IDictionary<string, object> data, string incomingTransition, string identifier, IExecutionPlan executionPlan, IList<IExecution> children)
             : this(identifier, executionPlan)
         {
             Parent = parent;
-            IncomingTransition = incomingTransition.Identifier;
+            IncomingTransition = incomingTransition;
+            CurrentNode = currentNode;
+            IsActive = isActive;
+            Data = data;
+            Children = children;
+            IsFinished = isFinished;
         }
 
-        public IExecution Parent { get; private set; }
-        public IList<IExecution> Children { get; private set; }
-        public INode CurrentNode { get; private set; }
-        public string IncomingTransition { get; private set; }
+        public IExecution Parent { get; protected set; }
+        public IList<IExecution> Children { get; protected set; }
+        public INode CurrentNode { get; protected set; }
+        public string IncomingTransition { get; protected set; }
 
         public IExecutionPlan Plan
         {
             get { return executionPlan; }
         }
 
-        public bool IsFinished { get; private set; }
+        public bool IsFinished { get; protected set; }
 
-        public string Identifier { get; private set; }
-        public bool IsActive { get; private set; }
-        public IDictionary<string, object> Data { get; private set; }
+        public string Identifier { get; protected set; }
+        public bool IsActive { get; protected set; }
+        public IDictionary<string, object> Data { get; protected set; }
 
         public void Proceed()
         {
@@ -130,19 +137,6 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void Start(INode startNode, IDictionary<string, object> data)
-        {
-            if (!IsActive)
-            {
-                Logger.InfoFormat("Execution '{0}' started.", Identifier);
-                CurrentNode = startNode;
-                Data = data;
-                IsActive = true;
-                executionPlan.OnExecutionStarting(this);
-                CurrentNode.Execute(this, executionPlan);
-            }
-        }
-
         public void Split(INode node)
         {
             Stop();
@@ -158,12 +152,7 @@ namespace PVM.Core.Runtime
             foreach (var outgoingTransition in node.OutgoingTransitions)
             {
                 var outgoingNode = outgoingTransition.Destination;
-                var child = new Execution(this, outgoingTransition, Guid.NewGuid() + "_" + outgoingNode.Identifier, executionPlan)
-                {
-                    CurrentNode = outgoingNode,
-                    IsActive = true,
-                    Data = Data
-                };
+                var child = new Execution(this, outgoingNode, true, false, Data, outgoingTransition.Identifier, Guid.NewGuid() + "_" + outgoingNode.Identifier, executionPlan, new List<IExecution>());
                 Children.Add(child);
             }
 
