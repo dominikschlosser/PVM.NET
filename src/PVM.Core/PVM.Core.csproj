@@ -123,6 +123,7 @@
     <Compile Include="Tasks\UserTask.cs" />
     <Compile Include="Utils\ContractException.cs" />
     <Compile Include="Utils\ContractExtensions.cs" />
+    <Compile Include="Utils\LinqExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

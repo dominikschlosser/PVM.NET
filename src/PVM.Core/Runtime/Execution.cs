@@ -44,15 +44,17 @@ namespace PVM.Core.Runtime
             this.executionPlan = executionPlan;
         }
 
-        public Execution(IExecution parent, string identifier, IExecutionPlan executionPlan)
+        public Execution(IExecution parent, Transition incomingTransition, string identifier, IExecutionPlan executionPlan)
             : this(identifier, executionPlan)
         {
             Parent = parent;
+            IncomingTransition = incomingTransition.Identifier;
         }
 
         public IExecution Parent { get; private set; }
         public IList<IExecution> Children { get; private set; }
         public INode CurrentNode { get; private set; }
+        public string IncomingTransition { get; private set; }
 
         public IExecutionPlan Plan
         {
@@ -141,7 +143,7 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void ProceedConcurrently(INode node)
+        public void Split(INode node)
         {
             Stop();
 
@@ -151,21 +153,21 @@ namespace PVM.Core.Runtime
                 return;
             }
 
-            var outgoingExecutions = new List<IExecution>();
             Children.Clear();
 
             foreach (var outgoingTransition in node.OutgoingTransitions)
             {
                 var outgoingNode = outgoingTransition.Destination;
-                var child = new Execution(this, Guid.NewGuid() + "_" + outgoingNode.Identifier, executionPlan);
-                child.CurrentNode = outgoingNode;
-                child.IsActive = true;
-                child.Data = Data;
-                outgoingExecutions.Add(child);
+                var child = new Execution(this, outgoingTransition, Guid.NewGuid() + "_" + outgoingNode.Identifier, executionPlan)
+                {
+                    CurrentNode = outgoingNode,
+                    IsActive = true,
+                    Data = Data
+                };
                 Children.Add(child);
             }
 
-            foreach (var outgoing in outgoingExecutions)
+            foreach (var outgoing in Children)
             {
                 Logger.InfoFormat("Child-Execution '{0}' started.", outgoing.Identifier);
 
@@ -217,6 +219,7 @@ namespace PVM.Core.Runtime
             Logger.InfoFormat("Taking transition with name '{0}' to node '{1}'", transition.Identifier,
                 transition.Destination.Identifier);
 
+            IncomingTransition = transition.Identifier;
             CurrentNode = transition.Destination;
             CurrentNode.Execute(this, executionPlan);
         }
@@ -250,6 +253,34 @@ namespace PVM.Core.Runtime
             {
                 child.Kill();
             }
+        }
+
+        public IExecution GetConcurrentRoot()
+        {
+            if (Parent == null || Parent.IsFinished)
+            {
+                return this;
+            }
+
+            return Parent.GetConcurrentRoot();
+        }
+
+        protected bool Equals(Execution other)
+        {
+            return string.Equals(Identifier, other.Identifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Execution) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Identifier != null ? Identifier.GetHashCode() : 0);
         }
     }
 }

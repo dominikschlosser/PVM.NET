@@ -22,7 +22,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Castle.Core.Internal;
 using log4net;
@@ -33,7 +32,6 @@ using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
-using PVM.Core.Utils;
 
 namespace PVM.Core.Plan
 {
@@ -56,19 +54,6 @@ namespace PVM.Core.Plan
         public void OnExecutionStopped(IExecution execution)
         {
             CheckIfEnded(execution);
-        }
-
-        private bool CheckIfEnded(IExecution execution)
-        {
-            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
-            {
-                Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
-                execution.Kill();
-
-                return true;
-            }
-
-            return false;
         }
 
         public void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier)
@@ -107,7 +92,8 @@ namespace PVM.Core.Plan
 
                 if (operation == null)
                 {
-                    throw new InvalidOperationException(string.Format("'{0}' is not an operation", node.Operation.FullName));
+                    throw new InvalidOperationException(string.Format("'{0}' is not an operation",
+                        node.Operation.FullName));
                 }
 
                 Type genericOperationInterface = operation.GetType()
@@ -132,6 +118,19 @@ namespace PVM.Core.Plan
                     operation.Execute(execution);
                 }
             }
+        }
+
+        private bool CheckIfEnded(IExecution execution)
+        {
+            if (workflowDefinition.EndNodes.Contains(execution.CurrentNode))
+            {
+                Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
+                execution.Kill();
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

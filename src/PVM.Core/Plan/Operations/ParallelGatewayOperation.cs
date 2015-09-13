@@ -26,6 +26,7 @@ using log4net;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
 using PVM.Core.Runtime.Algorithms;
+using PVM.Core.Utils;
 
 namespace PVM.Core.Plan.Operations
 {
@@ -37,29 +38,28 @@ namespace PVM.Core.Plan.Operations
         {
             execution.Stop();
 
-            var root = execution.Parent ?? execution;
-
             int incomingTransitionCount = execution.CurrentNode.IncomingTransitions.Count();
 
-            // start node
-            if (incomingTransitionCount == 0)
+            if (incomingTransitionCount > 1)
             {
-                incomingTransitionCount = 1;
-            }
+                var root = execution.GetConcurrentRoot();
+                var executionCollector =
+                    new ExecutionCollector(e => !e.IsActive && e.CurrentNode == execution.CurrentNode);
+                root.Accept(executionCollector);
+                int joinedTransitionCount = executionCollector.Result.DistinctBy(e => e.IncomingTransition).Count();
 
-            var executionCollector = new ExecutionCollector(e => !e.IsActive && e.CurrentNode == execution.CurrentNode);
-            root.Accept(executionCollector);
-            int joinedTransitionCount = executionCollector.Result.Count;
+                if (incomingTransitionCount > joinedTransitionCount)
+                {
+                    Logger.InfoFormat("Cannot join in node '{0}' yet. Joined: {1}, To join: {2}. Waiting...",
+                        execution.CurrentNode.Identifier, joinedTransitionCount, incomingTransitionCount);
+                    return;
+                }
 
-            if (incomingTransitionCount == joinedTransitionCount)
-            {
-
-                root.ProceedConcurrently(execution.CurrentNode);
+                root.Split(execution.CurrentNode);
             }
             else
             {
-                Logger.InfoFormat("Cannot join in node '{0}' yet. Joined: {1}, To join: {2}. Waiting...",
-                            execution.CurrentNode.Identifier, joinedTransitionCount, incomingTransitionCount);
+                execution.Split(execution.CurrentNode);
             }
 
         }

@@ -22,6 +22,7 @@
 #endregion
 
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
 using PVM.Core.Runtime.Algorithms;
@@ -31,24 +32,29 @@ namespace PVM.Core.Runtime
     public interface IExecution
     {
         string Identifier { get; }
+        [CanBeNull]
         IExecution Parent { get; }
         IList<IExecution> Children { get; }
+        [CanBeNull]
         INode CurrentNode { get; }
         IExecutionPlan Plan { get; }
         bool IsFinished { get; }
         bool IsActive { get; }
         IDictionary<string, object> Data { get; }
+        [CanBeNull]
+        string IncomingTransition { get; }
         void Proceed();
         void Proceed(string transitionName);
         void Resume();
         void Resume(INode currentNode);
         void Stop();
         void Start(INode startNode, IDictionary<string, object> data);
-        void ProceedConcurrently(INode node);
+        void Split(INode node);
         void Accept(IExecutionVisitor visitor);
         void Proceed(INode currentNode);
         void Wait();
         void Signal();
         void Kill();
+        IExecution GetConcurrentRoot();
     }
 }
