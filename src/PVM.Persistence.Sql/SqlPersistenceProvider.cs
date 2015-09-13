@@ -98,7 +98,17 @@ namespace PVM.Persistence.Sql
 
         public IExecution LoadExecution(string executionIdentifier, IExecutionPlan executionPlan)
         {
-            throw new System.NotImplementedException();
+            using (var db = new PvmContext())
+            {
+                var model = db.Executions.FirstOrDefault(w => w.Identifier == executionIdentifier);
+
+                if (model == null)
+                {
+                    return null;
+                }
+
+                return executionTransformer.TransformBack(model, executionPlan);
+            }
         }
     }
 }

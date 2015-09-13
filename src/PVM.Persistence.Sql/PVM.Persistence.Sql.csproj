@@ -44,6 +44,10 @@
       <HintPath>..\..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -65,9 +69,12 @@
     <Compile Include="Model\TransitionModel.cs" />
     <Compile Include="Model\WorkflowDefinitionModel.cs" />
     <Compile Include="Model\WorkflowInstanceModel.cs" />
+    <Compile Include="NinjectServiceLocatorBuilderExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PvmContext.cs" />
+    <Compile Include="SqlPersistenceModule.cs" />
     <Compile Include="SqlPersistenceProvider.cs" />
+    <Compile Include="SqlTaskRepository.cs" />
     <Compile Include="Transform\ExecutionDefinitionTransformer.cs" />
     <Compile Include="Transform\IWorkflowDefinitionTransformer.cs" />
     <Compile Include="Transform\WorkflowDefinitionTransformer.cs" />

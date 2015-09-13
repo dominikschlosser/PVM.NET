@@ -76,7 +76,7 @@ namespace PVM.Persistence.Sql.Test
 
             var instance =
                 new WorkflowEngineBuilder().ConfigureServiceLocator()
-                                           .OverridePersistenceProvider<SqlPersistenceProvider>()
+                                           .WithSqlPersistence()
                                            .Build()
                                            .StartNewInstance(workflowDefinition);
 
