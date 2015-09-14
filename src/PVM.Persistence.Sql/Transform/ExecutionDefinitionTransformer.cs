@@ -76,7 +76,7 @@ namespace PVM.Persistence.Sql.Transform
             model.Children = execution.Children.Select(c => Transform(c, definition)).ToList();
             model.Variables = execution.Data.Select(entry => new ExecutionVariableModel
             {
-                Key = entry.Key,
+                VariableKey = entry.Key,
                 SerializedValue = serializer.Serialize(entry.Value),
                 ValueType = entry.Value.GetType().AssemblyQualifiedName
             }).ToList();
@@ -109,7 +109,7 @@ namespace PVM.Persistence.Sql.Transform
             IDictionary<string, object> data = new Dictionary<string, object>();
             foreach (var variable in model.Variables)
             {
-                data.Add(variable.Key,
+                data.Add(variable.VariableKey,
                     serializer.Deserialize(variable.SerializedValue, Type.GetType(variable.ValueType)));
             }
 

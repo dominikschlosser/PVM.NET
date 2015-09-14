@@ -22,12 +22,14 @@
 #endregion
 
 using System.Linq;
+using System.Transactions;
+using NHibernate;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Plan;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
-
+using PVM.Persistence.Sql.Model;
 using PVM.Persistence.Sql.Transform;
 
 namespace PVM.Persistence.Sql
@@ -36,56 +38,56 @@ namespace PVM.Persistence.Sql
     {
         private readonly ExecutionDefinitionTransformer executionTransformer;
         private readonly WorkflowDefinitionTransformer workflowDefinitionTransformer;
+        private readonly ISessionFactory sessionFactory;
 
-        public SqlPersistenceProvider(IObjectSerializer objectSerializer)
+        public SqlPersistenceProvider(IObjectSerializer objectSerializer, ISessionFactory sessionFactory)
         {
+            this.sessionFactory = sessionFactory;
             workflowDefinitionTransformer = new WorkflowDefinitionTransformer();
             executionTransformer = new ExecutionDefinitionTransformer(objectSerializer);
         }
 
         public void Persist(IExecution execution, IWorkflowDefinition definition)
         {
-            using (var db = new PvmContext())
-            {
-                var entity = executionTransformer.Transform(execution, definition);
 
-                if (db.Executions.Any(e => e.Identifier == execution.Identifier))
+                using (var session = sessionFactory.OpenSession())
                 {
-                    db.Executions.Attach(entity);
-                }
-                else
-                {
-                    db.Executions.Add(entity);
+                    using (var txn = session.BeginTransaction())
+                    {
+                        var entity = executionTransformer.Transform(execution, definition);
+
+                        session.SaveOrUpdate(entity);
+                        session.Flush();
+                        txn.Commit();
+                    }
                 }
 
-                db.SaveChanges();
-            }
+
         }
 
         public void Persist(IWorkflowDefinition workflowDefinition)
         {
-            using (var db = new PvmContext())
-            {
-                var entity = workflowDefinitionTransformer.Transform(workflowDefinition);
 
-                if (db.WorkflowDefinitions.Any(d => d.Identifier == workflowDefinition.Identifier))
+                using (var session = sessionFactory.OpenSession())
                 {
-                    db.WorkflowDefinitions.Attach(entity);
-                }
-                else
-                {
-                    db.WorkflowDefinitions.Add(entity);
-                }
+                    using (var txn = session.BeginTransaction())
+                    {
+                        var entity = workflowDefinitionTransformer.Transform(workflowDefinition);
 
-                db.SaveChanges();
-            }
+                        session.SaveOrUpdate(entity);
+                        session.Flush();
+                        
+                        txn.Commit();
+                    }
+                }
+            
         }
 
         public IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier)
         {
-            using (var db = new PvmContext())
+            using (var session = sessionFactory.OpenSession())
             {
-                var model = db.WorkflowDefinitions.FirstOrDefault(w => w.Identifier == workflowDefinitionIdentifier);
+                var model = session.QueryOver<WorkflowDefinitionModel>().Where(w => w.Identifier == workflowDefinitionIdentifier).SingleOrDefault();
 
                 if (model == null)
                 {
@@ -98,9 +100,9 @@ namespace PVM.Persistence.Sql
 
         public IExecution LoadExecution(string executionIdentifier, IExecutionPlan executionPlan)
         {
-            using (var db = new PvmContext())
+            using (var session = sessionFactory.OpenSession())
             {
-                var model = db.Executions.FirstOrDefault(w => w.Identifier == executionIdentifier);
+                var model = session.QueryOver<ExecutionModel>().Where(w => w.Identifier == executionIdentifier).SingleOrDefault();
 
                 if (model == null)
                 {

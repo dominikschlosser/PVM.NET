@@ -19,20 +19,53 @@
 // -------------------------------------------------------------------------------
 #endregion
 
+using System.Transactions;
+using NHibernate;
 using PVM.Core.Tasks;
+using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql
 {
     public class SqlTaskRepository : ITaskRepository
     {
+        private readonly ISessionFactory sessionFactory;
+
+        public SqlTaskRepository(ISessionFactory sessionFactory)
+        {
+            this.sessionFactory = sessionFactory;
+        }
+
         public void Add(UserTask userTask)
         {
-            throw new System.NotImplementedException();
+
+                using (var session = sessionFactory.OpenSession())
+                {
+                    var entity = new UserTaskModel()
+                    {
+                        TaskIdentifier = userTask.TaskIdentifier,
+                        ExecutionIdentifier = userTask.ExecutionIdentifier,
+                        WorkflowDefinitionIdentifier = userTask.WorkflowDefinitionIdentifier
+                    };
+
+                    session.SaveOrUpdate(entity);
+                    session.Flush();
+                }
+
         }
 
         public UserTask FindTask(string taskName)
         {
-            throw new System.NotImplementedException();
+            using (var session = sessionFactory.OpenSession())
+            {
+                var model = session.QueryOver<UserTaskModel>().Where(w => w.TaskIdentifier == taskName).SingleOrDefault();
+
+                if (model == null)
+                {
+                    return null;
+                }
+
+                return new UserTask(model.TaskIdentifier, model.ExecutionIdentifier, model.WorkflowDefinitionIdentifier);
+            }
         }
     }
 }

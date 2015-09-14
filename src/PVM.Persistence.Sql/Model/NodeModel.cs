@@ -22,7 +22,6 @@
 #endregion
 
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace PVM.Persistence.Sql.Model
 {
@@ -30,12 +29,11 @@ namespace PVM.Persistence.Sql.Model
     {
         private IList<TransitionModel> outgoingTransitions = new List<TransitionModel>();
 
-        [Key]
-        public string Identifier { get; set; }
+        public virtual string Identifier { get; set; }
 
-        public string OperationType { get; set; }
-        public bool IsEndNode { get; set; }
-        public bool IsInitialNode { get; set; }
+        public virtual string OperationType { get; set; }
+        public virtual bool IsEndNode { get; set; }
+        public virtual bool IsInitialNode { get; set; }
 
         public virtual IList<TransitionModel> OutgoingTransitions
         {

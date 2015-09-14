@@ -22,21 +22,18 @@
 #endregion
 
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace PVM.Persistence.Sql.Model
 {
     public class ExecutionModel
     {
-        [Key]
-        public string Identifier { get; set; }
-
+        public virtual string Identifier { get; set; }
         public virtual ExecutionModel Parent { get; set; }
         public virtual IList<ExecutionModel> Children { get; set; }
         public virtual string CurrentNodeIdentifier { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsFinished { get; set; }
-        public string IncomingTransition { get; set; }
+        public virtual bool IsActive { get; set; }
+        public virtual bool IsFinished { get; set; }
+        public virtual string IncomingTransition { get; set; }
         public virtual IList<ExecutionVariableModel> Variables { get; set; }
 
         protected bool Equals(ExecutionModel other)

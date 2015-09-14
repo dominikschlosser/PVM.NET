@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="PvmContext.cs" company="PVM.NET Project Contributors">
+//  <copyright file="UserTaskMap.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,18 +17,20 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using System.Data.Entity;
+using FluentNHibernate.Mapping;
 using PVM.Persistence.Sql.Model;
 
-namespace PVM.Persistence.Sql
+namespace PVM.Persistence.Sql.Mapping
 {
-    public class PvmContext : DbContext
+    public class UserTaskMap : ClassMap<UserTaskModel>
     {
-        public DbSet<ExecutionModel> Executions { get; set; }
-        public DbSet<WorkflowInstanceModel> WorkflowInstances { get; set; }
-        public DbSet<WorkflowDefinitionModel> WorkflowDefinitions { get; set; }
+        public UserTaskMap()
+        {
+            Id(m => m.TaskIdentifier).GeneratedBy.Assigned();
+            Map(m => m.ExecutionIdentifier);
+            Map(m => m.WorkflowDefinitionIdentifier);
+        }
     }
 }

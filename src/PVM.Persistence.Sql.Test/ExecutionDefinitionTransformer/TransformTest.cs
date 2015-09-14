@@ -205,8 +205,8 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
 
             Assert.That(result.Variables.Count, Is.EqualTo(2));
-            Assert.That(result.Variables.First(v => v.Key.Equals("var1")).SerializedValue, Is.EqualTo("id1"));
-            Assert.That(result.Variables.First(v => v.Key.Equals("var2")).SerializedValue, Is.EqualTo("id2"));
+            Assert.That(result.Variables.First(v => v.VariableKey.Equals("var1")).SerializedValue, Is.EqualTo("id1"));
+            Assert.That(result.Variables.First(v => v.VariableKey.Equals("var2")).SerializedValue, Is.EqualTo("id2"));
         }
 
         [Test]

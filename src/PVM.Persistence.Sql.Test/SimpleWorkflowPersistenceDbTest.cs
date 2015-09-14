@@ -21,12 +21,12 @@
 
 #endregion
 
-using System.Linq;
 using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Data.Attributes;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Test
 {
@@ -84,11 +84,12 @@ namespace PVM.Persistence.Sql.Test
 
             var instance =
                 new WorkflowEngineBuilder().ConfigureServiceLocator()
-                                           .WithSqlPersistence()
+                                           .ImportModule(new SqlPersistenceTestModule(SessionFactory))
                                            .Build()
                                            .StartNewInstance(workflowDefinition, new TestData());
 
-            Assert.That(TestDbContext.WorkflowDefinitions.Any(d => d.Identifier == workflowDefinition.Identifier));
+            using (var session = SessionFactory.OpenSession())
+                Assert.That(session.QueryOver<WorkflowDefinitionModel>().Where(d => d.Identifier == workflowDefinition.Identifier).SingleOrDefault(), Is.Not.Null);
 
             Assert.False(instance.IsFinished);
         }

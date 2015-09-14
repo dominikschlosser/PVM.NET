@@ -1,7 +1,6 @@
 ﻿#region License
-
 // -------------------------------------------------------------------------------
-//  <copyright file="ExecutionVariableModel.cs" company="PVM.NET Project Contributors">
+//  <copyright file="NodeMap.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,33 +17,24 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-namespace PVM.Persistence.Sql.Model
+using FluentNHibernate.Mapping;
+using PVM.Persistence.Sql.Model;
+
+namespace PVM.Persistence.Sql.Mapping
 {
-    public class ExecutionVariableModel
+    public class NodeMap : ClassMap<NodeModel>
     {
-        public virtual string VariableKey { get; set; }
-        public virtual string SerializedValue { get; set; }
-        public virtual string ValueType { get; set; }
-
-        protected bool Equals(ExecutionVariableModel other)
+        public NodeMap()
         {
-            return string.Equals(VariableKey, other.VariableKey);
-        }
+            Id(m => m.Identifier).GeneratedBy.Assigned();
+            Map(m => m.IsEndNode);
+            Map(m => m.IsInitialNode);
+            Map(m => m.OperationType);
+            HasMany(m => m.OutgoingTransitions).Cascade.All();
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ExecutionVariableModel) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (VariableKey != null ? VariableKey.GetHashCode() : 0);
+            DiscriminateSubClassesOnColumn("Discriminator");
         }
     }
 }

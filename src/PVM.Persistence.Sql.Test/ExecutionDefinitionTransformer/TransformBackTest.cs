@@ -169,7 +169,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             objectSerializer.Setup(s => s.Deserialize("Val", type)).Returns("DeserializedVal");
             IExecution result = new TestContext()
                 .WithObjectSerializer(objectSerializer.Object)
-                .WithVariable(new ExecutionVariableModel(){Key = "myVar", SerializedValue = "Val", ValueType = type.AssemblyQualifiedName})
+                .WithVariable(new ExecutionVariableModel(){VariableKey = "myVar", SerializedValue = "Val", ValueType = type.AssemblyQualifiedName})
                 .ExecuteTransform();
 
             Assert.That(result.Data["myVar"], Is.SameAs("DeserializedVal"));

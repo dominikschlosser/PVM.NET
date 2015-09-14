@@ -21,18 +21,15 @@
 
 #endregion
 
-using System.ComponentModel.DataAnnotations;
-
 namespace PVM.Persistence.Sql.Model
 {
     public class TransitionModel
     {
-        [Key]
-        public string Identifier { get; set; }
+        public virtual string Identifier { get; set; }
 
-        public string Source { get; set; }
-        public string Destination { get; set; }
-        public bool IsDefault { get; set; }
+        public virtual string Source { get; set; }
+        public virtual string Destination { get; set; }
+        public virtual bool IsDefault { get; set; }
 
         protected bool Equals(TransitionModel other)
         {

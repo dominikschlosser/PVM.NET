@@ -23,6 +23,6 @@ namespace PVM.Persistence.Sql.Model
 {
     public class WorkflowInstanceModel : ExecutionModel
     {
-        public string WorkflowDefinitionIdentifier { get; set; }
+        public virtual string WorkflowDefinitionIdentifier { get; set; }
     }
 }

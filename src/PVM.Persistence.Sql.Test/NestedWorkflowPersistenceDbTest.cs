@@ -19,11 +19,12 @@
 // -------------------------------------------------------------------------------
 #endregion
 
-using System.Linq;
+
 using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Test
 {
@@ -76,12 +77,13 @@ namespace PVM.Persistence.Sql.Test
 
             var instance =
                 new WorkflowEngineBuilder().ConfigureServiceLocator()
-                                           .WithSqlPersistence()
+                                           .ImportModule(new SqlPersistenceTestModule(SessionFactory))
                                            .Build()
                                            .StartNewInstance(workflowDefinition);
 
 
-            Assert.That(TestDbContext.WorkflowDefinitions.Any(d => d.Identifier == "nested"));
+            using(var session = SessionFactory.OpenSession())
+                Assert.That(session.QueryOver<WorkflowDefinitionModel>().Where(d => d.Identifier == "nested").SingleOrDefault(), Is.Not.Null);
         }
     }
 }

@@ -21,53 +21,44 @@
 
 #endregion
 
-using System.Data.Entity.Migrations;
+using System.Configuration;
+using FluentNHibernate.Cfg;
+using FluentNHibernate.Cfg.Db;
+using NHibernate;
+using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
-using PVM.Persistence.Sql.Migrations;
+using PVM.Persistence.Sql.Mapping;
 
 namespace PVM.Persistence.Sql.Test
 {
     public abstract class DbTestBase
     {
-        protected PvmContext TestDbContext { get; private set; }
-
-        [TestFixtureSetUp]
-        public void Setup()
-        {
-            new DbMigrator(new Configuration()).Update();
-        }
+        protected ISessionFactory SessionFactory { get; private set; }
 
         [SetUp]
         public void TestSetUp()
         {
-            ResetDb();
-            TestDbContext = new PvmContext();
+            CreateDatabase(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
         }
 
         [TearDown]
         public void TestTearDown()
         {
-            TestDbContext.Dispose();
-            TestDbContext = null;
+            SessionFactory.Dispose();
+            SessionFactory = null;
         }
 
-        private void ResetDb()
+        private void CreateDatabase(string connectionString)
         {
-            string[] allTableNames =
-            {
-                "TransitionModels",
-                "NodeModels",
-                "ExecutionVariableModels",
-                "ExecutionModels"
-            };
+            var configuration = Fluently.Configure()
+                .Database(MsSqlConfiguration.MsSql2008.ConnectionString(connectionString))
+                .Mappings(m => m.FluentMappings.AddFromAssemblyOf<ExecutionMap>())
+                .BuildConfiguration();
 
-            using (var context = new PvmContext())
-            {
-                foreach (var tableName in allTableNames)
-                {
-                    context.Database.ExecuteSqlCommand(string.Format("DELETE FROM [{0}]", tableName));
-                }
-            }
+            var exporter = new SchemaExport(configuration);
+            exporter.Execute(true, true, false);
+
+            SessionFactory = configuration.BuildSessionFactory();
         }
     }
 }

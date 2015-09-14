@@ -1,7 +1,6 @@
-#region License
-
+﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="Configuration.cs" company="PVM.NET Project Contributors">
+//  <copyright file="SqlPersistenceTestModule.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,34 +17,25 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
 
-using System.Data.Entity.Migrations;
+using NHibernate;
 
-namespace PVM.Persistence.Sql.Migrations
+namespace PVM.Persistence.Sql.Test
 {
-    public sealed class Configuration : DbMigrationsConfiguration<PvmContext>
+    public class SqlPersistenceTestModule : SqlPersistenceModule
     {
-        public Configuration()
+        private readonly ISessionFactory factory;
+
+        public SqlPersistenceTestModule(ISessionFactory factory)
         {
-            AutomaticMigrationsEnabled = false;
+            this.factory = factory;
         }
 
-        protected override void Seed(PvmContext context)
+        public override void Load()
         {
-            //  This method will be called after migrating to the latest version.
-
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data. E.g.
-            //
-            //    context.People.AddOrUpdate(
-            //      p => p.FullName,
-            //      new Person { FullName = "Andrew Peters" },
-            //      new Person { FullName = "Brice Lambson" },
-            //      new Person { FullName = "Rowan Miller" }
-            //    );
-            //
+            base.Load();
+            Bind<ISessionFactory>().ToConstant(factory);
         }
     }
 }
