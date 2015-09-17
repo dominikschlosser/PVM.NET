@@ -1,6 +1,6 @@
 ﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="Node.cs" company="PVM.NET Project Contributors">
+//  <copyright file="TransitionModel.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -20,14 +20,12 @@
 #endregion
 namespace PVM.Persistence.Neo4j.Model
 {
-    public class NodeModel
+    public class TransitionModel
     {
         public string Identifier { get; set; }
-        public string OperationType { get; set; }
-        public bool IsEndNode { get; set; }
+        public bool IsDefault { get; set; }
 
-
-        protected bool Equals(NodeModel other)
+        protected bool Equals(TransitionModel other)
         {
             return string.Equals(Identifier, other.Identifier);
         }
@@ -37,7 +35,7 @@ namespace PVM.Persistence.Neo4j.Model
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((NodeModel) obj);
+            return Equals((TransitionModel) obj);
         }
 
         public override int GetHashCode()
