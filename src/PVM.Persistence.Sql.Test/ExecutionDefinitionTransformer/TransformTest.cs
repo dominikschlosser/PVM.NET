@@ -163,18 +163,6 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
         }
 
         [Test]
-        public void AddsParentIfAvailable()
-        {
-            var parent = new TestExecutionBuilder().WithIdentifier("parent").BuildExecution();
-            var execution = new TestExecutionBuilder().WithParent(parent).BuildExecution();
-            var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
-
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
-
-            Assert.That(result.Parent.Identifier, Is.EqualTo("parent"));
-        }
-
-        [Test]
         public void AddsChildrenIfAvailable()
         {
             var child1 = new TestExecutionBuilder().WithIdentifier("child1").BuildExecution();

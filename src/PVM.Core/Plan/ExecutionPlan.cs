@@ -52,6 +52,11 @@ namespace PVM.Core.Plan
             get { return workflowDefinition; }
         }
 
+        private IPersistenceProvider PersistenceProvider
+        {
+            get { return serviceLocator.GetInstance<IPersistenceProvider>(); }
+        }
+
         public void OnExecutionStarting(IExecution execution)
         {
         }
@@ -60,15 +65,13 @@ namespace PVM.Core.Plan
         {
             if (!execution.CurrentNode.OutgoingTransitions.Any())
             {
-                Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
-                execution.Kill();
+                KillExecution(execution);
             }
         }
 
         public void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier)
         {
-            Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
-            execution.Kill();
+            KillExecution(execution);
         }
 
         public void OnExecutionResuming(IExecution execution)
@@ -89,8 +92,7 @@ namespace PVM.Core.Plan
         {
             if (!execution.CurrentNode.OutgoingTransitions.Any())
             {
-                Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
-                execution.Kill();
+                KillExecution(execution);
                 return;
             }
 
@@ -124,6 +126,13 @@ namespace PVM.Core.Plan
                 operation.Execute(execution);
             }
 
+        }
+
+        private void KillExecution(IExecution execution)
+        {
+            Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
+            execution.Kill();
+            PersistenceProvider.Persist(execution, workflowDefinition);
         }
     }
 }

@@ -21,7 +21,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Definition;
 using PVM.Core.Plan;
 using PVM.Core.Runtime;
@@ -66,5 +68,11 @@ namespace PVM.Core.Persistence
         {
             return executions[executionIdentifier];
         }
+
+        public IWorkflowInstance LoadWorkflowInstance(string identifier, Func<IWorkflowDefinition, IExecutionPlan> executionPlanCreatorCallback)
+        {
+            return executions[identifier] as IWorkflowInstance;
+        }
+
     }
 }

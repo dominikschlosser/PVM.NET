@@ -116,5 +116,10 @@ namespace PVM.Core.Runtime
         {
             return TaskRepository.FindTask(taskName);
         }
+
+        public IWorkflowInstance Load(string identifier)
+        {
+            return persistenceProvider.LoadWorkflowInstance(identifier, workflowDefinition => new ExecutionPlan(serviceLocator, workflowDefinition));
+        }
     }
 }

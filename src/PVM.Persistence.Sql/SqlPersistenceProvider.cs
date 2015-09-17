@@ -21,8 +21,7 @@
 
 #endregion
 
-using System.Linq;
-using System.Transactions;
+using System;
 using NHibernate;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
@@ -37,8 +36,8 @@ namespace PVM.Persistence.Sql
     public class SqlPersistenceProvider : IPersistenceProvider
     {
         private readonly ExecutionDefinitionTransformer executionTransformer;
-        private readonly WorkflowDefinitionTransformer workflowDefinitionTransformer;
         private readonly ISessionFactory sessionFactory;
+        private readonly WorkflowDefinitionTransformer workflowDefinitionTransformer;
 
         public SqlPersistenceProvider(IObjectSerializer objectSerializer, ISessionFactory sessionFactory)
         {
@@ -49,45 +48,43 @@ namespace PVM.Persistence.Sql
 
         public void Persist(IExecution execution, IWorkflowDefinition definition)
         {
-
-                using (var session = sessionFactory.OpenSession())
+            using (var session = sessionFactory.OpenSession())
+            {
+                using (var txn = session.BeginTransaction())
                 {
-                    using (var txn = session.BeginTransaction())
-                    {
-                        var entity = executionTransformer.Transform(execution, definition);
+                    var entity = executionTransformer.Transform(execution, definition);
 
-                        session.SaveOrUpdate(entity);
-                        session.Flush();
-                        txn.Commit();
-                    }
+                    session.SaveOrUpdate(entity);
+                    session.Flush();
+                    txn.Commit();
                 }
-
-
+            }
         }
 
         public void Persist(IWorkflowDefinition workflowDefinition)
         {
-
-                using (var session = sessionFactory.OpenSession())
+            using (var session = sessionFactory.OpenSession())
+            {
+                using (var txn = session.BeginTransaction())
                 {
-                    using (var txn = session.BeginTransaction())
-                    {
-                        var entity = workflowDefinitionTransformer.Transform(workflowDefinition);
+                    var entity = workflowDefinitionTransformer.Transform(workflowDefinition);
 
-                        session.SaveOrUpdate(entity);
-                        session.Flush();
-                        
-                        txn.Commit();
-                    }
+                    session.SaveOrUpdate(entity);
+                    session.Flush();
+
+                    txn.Commit();
                 }
-            
+            }
         }
 
         public IWorkflowDefinition LoadWorkflowDefinition(string workflowDefinitionIdentifier)
         {
             using (var session = sessionFactory.OpenSession())
             {
-                var model = session.QueryOver<WorkflowDefinitionModel>().Where(w => w.Identifier == workflowDefinitionIdentifier).SingleOrDefault();
+                var model =
+                    session.QueryOver<WorkflowDefinitionModel>()
+                           .Where(w => w.Identifier == workflowDefinitionIdentifier)
+                           .SingleOrDefault();
 
                 if (model == null)
                 {
@@ -102,7 +99,10 @@ namespace PVM.Persistence.Sql
         {
             using (var session = sessionFactory.OpenSession())
             {
-                var model = session.QueryOver<ExecutionModel>().Where(w => w.Identifier == executionIdentifier).SingleOrDefault();
+                var model =
+                    session.QueryOver<ExecutionModel>()
+                           .Where(w => w.Identifier == executionIdentifier)
+                           .SingleOrDefault();
 
                 if (model == null)
                 {
@@ -110,6 +110,25 @@ namespace PVM.Persistence.Sql
                 }
 
                 return executionTransformer.TransformBack(model, executionPlan);
+            }
+        }
+
+        public IWorkflowInstance LoadWorkflowInstance(string identifier, Func<IWorkflowDefinition, IExecutionPlan> executionPlanCreatorCallback)
+        {
+            using (var session = sessionFactory.OpenSession())
+            {
+                var model =
+                    session.QueryOver<WorkflowInstanceModel>()
+                           .Where(w => w.Identifier == identifier)
+                           .SingleOrDefault();
+
+                if (model == null)
+                {
+                    return null;
+                }
+
+                var workflowDefinition = LoadWorkflowDefinition(model.WorkflowDefinitionIdentifier);
+                return executionTransformer.TransformBack(model, executionPlanCreatorCallback(workflowDefinition));
             }
         }
     }
