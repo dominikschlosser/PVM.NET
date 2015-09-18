@@ -23,11 +23,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Neo4jClient;
+
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Plan;
 using PVM.Core.Runtime;
 using PVM.Persistence.Neo4j.Model;
+using Node = PVM.Core.Definition.Node;
 
 namespace PVM.Persistence.Neo4j
 {
@@ -102,96 +104,100 @@ namespace PVM.Persistence.Neo4j
         {
             using (var client = CreateGraphClient())
             {
-                var result = client.Cypher.Match("(wf:WorkflowDefinition {Identifier: {wfId}})")
-                      .Match("(wf)-[:STARTS_AT]->(initialNode:Node)")
-                      .Match("(source)-[transition:TRANSITION]->(destination)")
+                IDictionary<string, INode> allNodes = new Dictionary<string, INode>();
+                List<INode> endNodes = new List<INode>();
+
+                var initialNodeResult = client.Cypher.Match("(wf:WorkflowDefinition {Identifier: {wfId}})")
+                                                             .Match("(wf)-[:STARTS_AT]->(initialNode:Node)")
+                                                             .WithParams(new
+                                                             {
+                                                                 wfId = workflowDefinitionIdentifier
+                                                             })
+                                                             .ReturnDistinct(initialNode => initialNode.As<NodeModel>());
+
+                var initialNodeModel = initialNodeResult.Results.First();
+                INode initial = new Node(initialNodeModel.Identifier, Type.GetType(initialNodeModel.OperationType));
+                allNodes.Add(initial.Identifier, initial);
+                if (initialNodeModel.IsEndNode)
+                {
+                    endNodes.Add(initial);
+                }
+
+                var result = client.Cypher
+                      .Match("(source:Node {Identifier: {initialNodeId}})-[transition:TRANSITION*]->(destination:Node)")
                       .WithParams(new
                       {
-                          wfId = workflowDefinitionIdentifier
+                          initialNodeId = initialNodeModel.Identifier
                       })
                       .ReturnDistinct((source, transition, destination) => new
                       {
                           Source = source.As<NodeModel>(),
-                          Transition = transition.As<TransitionModel>(),
+                          Transition = transition.As<List<TransitionModel>>(),
                           Destination = destination.As<NodeModel>()
                       });
 
-                List<INode> allNodes = new List<INode>();
-                List<INode> endNodes = new List<INode>();
 
-                Node initialNode = null;
+
                 foreach (var r in result.Results)
                 {
-                    if (initialNode == null)
+                    INode source;
+
+                    if (allNodes.ContainsKey(r.Source.Identifier))
                     {
-                        initialNode = new Node(r.Source.Identifier, Type.GetType(r.Source.OperationType));
-                        allNodes.Add(initialNode);
-                        if (r.Source.IsEndNode)
+                        source = allNodes[r.Source.Identifier];
+                    }
+                    else
+                    {
+                        source = new Node(r.Source.Identifier, Type.GetType(r.Source.OperationType));
+                        allNodes.Add(source.Identifier, source);
+
+                        if (r.Source.IsEndNode && !endNodes.Contains(source))
                         {
-                            endNodes.Add(initialNode);
+                            endNodes.Add(source);
                         }
                     }
 
-                    Node destination = new Node(r.Destination.Identifier, Type.GetType(r.Destination.OperationType));
-                    if (allNodes.Contains(destination))
+
+                    if (r.Transition.Count > 1)
                     {
-                        continue;
-                    }
-                    allNodes.Add(destination);
-                    if (r.Destination.IsEndNode)
-                    {
-                        endNodes.Add(destination);
+                        for (int i = 0; i < r.Transition.Count - 1; i++)
+                        {
+                            var transitionToTake =
+                                source.OutgoingTransitions.First(t => t.Identifier == r.Transition[i].Identifier);
+                            source = transitionToTake.Destination;
+                        }
                     }
 
-                    var transition = new Transition(r.Transition.Identifier, r.Transition.IsDefault, initialNode,
+                    INode destination;
+
+                    if (allNodes.ContainsKey(r.Destination.Identifier))
+                    {
+                        destination = allNodes[r.Destination.Identifier];
+                    }
+                    else
+                    {
+                        destination = new Node(r.Destination.Identifier, Type.GetType(r.Destination.OperationType));
+                        allNodes.Add(destination.Identifier, destination);
+
+                        if (r.Destination.IsEndNode && !endNodes.Contains(destination))
+                        {
+                            endNodes.Add(destination);
+                        }
+                    }
+
+
+                    var lastTransition = r.Transition.Last();
+                    var transition = new Transition(lastTransition.Identifier, lastTransition.IsDefault, source,
                         destination);
-                    initialNode.AddOutgoingTransition(transition);
+                    source.AddOutgoingTransition(transition);
                     destination.AddIncomingTransition(transition);
-
-                    PopulateNode(destination, allNodes, endNodes, client);
                 }
 
-                return new WorkflowDefinition(workflowDefinitionIdentifier, allNodes, endNodes, initialNode);
+                return new WorkflowDefinition(workflowDefinitionIdentifier, new List<INode>(allNodes.Values), endNodes, initial);
             }
 
         }
 
-        private void PopulateNode(Node node, List<INode> allNodes, List<INode> endNodes, GraphClient client)
-        {
-            var result = client.Cypher.Match("(source:Node {Identifier: {sourceId}})")
-                      .Match("(source)-[transition:TRANSITION]->(destination)")
-                      .WithParams(new
-                      {
-                          sourceId = node.Identifier
-                      })
-                      .ReturnDistinct((source, transition, destination) => new
-                      {
-                          Source = source.As<NodeModel>(),
-                          Transition = transition.As<TransitionModel>(),
-                          Destination = destination.As<NodeModel>()
-                      });
-
-            foreach (var r in result.Results)
-            {
-                Node destination = new Node(r.Destination.Identifier, Type.GetType(r.Destination.OperationType));
-                if (allNodes.Contains(destination))
-                {
-                    continue;
-                }
-                allNodes.Add(destination);
-                if (r.Destination.IsEndNode)
-                {
-                    endNodes.Add(destination);
-                }
-
-                var transition = new Transition(r.Transition.Identifier, r.Transition.IsDefault, node,
-                    destination);
-                node.AddOutgoingTransition(transition);
-                destination.AddIncomingTransition(transition);
-
-                PopulateNode(destination, allNodes, endNodes, client);
-            }
-        }
         private static GraphClient CreateGraphClient()
         {
             var graphClient = new GraphClient(new Uri("http://localhost:7474/db/data"), "neo4j", "dkschlos");
