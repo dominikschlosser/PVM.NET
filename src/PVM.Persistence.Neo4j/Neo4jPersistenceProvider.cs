@@ -37,9 +37,80 @@ namespace PVM.Persistence.Neo4j
     {
         public void Persist(IExecution execution, IWorkflowDefinition definition)
         {
-            throw new NotImplementedException();
+            using (var client = CreateGraphClient())
+            {
+                var findRoot = FindRoot(execution);
+
+                var query = client.Cypher
+                    .Merge("(e:Execution {Identifier: {id}})");
+
+                if (execution.CurrentNode != null)
+                {
+                    query.Merge("(n:Node {Identifier: {currentNodeId}})")
+                         .Merge("(e)-[:EXECUTES]->(n)");
+                }
+
+                
+                query.Set("e = {execution}")
+                    .WithParams(new
+                    {
+                        execution =
+                            new ExecutionModel()
+                            {
+                                Identifier = findRoot.Identifier,
+                                IsActive = findRoot.IsActive
+                            },
+                        id = findRoot.Identifier,
+                        currentNodeId = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier
+                    })
+                    .ExecuteWithoutResults();
+
+                PersistChildExecutions(findRoot, client);
+            }
         }
 
+        private void PersistChildExecutions(IExecution execution, GraphClient client)
+        {
+            foreach (var child in execution.Children)
+            {
+                var query = client.Cypher
+                                  .Merge("(parent:Execution {Identifier: {parentId}})")
+                                  .Merge("(parent)-[:PARENT_OF]->(child:Execution {Identifier: {childId}})");
+
+                if (execution.CurrentNode != null)
+                {
+                    query.Merge("(n:Node {Identifier: {currentNodeId}})")
+                         .Merge("(child)-[:EXECUTES]->(n)");
+                }
+
+                query.Set("child = {execution}")
+                     .WithParams(new
+                     {
+                         execution =
+                             new ExecutionModel()
+                             {
+                                 Identifier = execution.Identifier,
+                                 IsActive = execution.IsActive
+                             },
+                         parentId = execution.Parent.Identifier,
+                         childId = execution.Identifier,
+                         currentNodeId = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier
+                     })
+                     .ExecuteWithoutResults();
+
+                PersistChildExecutions(child, client);
+            }
+        }
+
+        private IExecution FindRoot(IExecution execution)
+        {
+            if (execution.Parent == null)
+            {
+                return execution;
+            }
+
+            return FindRoot(execution.Parent);
+        }
         public void Persist(IWorkflowDefinition workflowDefinition)
         {
             using (var client = CreateGraphClient())

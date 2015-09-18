@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ExecutionModel.cs" />
     <Compile Include="Model\NodeModel.cs" />
     <Compile Include="Model\TransitionModel.cs" />
     <Compile Include="Neo4jPersistenceModule.cs" />
