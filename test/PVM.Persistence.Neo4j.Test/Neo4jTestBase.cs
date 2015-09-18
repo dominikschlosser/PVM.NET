@@ -42,9 +42,9 @@ namespace PVM.Persistence.Neo4j.Test
 
         private void ResetDb()
         {
-            GraphClient.Cypher.Match("(n:Node)")
+            GraphClient.Cypher.Match("(n)")
                 .OptionalMatch("(n)-[r]->()")
-                .Delete("n, r")
+                .Delete("r,n")
                 .ExecuteWithoutResults();
         }
 

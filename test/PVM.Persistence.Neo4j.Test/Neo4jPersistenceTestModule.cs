@@ -1,6 +1,6 @@
 ﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="Neo4jPersistenceModule.cs" company="PVM.NET Project Contributors">
+//  <copyright file="SqlPersistenceTestModule.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -20,19 +20,24 @@
 #endregion
 
 using Neo4jClient;
-using Ninject.Modules;
-using PVM.Core.Persistence;
-using PVM.Core.Tasks;
+using PVM.Persistence.Neo4j;
 
-namespace PVM.Persistence.Neo4j
+namespace PVM.Persistence.Sql.Test
 {
-    public class Neo4jPersistenceModule : NinjectModule
+    public class Neo4jPersistenceTestModule : Neo4jPersistenceModule
     {
+        private readonly IGraphClient graphClient;
+
+        public Neo4jPersistenceTestModule(IGraphClient graphClient)
+        {
+            this.graphClient = graphClient;
+        }
+
 
         public override void Load()
         {
-            Rebind<IPersistenceProvider>().To<Neo4jPersistenceProvider>();
-            Rebind<ITaskRepository>().To<Neo4jTaskRepository>();
+            base.Load();
+            Bind<IGraphClient>().ToConstant(graphClient);
         }
     }
 }

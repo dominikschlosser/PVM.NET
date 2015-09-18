@@ -23,6 +23,7 @@
 
 using NUnit.Framework;
 using PVM.Core.Builder;
+using PVM.Persistence.Sql.Test;
 
 namespace PVM.Persistence.Neo4j.Test
 {
@@ -76,7 +77,7 @@ namespace PVM.Persistence.Neo4j.Test
                 .BuildWorkflow();
 
             new WorkflowEngineBuilder().ConfigureServiceLocator()
-                                           .ImportModule(new Neo4jPersistenceModule())
+                                           .ImportModule(new Neo4jPersistenceTestModule(GraphClient))
                                            .Build()
                                            .StartNewInstance(workflowDefinition);
         }
@@ -128,7 +129,7 @@ namespace PVM.Persistence.Neo4j.Test
                 .BuildWorkflow();
 
             new WorkflowEngineBuilder().ConfigureServiceLocator()
-                                           .ImportModule(new Neo4jPersistenceModule())
+                                           .ImportModule(new Neo4jPersistenceTestModule(GraphClient))
                                            .Build()
                                            .StartNewInstance(workflowDefinition);
         }
