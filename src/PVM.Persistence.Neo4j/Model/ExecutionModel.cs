@@ -18,12 +18,14 @@
 //  </copyright>
 // -------------------------------------------------------------------------------
 #endregion
+
 namespace PVM.Persistence.Neo4j.Model
 {
     public class ExecutionModel
     {
         public string Identifier { get; set; }
         public bool IsActive { get; set; }
+        public string Data { get; set; }
 
     }
 }

@@ -42,15 +42,18 @@ namespace PVM.Persistence.Sql.Test
         }
 
         [WorkflowData]
-        private class TestData
+        public class TestData
         {
             public TestData()
             {
                 Counter = 0;
-                Data = new NestedTestClass {Name = "bla", Value = 42.3f};
+                Data = new NestedTestClass { Name = "bla", Value = 42.3f };
             }
 
+            [In, Out]
             public virtual int Counter { get; set; }
+
+            [In, Out]
             public virtual NestedTestClass Data { get; set; }
         }
 

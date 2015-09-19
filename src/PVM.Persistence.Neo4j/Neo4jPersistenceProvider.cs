@@ -25,6 +25,7 @@ using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Plan;
 using PVM.Core.Runtime;
+using PVM.Core.Serialization;
 using PVM.Persistence.Neo4j.Model;
 
 namespace PVM.Persistence.Neo4j
@@ -32,10 +33,12 @@ namespace PVM.Persistence.Neo4j
     public class Neo4jPersistenceProvider : IPersistenceProvider
     {
         private readonly IGraphClient graphClient;
+        private readonly IObjectSerializer objectSerializer;
 
-        public Neo4jPersistenceProvider(IGraphClient graphClient)
+        public Neo4jPersistenceProvider(IGraphClient graphClient, IObjectSerializer objectSerializer)
         {
             this.graphClient = graphClient;
+            this.objectSerializer = objectSerializer;
         }
 
         public void Persist(IExecution execution, IWorkflowDefinition definition)
@@ -51,7 +54,6 @@ namespace PVM.Persistence.Neo4j
                     .Merge("(e)-[:EXECUTES]->(n)");
             }
 
-
             query.Set("e = {execution}")
                 .WithParams(new
                 {
@@ -59,7 +61,8 @@ namespace PVM.Persistence.Neo4j
                         new ExecutionModel()
                         {
                             Identifier = findRoot.Identifier,
-                            IsActive = findRoot.IsActive
+                            IsActive = findRoot.IsActive,
+                            Data = objectSerializer.Serialize(execution.Data)
                         },
                     id = findRoot.Identifier,
                     currentNodeId = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier
@@ -264,13 +267,34 @@ namespace PVM.Persistence.Neo4j
                 destination.AddIncomingTransition(transition);
             }
 
-            return new WorkflowDefinition(workflowDefinitionIdentifier, new List<INode>(allNodes.Values), endNodes,
+            var workflowDefinition = new WorkflowDefinition(workflowDefinitionIdentifier, new List<INode>(allNodes.Values), endNodes,
                 initial);
+
+            // TODO: smells
+            workflowDefinition.AddStartTransition();
+
+            return workflowDefinition;
         }
 
         public IExecution LoadExecution(string executionIdentifier, IExecutionPlan executionPlan)
         {
-            throw new NotImplementedException();
+            var root = graphClient.Cypher
+                                  .Match("(e:Execution {Identifier: {id}})")
+                                  .Match("(root:Execution)->[:PARENT_OF*]->(e)")
+                                  .Match("(root)->[:EXECUTES]->(currentNode:Node)")
+                                  .Where("NOT (:Execution)->[:PARENT_OF*]->(root)")
+                                  .Limit(1)
+                                  .Return((r, currentNode) => new
+                                  {
+                                      Root = r.As<ExecutionModel>(),
+                                      CurrentNode = currentNode.As<NodeModel>()
+                                  });
+
+            var executionModel = root.Results.Single();
+
+
+            //IExecution rootExecution = new Execution(null, executionPlan.WorkflowDefinition.Nodes.First(n => n.Identifier == executionModel.CurrentNode.Identifier), executionModel.Root.IsActive, false, new Dictionary<string, object>(), );
+            return null;
         }
 
         public IWorkflowInstance LoadWorkflowInstance(string identifier,

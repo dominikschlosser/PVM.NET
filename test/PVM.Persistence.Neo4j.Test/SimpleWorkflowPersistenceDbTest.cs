@@ -33,16 +33,16 @@ namespace PVM.Persistence.Neo4j.Test
     [TestFixture]
     public class SimpleWorkflowPersistenceDbTest : Neo4jTestBase
     {
-        private class TestOperation : IOperation
+        private class TestOperation : DataAwareOperation<TestData>
         {
-            public void Execute(IExecution execution)
+            public override void Execute(IExecution execution, TestData dataContext)
             {
                 execution.Wait();
             }
         }
 
         [WorkflowData]
-        private class TestData
+        public class TestData
         {
             public TestData()
             {
@@ -50,7 +50,10 @@ namespace PVM.Persistence.Neo4j.Test
                 Data = new NestedTestClass {Name = "bla", Value = 42.3f};
             }
 
+            [In, Out]
             public virtual int Counter { get; set; }
+
+            [In, Out]
             public virtual NestedTestClass Data { get; set; }
         }
 
