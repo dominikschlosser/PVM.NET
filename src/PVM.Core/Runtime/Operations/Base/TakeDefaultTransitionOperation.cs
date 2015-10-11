@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="ExecutionVisitor.cs" company="PVM.NET Project Contributors">
+//  <copyright file="TakeDefaultTransitionOperation.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,24 +21,13 @@
 
 #endregion
 
-using System;
-using PVM.Core.Runtime;
-using PVM.Core.Runtime.Algorithms;
-
-namespace PVM.Core.Plan
+namespace PVM.Core.Runtime.Operations.Base
 {
-    public class ExecutionVisitor : IExecutionVisitor
+    public class TakeDefaultTransitionOperation : IOperation
     {
-        private readonly Action<IExecution> action;
-
-        public ExecutionVisitor(Action<IExecution> action)
+        public void Execute(IExecution execution)
         {
-            this.action = action;
-        }
-
-        public void Visit(IExecution execution)
-        {
-            action(execution);
+            execution.Proceed();
         }
     }
 }

@@ -19,20 +19,40 @@
 // -------------------------------------------------------------------------------
 #endregion
 
+using System.Linq;
+using Neo4jClient;
 using PVM.Core.Tasks;
 
 namespace PVM.Persistence.Neo4j
 {
     public class Neo4jTaskRepository : ITaskRepository
     {
+        private readonly IGraphClient graphClient;
+
+        public Neo4jTaskRepository(IGraphClient graphClient)
+        {
+            this.graphClient = graphClient;
+        }
+
         public void Add(UserTask userTask)
         {
-            throw new System.NotImplementedException();
+            
+            graphClient.Cypher.Match("(e:Execution {Identifier: {id}})")
+                .Merge("(e)-[:HAS_TASK]->(t:Task)")
+                .Set("t = {task}")
+                .WithParams(new
+                {
+                    id = userTask.ExecutionIdentifier,
+                    task = userTask
+                })
+                .ExecuteWithoutResults();
         }
 
         public UserTask FindTask(string taskName)
         {
-            throw new System.NotImplementedException();
+            return graphClient.Cypher.Match("(t:Task {TaskIdentifier: {name}})")
+                       .WithParam("name", taskName)
+                       .Return(t => t.As<UserTask>()).Limit(1).Results.FirstOrDefault();
         }
     }
 }

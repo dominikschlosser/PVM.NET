@@ -26,6 +26,10 @@ namespace PVM.Core.Tasks
         private readonly string taskIdentifier;
         private readonly string workflowDefinitionIdentifier;
 
+        public UserTask()
+        {
+            
+        }
         public UserTask(string taskIdentifier, string executionIdentifier, string workflowDefinitionIdentifier)
         {
             this.taskIdentifier = taskIdentifier;

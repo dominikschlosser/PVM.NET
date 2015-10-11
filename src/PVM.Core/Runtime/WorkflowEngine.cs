@@ -27,7 +27,6 @@ using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
-using PVM.Core.Plan;
 using PVM.Core.Tasks;
 
 namespace PVM.Core.Runtime

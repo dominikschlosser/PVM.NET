@@ -24,9 +24,8 @@
 using System.Linq;
 using NUnit.Framework;
 using PVM.Core.Definition;
-using PVM.Core.Plan.Operations;
-using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Operations.Base;
 using PVM.Persistence.Sql.Model;
 
 namespace PVM.Persistence.Sql.Test.WorkflowDefinitionTransformer

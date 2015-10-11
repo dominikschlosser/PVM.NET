@@ -23,10 +23,11 @@ using System.Linq;
 using Neo4jClient;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
-using PVM.Core.Plan;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Algorithms;
 using PVM.Core.Serialization;
 using PVM.Persistence.Neo4j.Model;
+using Node = PVM.Core.Definition.Node;
 
 namespace PVM.Persistence.Neo4j
 {
@@ -46,12 +47,17 @@ namespace PVM.Persistence.Neo4j
             var findRoot = FindRoot(execution);
 
             var query = graphClient.Cypher
-                .Merge("(e:Execution {Identifier: {id}})");
+                                   .Match("(e:Execution {Identifier: {id}})");
+
 
             if (execution.CurrentNode != null)
             {
-                query.Merge("(n:Node {Identifier: {currentNodeId}})")
-                    .Merge("(e)-[:EXECUTES]->(n)");
+                query.Match("(n:Node {Identifier: {currentNodeId}})")
+                     .Merge("(e)-[:EXECUTES]->(n)");
+            }
+            else
+            {
+                query.Merge("(e:Execution {Identifier: {id}})");
             }
 
             query.Set("e = {execution}")
@@ -62,7 +68,8 @@ namespace PVM.Persistence.Neo4j
                         {
                             Identifier = findRoot.Identifier,
                             IsActive = findRoot.IsActive,
-                            Data = objectSerializer.Serialize(execution.Data)
+                            Data = objectSerializer.Serialize(execution.Data),
+                            IncomingTransition = findRoot.IncomingTransition
                         },
                     id = findRoot.Identifier,
                     currentNodeId = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier
@@ -80,26 +87,32 @@ namespace PVM.Persistence.Neo4j
                     .Merge("(parent:Execution {Identifier: {parentId}})")
                     .Merge("(parent)-[:PARENT_OF]->(child:Execution {Identifier: {childId}})");
 
-                if (execution.CurrentNode != null)
-                {
-                    query.Merge("(n:Node {Identifier: {currentNodeId}})")
-                        .Merge("(child)-[:EXECUTES]->(n)");
-                }
-
                 query.Set("child = {execution}")
                     .WithParams(new
                     {
                         execution =
                             new ExecutionModel()
                             {
-                                Identifier = execution.Identifier,
-                                IsActive = execution.IsActive
+                                Identifier = child.Identifier,
+                                IsActive = child.IsActive
                             },
-                        parentId = execution.Parent.Identifier,
-                        childId = execution.Identifier,
-                        currentNodeId = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier
+                        parentId = execution.Identifier,
+                        childId = child.Identifier
                     })
                     .ExecuteWithoutResults();
+
+                if (child.CurrentNode != null)
+                {
+                    client.Cypher.Match("(n:Node {Identifier: {currentNodeId}})")
+                        .Match("(child:Execution {Identifier: {childId}})")
+                        .Merge("(child)-[:EXECUTES]->(n)")
+                         .WithParams(new
+                         {
+                             currentNodeId = child.CurrentNode.Identifier,
+                             childId = child.Identifier
+                         })
+                        .ExecuteWithoutResults();
+                }
 
                 PersistChildExecutions(child, client);
             }
@@ -280,10 +293,11 @@ namespace PVM.Persistence.Neo4j
         {
             var root = graphClient.Cypher
                                   .Match("(e:Execution {Identifier: {id}})")
-                                  .Match("(root:Execution)->[:PARENT_OF*]->(e)")
-                                  .Match("(root)->[:EXECUTES]->(currentNode:Node)")
-                                  .Where("NOT (:Execution)->[:PARENT_OF*]->(root)")
+                                  .Match("(root:Execution)-[:PARENT_OF*]->(e)")
+                                  .Match("(root)-[:EXECUTES]->(currentNode:Node)")
+                                  .Where("NOT (:Execution)-[:PARENT_OF*]->(root)")
                                   .Limit(1)
+                                  .WithParam("id", executionIdentifier)
                                   .Return((r, currentNode) => new
                                   {
                                       Root = r.As<ExecutionModel>(),
@@ -292,9 +306,47 @@ namespace PVM.Persistence.Neo4j
 
             var executionModel = root.Results.Single();
 
+            Dictionary<string, object> data = (Dictionary<string, object>) objectSerializer.Deserialize(executionModel.Root.Data, typeof(Dictionary<string, object>));
+            var children = new List<IExecution>();
 
-            //IExecution rootExecution = new Execution(null, executionPlan.WorkflowDefinition.Nodes.First(n => n.Identifier == executionModel.CurrentNode.Identifier), executionModel.Root.IsActive, false, new Dictionary<string, object>(), );
-            return null;
+            var rootExecution = new Execution(null, 
+                executionPlan.WorkflowDefinition.Nodes.First(n => n.Identifier == executionModel.CurrentNode.Identifier), 
+                executionModel.Root.IsActive, false, data, executionModel.Root.IncomingTransition, executionModel.Root.Identifier, executionPlan, children);
+
+            FillChildren(executionModel.Root.Identifier, children, executionPlan);
+
+            var collector = new ExecutionCollector(e => e.Identifier == executionIdentifier);
+            rootExecution.Accept(collector);
+
+            return collector.Result.First();
+        }
+
+        private void FillChildren(string executionId, List<IExecution> children, IExecutionPlan executionPlan)
+        {
+            var result = graphClient.Cypher
+                .Match("(root:Execution {Identifier: {id}})")
+                .Match("(root:Execution)-[:PARENT_OF]->(child:Execution)")
+                .Match("(child)-[:EXECUTES]->(currentNode:Node)")
+                .WithParam("id", executionId)
+                .Return((child, currentNode) => new
+                {
+                    Child = child.As<ExecutionModel>(),
+                    CurrentNode = currentNode.As<NodeModel>()
+                });
+
+            foreach (var r in result.Results)
+            {
+                Dictionary<string, object> data = (Dictionary<string, object>)objectSerializer.Deserialize(r.Child.Data, typeof(Dictionary<string, object>));
+
+                var childExecutions = new List<IExecution>();
+                var e = new Execution(null,
+                    executionPlan.WorkflowDefinition.Nodes.First(n => n.Identifier == r.CurrentNode.Identifier),
+                    r.Child.IsActive, false, data, r.Child.IncomingTransition, r.Child.Identifier, executionPlan,
+                    childExecutions);
+                children.Add(e);
+
+                FillChildren(r.Child.Identifier, childExecutions, executionPlan);
+            }
         }
 
         public IWorkflowInstance LoadWorkflowInstance(string identifier,

@@ -27,7 +27,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using log4net;
 using PVM.Core.Definition;
-using PVM.Core.Plan;
 using PVM.Core.Runtime.Algorithms;
 
 namespace PVM.Core.Runtime
@@ -156,7 +155,8 @@ namespace PVM.Core.Runtime
                 Children.Add(child);
             }
 
-            foreach (var outgoing in Children)
+            var children = new List<IExecution>(Children);
+            foreach (var outgoing in children)
             {
                 Logger.InfoFormat("Child-Execution '{0}' started.", outgoing.Identifier);
 

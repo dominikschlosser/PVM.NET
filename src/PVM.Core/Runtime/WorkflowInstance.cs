@@ -24,7 +24,6 @@
 using System.Collections.Generic;
 using log4net;
 using PVM.Core.Definition;
-using PVM.Core.Plan;
 
 namespace PVM.Core.Runtime
 {

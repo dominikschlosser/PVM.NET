@@ -21,7 +21,6 @@
 
 using Moq;
 using NUnit.Framework;
-using PVM.Core.Plan;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Test

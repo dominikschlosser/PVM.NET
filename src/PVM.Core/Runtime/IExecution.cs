@@ -24,7 +24,6 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
 using PVM.Core.Definition;
-using PVM.Core.Plan;
 using PVM.Core.Runtime.Algorithms;
 
 namespace PVM.Core.Runtime

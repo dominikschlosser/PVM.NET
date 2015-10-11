@@ -21,8 +21,8 @@
 
 using NUnit.Framework;
 using PVM.Core.Builder;
-using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Operations.Base;
 using PVM.Persistence.Sql.Test;
 
 namespace PVM.Persistence.Neo4j.Test

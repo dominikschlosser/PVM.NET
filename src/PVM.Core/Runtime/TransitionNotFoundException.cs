@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="UserTaskOperation.cs" company="PVM.NET Project Contributors">
+//  <copyright file="TransitionNotFoundException.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,25 +21,17 @@
 
 #endregion
 
-using PVM.Core.Plan.Operations.Base;
-using PVM.Core.Runtime;
-using PVM.Core.Tasks;
-
-namespace PVM.Core.Plan.Operations
+namespace PVM.Core.Runtime
 {
-    internal class UserTaskOperation : IOperation
+    public class TransitionNotFoundException : System.Exception
     {
-        private readonly ITaskRepository taskRepository;
-
-        public UserTaskOperation(ITaskRepository taskRepository)
+        public TransitionNotFoundException(string message) : base(message)
         {
-            this.taskRepository = taskRepository;
         }
 
-        public void Execute(IExecution execution)
+        public TransitionNotFoundException(string message, System.Exception innerException)
+            : base(message, innerException)
         {
-            taskRepository.Add(new UserTask(execution.CurrentNode.Identifier, execution.Identifier, execution.Plan.WorkflowDefinition.Identifier));
-            execution.Wait();
         }
     }
 }

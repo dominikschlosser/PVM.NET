@@ -23,7 +23,6 @@ using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using PVM.Core.Definition;
-using PVM.Core.Plan;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
 using PVM.Persistence.Sql.Model;

@@ -23,12 +23,11 @@
 
 using System.Linq;
 using log4net;
-using PVM.Core.Plan.Operations.Base;
-using PVM.Core.Runtime;
 using PVM.Core.Runtime.Algorithms;
+using PVM.Core.Runtime.Operations.Base;
 using PVM.Core.Utils;
 
-namespace PVM.Core.Plan.Operations
+namespace PVM.Core.Runtime.Operations
 {
     public class ParallelGatewayOperation : IOperation
     {

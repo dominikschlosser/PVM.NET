@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="DataAwareOperation.cs" company="PVM.NET Project Contributors">
+//  <copyright file="UserTaskOperation.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,18 +21,24 @@
 
 #endregion
 
-using System;
-using PVM.Core.Runtime;
+using PVM.Core.Runtime.Operations.Base;
+using PVM.Core.Tasks;
 
-namespace PVM.Core.Plan.Operations.Base
+namespace PVM.Core.Runtime.Operations
 {
-    public abstract class DataAwareOperation<T> : IOperation<T> where T : class
+    internal class UserTaskOperation : IOperation
     {
-        public abstract void Execute(IExecution execution, T dataContext);
+        private readonly ITaskRepository taskRepository;
+
+        public UserTaskOperation(ITaskRepository taskRepository)
+        {
+            this.taskRepository = taskRepository;
+        }
 
         public void Execute(IExecution execution)
         {
-            throw new InvalidOperationException("Use overload with datacontext");
+            taskRepository.Add(new UserTask(execution.CurrentNode.Identifier, execution.Identifier, execution.Plan.WorkflowDefinition.Identifier));
+            execution.Wait();
         }
     }
 }

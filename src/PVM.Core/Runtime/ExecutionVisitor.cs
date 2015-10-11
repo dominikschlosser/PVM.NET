@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="TransitionNotFoundException.cs" company="PVM.NET Project Contributors">
+//  <copyright file="ExecutionVisitor.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,17 +21,23 @@
 
 #endregion
 
-namespace PVM.Core.Plan
+using System;
+using PVM.Core.Runtime.Algorithms;
+
+namespace PVM.Core.Runtime
 {
-    public class TransitionNotFoundException : System.Exception
+    public class ExecutionVisitor : IExecutionVisitor
     {
-        public TransitionNotFoundException(string message) : base(message)
+        private readonly Action<IExecution> action;
+
+        public ExecutionVisitor(Action<IExecution> action)
         {
+            this.action = action;
         }
 
-        public TransitionNotFoundException(string message, System.Exception innerException)
-            : base(message, innerException)
+        public void Visit(IExecution execution)
         {
+            action(execution);
         }
     }
 }

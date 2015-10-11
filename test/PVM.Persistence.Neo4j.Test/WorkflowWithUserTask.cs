@@ -102,7 +102,7 @@ namespace PVM.Persistence.Sql.Test
                 .BuildNode()
                 .BuildWorkflow();
 
-            var workflowEngine = new WorkflowEngineBuilder().ConfigureServiceLocator().ImportModule(new Neo4jPersistenceModule()).Build();
+            var workflowEngine = new WorkflowEngineBuilder().ConfigureServiceLocator().ImportModule(new Neo4jPersistenceTestModule(GraphClient)).Build();
             var instance = workflowEngine.StartNewInstance(workflowDefinition);
 
             Assert.False(instance.IsFinished);
@@ -180,7 +180,7 @@ namespace PVM.Persistence.Sql.Test
                 .BuildNode()
                 .BuildWorkflow();
 
-            var workflowEngine = new WorkflowEngineBuilder().ConfigureServiceLocator().ImportModule(new Neo4jPersistenceModule()).Build();
+            var workflowEngine = new WorkflowEngineBuilder().ConfigureServiceLocator().ImportModule(new Neo4jPersistenceTestModule(GraphClient)).Build();
             var instance = workflowEngine.StartNewInstance(workflowDefinition);
 
             Assert.False(instance.IsFinished);

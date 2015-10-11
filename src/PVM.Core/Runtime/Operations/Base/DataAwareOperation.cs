@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="TakeDefaultTransitionOperation.cs" company="PVM.NET Project Contributors">
+//  <copyright file="DataAwareOperation.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,15 +21,17 @@
 
 #endregion
 
-using PVM.Core.Runtime;
+using System;
 
-namespace PVM.Core.Plan.Operations.Base
+namespace PVM.Core.Runtime.Operations.Base
 {
-    public class TakeDefaultTransitionOperation : IOperation
+    public abstract class DataAwareOperation<T> : IOperation<T> where T : class
     {
+        public abstract void Execute(IExecution execution, T dataContext);
+
         public void Execute(IExecution execution)
         {
-            execution.Proceed();
+            throw new InvalidOperationException("Use overload with datacontext");
         }
     }
 }

@@ -25,7 +25,6 @@ using System;
 using NHibernate;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
-using PVM.Core.Plan;
 using PVM.Core.Runtime;
 using PVM.Core.Serialization;
 using PVM.Persistence.Sql.Model;

@@ -24,8 +24,8 @@
 using System;
 using System.Collections.Generic;
 using PVM.Core.Definition;
-using PVM.Core.Plan.Operations;
-using PVM.Core.Plan.Operations.Base;
+using PVM.Core.Runtime.Operations;
+using PVM.Core.Runtime.Operations.Base;
 
 namespace PVM.Core.Builder
 {

@@ -1,7 +1,7 @@
-﻿#region License
+#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="IOperation.cs" company="PVM.NET Project Contributors">
+//  <copyright file="IExecutionPlan.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,17 +21,19 @@
 
 #endregion
 
-using PVM.Core.Runtime;
+using PVM.Core.Definition;
 
-namespace PVM.Core.Plan.Operations.Base
+namespace PVM.Core.Runtime
 {
-    public interface IOperation<in TDataMappingDefinition> : IOperation where TDataMappingDefinition : class
+    public interface IExecutionPlan
     {
-        void Execute(IExecution execution, TDataMappingDefinition dataContext);
-    }
-
-    public interface IOperation
-    {
-        void Execute(IExecution execution);
+        void Proceed(IExecution execution, INode node);
+        void OnExecutionStarting(IExecution execution);
+        void OnExecutionStopped(IExecution execution);
+        void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier);
+        void OnExecutionResuming(IExecution execution);
+        void OnExecutionReachesWaitState(IExecution execution);
+        void OnExecutionSignaled(IExecution execution);
+        IWorkflowDefinition WorkflowDefinition { get; }
     }
 }

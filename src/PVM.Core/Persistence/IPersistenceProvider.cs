@@ -25,7 +25,6 @@ using System;
 using JetBrains.Annotations;
 using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Definition;
-using PVM.Core.Plan;
 using PVM.Core.Runtime;
 
 namespace PVM.Core.Persistence

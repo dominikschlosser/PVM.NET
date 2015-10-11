@@ -30,10 +30,9 @@ using PVM.Core.Data.Attributes;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
-using PVM.Core.Plan.Operations.Base;
-using PVM.Core.Runtime;
+using PVM.Core.Runtime.Operations.Base;
 
-namespace PVM.Core.Plan
+namespace PVM.Core.Runtime
 {
     public class ExecutionPlan : IExecutionPlan
     {

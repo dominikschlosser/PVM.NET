@@ -25,8 +25,8 @@ using log4net;
 using NUnit.Framework;
 using PVM.Core.Builder;
 using PVM.Core.Data.Attributes;
-using PVM.Core.Plan.Operations.Base;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Operations.Base;
 
 namespace PVM.Core.Test.Workflows
 {
