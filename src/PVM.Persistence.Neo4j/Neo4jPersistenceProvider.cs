@@ -74,7 +74,6 @@ namespace PVM.Persistence.Neo4j
                          {
                              Identifier = findRoot.Identifier,
                              WorkflowInstanceIdentifier = findRoot.WorkflowInstanceIdentifier,
-                             WorkflowDefinitionIdentifier = findRoot.WorkflowDefinition.Identifier,
                              IsActive = findRoot.IsActive,
                              IsFinished = findRoot.IsFinished,
                              Data = objectSerializer.Serialize(execution.Data),
@@ -84,6 +83,16 @@ namespace PVM.Persistence.Neo4j
                      currentNodeId = execution.CurrentNode == null ? null : execution.CurrentNode.Identifier
                  })
                  .ExecuteWithoutResults();
+
+            graphClient.Cypher
+                       .Match("(e:Execution {Identifier: {id}})")
+                       .Match("(wf:WorkflowDefinition {Identifier: {wfId}})")
+                       .Merge("(e)-[:REFERENCES]->(wf)")
+                       .WithParams(new
+                       {
+                           id = findRoot.Identifier,
+                           wfId = findRoot.WorkflowDefinition.Identifier
+                       }).ExecuteWithoutResults();
 
             PersistChildExecutions(findRoot, graphClient);
         }
@@ -231,7 +240,17 @@ namespace PVM.Persistence.Neo4j
 
             var root = executionModel.Root ?? executionModel.Current;
 
-            var workflowDefinition = LoadWorkflowDefinition(root.WorkflowDefinitionIdentifier);
+
+            var wfQuery = graphClient.Cypher
+                                     .Match("(e:Execution {Identifier: {id}})-[*]->(n:Node)")
+                                     .Match("(wf:WorkflowDefinition)-[*]->(n)")
+                                     .OptionalMatch(
+                                         "(e:Execution {Identifier: {id}})-[:REFERENCES]->(wf:WorkflowDefinition)")
+                                     .WithParam("id", root.Identifier)
+                                     .Return(wf => wf.As<WorkflowDefinitionModel>());
+
+            var workflowDefinition = LoadWorkflowDefinition(wfQuery.Results.First().Identifier);
+
 
             Dictionary<string, object> data =
                 (Dictionary<string, object>)
@@ -262,13 +281,13 @@ namespace PVM.Persistence.Neo4j
                 if (child.IsFinished)
                 {
                     client.Cypher.Match("(child:Execution {Identifier: {childId}})")
-                        .OptionalMatch("()-[from]->(child)")
-                        .OptionalMatch("(child)-[to]->()")
-                        .OptionalMatch("(child)-[]->(e:Execution)")
-                        .OptionalMatch("(e)-[t]->()")
-                        .Delete("child, from, to, t, e")
-                        .WithParam("childId", child.Identifier)
-                        .ExecuteWithoutResults();
+                          .OptionalMatch("()-[from]->(child)")
+                          .OptionalMatch("(child)-[to]->()")
+                          .OptionalMatch("(child)-[]->(e:Execution)")
+                          .OptionalMatch("(e)-[t]->()")
+                          .Delete("child, from, to, t, e")
+                          .WithParam("childId", child.Identifier)
+                          .ExecuteWithoutResults();
 
                     continue;
                 }
@@ -285,7 +304,6 @@ namespace PVM.Persistence.Neo4j
                              {
                                  Identifier = child.Identifier,
                                  WorkflowInstanceIdentifier = child.WorkflowInstanceIdentifier,
-                                 WorkflowDefinitionIdentifier = child.WorkflowDefinition.Identifier,
                                  IsActive = child.IsActive,
                                  IsFinished = child.IsFinished,
                                  Data = objectSerializer.Serialize(execution.Data),

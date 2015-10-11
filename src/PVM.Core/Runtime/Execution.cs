@@ -67,10 +67,7 @@ namespace PVM.Core.Runtime
         public string WorkflowInstanceIdentifier { get; private set; }
         public IExecution Parent { get; protected set; }
         public IList<IExecution> Children { get; protected set; }
-        private INode currentNode;
-        public INode CurrentNode { 
-            get { return currentNode; } 
-            set { currentNode = value; } }
+        public INode CurrentNode { get; private set; }
         public string IncomingTransition { get; protected set; }
 
         public IExecutionPlan Plan

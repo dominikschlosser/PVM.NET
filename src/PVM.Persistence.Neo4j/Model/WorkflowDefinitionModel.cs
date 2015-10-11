@@ -1,6 +1,6 @@
 ﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="ExecutionModel.cs" company="PVM.NET Project Contributors">
+//  <copyright file="WorkflowDefinitionModel.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,17 +18,10 @@
 //  </copyright>
 // -------------------------------------------------------------------------------
 #endregion
-
 namespace PVM.Persistence.Neo4j.Model
 {
-    public class ExecutionModel
+    public class WorkflowDefinitionModel
     {
-        public string Identifier { get; set; }
-        public string WorkflowInstanceIdentifier { get; set; }
-        public string IncomingTransition { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsFinished { get; set; }
-        public string Data { get; set; }
-
+        public string Identifier { get; set; } 
     }
 }
