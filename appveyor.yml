@@ -79,7 +79,7 @@ test_script:
     # replace the db connection with the local instance
     $config = join-path $startPath "PVM.Persistence.Sql.Test.dll.config"
     $doc = (gc $config) -as [xml]
-    $doc.SelectSingleNode('//connectionStrings/add[@name="PvmContext"]').connectionString = "Server=$sqlInstance; Database=$dbName; Trusted_connection=true"
+    $doc.SelectSingleNode('//connectionStrings/add[@name="DefaultConnection"]').connectionString = "Server=$sqlInstance; Database=$dbName; Trusted_connection=true"
     $doc.Save($config)
 
     sqlcmd -S "$sqlInstance" -Q "Use [master]; CREATE DATABASE [$dbName]"
