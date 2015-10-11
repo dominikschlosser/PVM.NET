@@ -24,10 +24,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using JetBrains.Annotations;
 using log4net;
 using PVM.Core.Definition;
 using PVM.Core.Runtime.Algorithms;
+using PVM.Core.Runtime.Plan;
 
 namespace PVM.Core.Runtime
 {
@@ -35,18 +37,23 @@ namespace PVM.Core.Runtime
     {
         private static readonly ILog Logger = LogManager.GetLogger(typeof (Execution));
         private readonly IExecutionPlan executionPlan;
+        private readonly IWorkflowDefinition workflowDefinition;
 
-        public Execution(string identifier, IExecutionPlan executionPlan)
+        public Execution(string identifier, string workflowInstanceIdentifier, IWorkflowDefinition workflowDefinition, IExecutionPlan executionPlan)
         {
             Identifier = identifier;
+            WorkflowInstanceIdentifier = workflowInstanceIdentifier;
             Children = new List<IExecution>();
             this.executionPlan = executionPlan;
+            this.workflowDefinition = workflowDefinition;
             Data = new Dictionary<string, object>();
         }
 
         // TODO: builder
-        public Execution(IExecution parent, INode currentNode, bool isActive, bool isFinished, IDictionary<string, object> data, string incomingTransition, string identifier, IExecutionPlan executionPlan, IList<IExecution> children)
-            : this(identifier, executionPlan)
+        public Execution(IExecution parent, INode currentNode, bool isActive, bool isFinished,
+            IDictionary<string, object> data, string incomingTransition, string identifier, string workflowInstanceIdentifier, IExecutionPlan executionPlan,
+            IList<IExecution> children, IWorkflowDefinition workflowDefinition)
+            : this(identifier, workflowInstanceIdentifier, workflowDefinition, executionPlan)
         {
             Parent = parent;
             IncomingTransition = incomingTransition;
@@ -57,9 +64,13 @@ namespace PVM.Core.Runtime
             IsFinished = isFinished;
         }
 
+        public string WorkflowInstanceIdentifier { get; private set; }
         public IExecution Parent { get; protected set; }
         public IList<IExecution> Children { get; protected set; }
-        public INode CurrentNode { get; protected set; }
+        private INode currentNode;
+        public INode CurrentNode { 
+            get { return currentNode; } 
+            set { currentNode = value; } }
         public string IncomingTransition { get; protected set; }
 
         public IExecutionPlan Plan
@@ -68,10 +79,14 @@ namespace PVM.Core.Runtime
         }
 
         public bool IsFinished { get; protected set; }
-
         public string Identifier { get; protected set; }
         public bool IsActive { get; protected set; }
         public IDictionary<string, object> Data { get; protected set; }
+
+        public IWorkflowDefinition WorkflowDefinition
+        {
+            get { return workflowDefinition; }
+        }
 
         public void Proceed()
         {
@@ -146,16 +161,21 @@ namespace PVM.Core.Runtime
                 return;
             }
 
-            Children.Clear();
+            Children.ForEach(c => c.Kill());
+
+            var children = new List<IExecution>();
 
             foreach (var outgoingTransition in node.OutgoingTransitions)
             {
                 var outgoingNode = outgoingTransition.Destination;
-                var child = new Execution(this, outgoingNode, true, false, Data, outgoingTransition.Identifier, Guid.NewGuid() + "_" + outgoingNode.Identifier, executionPlan, new List<IExecution>());
+                var child = new Execution(this, outgoingNode, true, false, Data, outgoingTransition.Identifier,
+                    Guid.NewGuid() + "_" + outgoingNode.Identifier, WorkflowInstanceIdentifier, executionPlan, new List<IExecution>(),
+                    workflowDefinition);
                 Children.Add(child);
+                children.Add(child);
             }
 
-            var children = new List<IExecution>(Children);
+
             foreach (var outgoing in children)
             {
                 Logger.InfoFormat("Child-Execution '{0}' started.", outgoing.Identifier);
@@ -197,6 +217,39 @@ namespace PVM.Core.Runtime
             executionPlan.OnExecutionReachesWaitState(this);
         }
 
+        public void Signal()
+        {
+            Logger.InfoFormat("Signaling Execution '{0}'", Identifier);
+            executionPlan.OnExecutionSignaled(this);
+        }
+
+        public void Kill()
+        {
+            if (IsFinished)
+            {
+                return;
+            }
+
+            IsFinished = true;
+            IsActive = false;
+            Logger.InfoFormat("Execution '{0}' was killed.", Identifier);
+
+            foreach (var child in Children)
+            {
+                child.Kill();
+            }
+        }
+
+        public IExecution GetConcurrentRoot()
+        {
+            if (Parent == null || Parent.IsFinished)
+            {
+                return this;
+            }
+
+            return Parent.GetConcurrentRoot();
+        }
+
         private void Execute(string transitionIdentifier, Transition transition)
         {
             if (transition == null)
@@ -226,32 +279,17 @@ namespace PVM.Core.Runtime
             }
         }
 
-        public void Signal()
+        public void Start(INode startNode, IDictionary<string, object> data)
         {
-            Logger.InfoFormat("Signaling Execution '{0}'", Identifier);
-            executionPlan.OnExecutionSignaled(this);
-        }
-
-        public void Kill()
-        {
-            IsFinished = true;
-            IsActive = false;
-            Logger.InfoFormat("Execution '{0}' was killed.", Identifier);
-
-            foreach (var child in Children)
+            if (!IsActive)
             {
-                child.Kill();
+                Logger.InfoFormat("Execution '{0}' started.", Identifier);
+                CurrentNode = startNode;
+                Data = data;
+                IsActive = true;
+                Plan.OnExecutionStarting(this);
+                CurrentNode.Execute(this, Plan);
             }
-        }
-
-        public IExecution GetConcurrentRoot()
-        {
-            if (Parent == null || Parent.IsFinished)
-            {
-                return this;
-            }
-
-            return Parent.GetConcurrentRoot();
         }
 
         protected bool Equals(Execution other)
@@ -263,7 +301,7 @@ namespace PVM.Core.Runtime
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
+            if (obj.GetType() != GetType()) return false;
             return Equals((Execution) obj);
         }
 

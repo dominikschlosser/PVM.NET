@@ -21,7 +21,9 @@
 
 using Moq;
 using NUnit.Framework;
+using PVM.Core.Definition;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Plan;
 
 namespace PVM.Core.Test
 {
@@ -32,7 +34,7 @@ namespace PVM.Core.Test
         public void WaitNotifiesExecutionPlanOfWaitState()
         {
             var executionPlan = new Mock<IExecutionPlan>();
-            var execution = new Execution("id", executionPlan.Object);
+            var execution = new Execution("id", "instanceId", Mock.Of<IWorkflowDefinition>(), executionPlan.Object);
 
             execution.Wait();
 
@@ -43,7 +45,7 @@ namespace PVM.Core.Test
         public void SignalResumesExecution()
         {
             var executionPlan = new Mock<IExecutionPlan>();
-            var execution = new Execution("id", executionPlan.Object);
+            var execution = new Execution("id", "instanceId", Mock.Of<IWorkflowDefinition>(), executionPlan.Object);
             execution.Wait();
 
             execution.Signal();

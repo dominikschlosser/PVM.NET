@@ -28,6 +28,8 @@ namespace PVM.Core.Tasks
         void Add(UserTask userTask);
 
         [CanBeNull]
-        UserTask FindTask(string taskName);
+        UserTask FindTask(string taskName, string workflowInstanceIdentifier);
+
+        void Remove(UserTask userTask);
     }
 }

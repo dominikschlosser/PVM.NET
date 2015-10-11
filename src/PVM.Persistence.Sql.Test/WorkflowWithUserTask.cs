@@ -53,7 +53,7 @@ namespace PVM.Persistence.Sql.Test
 
             Assert.False(instance.IsFinished);
 
-            var userTask = workflowEngine.FindTask("myTask");
+            var userTask = workflowEngine.FindTask("myTask", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask);
 
             instance = workflowEngine.Load(instance.Identifier);
@@ -105,12 +105,12 @@ namespace PVM.Persistence.Sql.Test
 
             Assert.False(instance.IsFinished);
 
-            var userTask = workflowEngine.FindTask("task1");
+            var userTask = workflowEngine.FindTask("task1", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask);
 
             Assert.False(instance.IsFinished);
 
-            var userTask2 = workflowEngine.FindTask("task2");
+            var userTask2 = workflowEngine.FindTask("task2", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask2);
 
             instance = workflowEngine.Load(instance.Identifier);
@@ -183,13 +183,13 @@ namespace PVM.Persistence.Sql.Test
 
             Assert.False(instance.IsFinished);
 
-            var userTask = workflowEngine.FindTask("task1");
+            var userTask = workflowEngine.FindTask("task1", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask);
 
             instance = workflowEngine.Load(instance.Identifier);
             Assert.That(instance.IsFinished);
 
-            var nestedTask = workflowEngine.FindTask("nestedTask");
+            var nestedTask = workflowEngine.FindTask("nestedTask", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(nestedTask);
 
             instance = workflowEngine.Load(instance.Identifier);

@@ -30,7 +30,7 @@ namespace PVM.Persistence.Sql.Mapping
         {
             Id(m => m.TaskIdentifier).GeneratedBy.Assigned();
             Map(m => m.ExecutionIdentifier);
-            Map(m => m.WorkflowDefinitionIdentifier);
+            Map(m => m.WorkflowInstanceIdentifier);
         }
     }
 }

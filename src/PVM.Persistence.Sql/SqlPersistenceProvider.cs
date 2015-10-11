@@ -21,11 +21,11 @@
 
 #endregion
 
-using System;
 using NHibernate;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Plan;
 using PVM.Core.Serialization;
 using PVM.Persistence.Sql.Model;
 using PVM.Persistence.Sql.Transform;
@@ -45,13 +45,13 @@ namespace PVM.Persistence.Sql
             executionTransformer = new ExecutionDefinitionTransformer(objectSerializer);
         }
 
-        public void Persist(IExecution execution, IWorkflowDefinition definition)
+        public void Persist(IExecution execution)
         {
             using (var session = sessionFactory.OpenSession())
             {
                 using (var txn = session.BeginTransaction())
                 {
-                    var entity = executionTransformer.Transform(execution, definition);
+                    var entity = executionTransformer.Transform(execution);
 
                     session.SaveOrUpdate(entity);
                     session.Flush();
@@ -108,26 +108,8 @@ namespace PVM.Persistence.Sql
                     return null;
                 }
 
-                return executionTransformer.TransformBack(model, executionPlan);
-            }
-        }
-
-        public IWorkflowInstance LoadWorkflowInstance(string identifier, Func<IWorkflowDefinition, IExecutionPlan> executionPlanCreatorCallback)
-        {
-            using (var session = sessionFactory.OpenSession())
-            {
-                var model =
-                    session.QueryOver<WorkflowInstanceModel>()
-                           .Where(w => w.Identifier == identifier)
-                           .SingleOrDefault();
-
-                if (model == null)
-                {
-                    return null;
-                }
-
-                var workflowDefinition = LoadWorkflowDefinition(model.WorkflowDefinitionIdentifier);
-                return executionTransformer.TransformBack(model, executionPlanCreatorCallback(workflowDefinition));
+                var wf = LoadWorkflowDefinition(model.WorkflowDefinitionIdentifier);
+                return executionTransformer.TransformBack(model, wf, executionPlan);
             }
         }
     }

@@ -24,8 +24,11 @@ namespace PVM.Persistence.Neo4j.Model
     public class ExecutionModel
     {
         public string Identifier { get; set; }
+        public string WorkflowInstanceIdentifier { get; set; }
+        public string WorkflowDefinitionIdentifier { get; set; }
         public string IncomingTransition { get; set; }
         public bool IsActive { get; set; }
+        public bool IsFinished { get; set; }
         public string Data { get; set; }
 
     }

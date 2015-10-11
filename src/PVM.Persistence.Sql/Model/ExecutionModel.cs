@@ -28,6 +28,7 @@ namespace PVM.Persistence.Sql.Model
     public class ExecutionModel
     {
         public virtual string Identifier { get; set; }
+        public virtual string WorkflowInstanceIdentifier { get; set; }
         public virtual ExecutionModel Parent { get; set; }
         public virtual IList<ExecutionModel> Children { get; set; }
         public virtual string CurrentNodeIdentifier { get; set; }
@@ -35,6 +36,7 @@ namespace PVM.Persistence.Sql.Model
         public virtual bool IsFinished { get; set; }
         public virtual string IncomingTransition { get; set; }
         public virtual IList<ExecutionVariableModel> Variables { get; set; }
+        public virtual string WorkflowDefinitionIdentifier { get; set; }
 
         protected bool Equals(ExecutionModel other)
         {

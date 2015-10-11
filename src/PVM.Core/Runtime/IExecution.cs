@@ -25,12 +25,14 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using PVM.Core.Definition;
 using PVM.Core.Runtime.Algorithms;
+using PVM.Core.Runtime.Plan;
 
 namespace PVM.Core.Runtime
 {
     public interface IExecution
     {
         string Identifier { get; }
+        string WorkflowInstanceIdentifier { get; }
         [CanBeNull]
         IExecution Parent { get; }
         IList<IExecution> Children { get; }
@@ -54,5 +56,7 @@ namespace PVM.Core.Runtime
         void Signal();
         void Kill();
         IExecution GetConcurrentRoot();
+        IWorkflowDefinition WorkflowDefinition { get; }
+        void Start(INode startNode, IDictionary<string, object> data);
     }
 }

@@ -21,17 +21,16 @@
 
 #endregion
 
-using System;
 using JetBrains.Annotations;
-using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Plan;
 
 namespace PVM.Core.Persistence
 {
     public interface IPersistenceProvider
     {
-        void Persist(IExecution execution, IWorkflowDefinition definition);
+        void Persist(IExecution execution);
         void Persist(IWorkflowDefinition workflowDefinition);
 
         [CanBeNull]
@@ -39,7 +38,5 @@ namespace PVM.Core.Persistence
 
         [CanBeNull]
         IExecution LoadExecution(string executionIdentifier, IExecutionPlan executionPlan);
-
-        IWorkflowInstance LoadWorkflowInstance(string identifier, Func<IWorkflowDefinition, IExecutionPlan> executionPlanCreatorCallback);
     }
 }

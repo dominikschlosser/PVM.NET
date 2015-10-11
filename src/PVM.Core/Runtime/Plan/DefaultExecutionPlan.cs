@@ -25,35 +25,25 @@ using System;
 using System.Linq;
 using Castle.Core.Internal;
 using log4net;
-using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Data.Attributes;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
+using PVM.Core.Inject;
 using PVM.Core.Persistence;
 using PVM.Core.Runtime.Operations.Base;
 
-namespace PVM.Core.Runtime
+namespace PVM.Core.Runtime.Plan
 {
-    public class ExecutionPlan : IExecutionPlan
+    public class DefaultExecutionPlan : IExecutionPlan
     {
-        private static readonly ILog Logger = LogManager.GetLogger(typeof (ExecutionPlan));
-        private readonly IServiceLocator serviceLocator;
-        private readonly IWorkflowDefinition workflowDefinition;
+        private static readonly ILog Logger = LogManager.GetLogger(typeof (DefaultExecutionPlan));
+        private readonly IPersistenceProvider persistenceProvider;
+        private readonly IOperationResolver operationResolver;
 
-        public ExecutionPlan(IServiceLocator serviceLocator, IWorkflowDefinition workflowDefinition)
+        public DefaultExecutionPlan(IPersistenceProvider persistenceProvider, IOperationResolver operationResolver)
         {
-            this.serviceLocator = serviceLocator;
-            this.workflowDefinition = workflowDefinition;
-        }
-
-        public IWorkflowDefinition WorkflowDefinition
-        {
-            get { return workflowDefinition; }
-        }
-
-        private IPersistenceProvider PersistenceProvider
-        {
-            get { return serviceLocator.GetInstance<IPersistenceProvider>(); }
+            this.persistenceProvider = persistenceProvider;
+            this.operationResolver = operationResolver;
         }
 
         public void OnExecutionStarting(IExecution execution)
@@ -79,7 +69,7 @@ namespace PVM.Core.Runtime
 
         public void OnExecutionReachesWaitState(IExecution execution)
         {
-            serviceLocator.GetInstance<IPersistenceProvider>().Persist(execution, workflowDefinition);
+            persistenceProvider.Persist(execution);
         }
 
         public void OnExecutionSignaled(IExecution execution)
@@ -95,7 +85,7 @@ namespace PVM.Core.Runtime
                 return;
             }
 
-            var operation = serviceLocator.GetInstance(node.Operation) as IOperation;
+            var operation = operationResolver.Resolve(node.Operation);
 
             if (operation == null)
             {
@@ -131,7 +121,12 @@ namespace PVM.Core.Runtime
         {
             Logger.InfoFormat("Execution '{0}' ended", execution.Identifier);
             execution.Kill();
-            PersistenceProvider.Persist(execution, workflowDefinition);
+
+            if (execution.Parent != null && execution.Children.All(c => c.IsFinished))
+            {
+                KillExecution(execution.Parent);
+            }
+            persistenceProvider.Persist(execution);
         }
     }
 }

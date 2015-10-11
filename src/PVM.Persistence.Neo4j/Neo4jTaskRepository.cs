@@ -22,6 +22,7 @@
 using System.Linq;
 using Neo4jClient;
 using PVM.Core.Tasks;
+using PVM.Persistence.Neo4j.Model;
 
 namespace PVM.Persistence.Neo4j
 {
@@ -48,11 +49,32 @@ namespace PVM.Persistence.Neo4j
                 .ExecuteWithoutResults();
         }
 
-        public UserTask FindTask(string taskName)
+        public UserTask FindTask(string taskName, string workflowInstanceIdentifier)
         {
-            return graphClient.Cypher.Match("(t:Task {TaskIdentifier: {name}})")
-                       .WithParam("name", taskName)
-                       .Return(t => t.As<UserTask>()).Limit(1).Results.FirstOrDefault();
+            var result = graphClient.Cypher.Match("(t:Task)")
+                                                      .Where("t.TaskIdentifier={name}")
+                                                      .AndWhere("t.WorkflowInstanceIdentifier={id}")
+                                                      .WithParams(new
+                                                      {
+                                                          name = taskName,
+                                                          id = workflowInstanceIdentifier
+                                                      })
+                                                      .Return(t => t.As<UserTaskModel>()).Limit(1).Results.FirstOrDefault();
+
+            return new UserTask(result.TaskIdentifier, result.ExecutionIdentifier, result.WorkflowInstanceIdentifier);
+        }
+
+        public void Remove(UserTask userTask)
+        {
+            graphClient.Cypher.Match("(t:Task)")
+                       .Where("t.TaskIdentifier={name}")
+                       .AndWhere("t.WorkflowInstanceIdentifier={id}")
+                       .OptionalMatch("()-[r]->(t)")
+                       .WithParams(new
+                       {
+                           name = userTask.TaskIdentifier,
+                           id = userTask.WorkflowInstanceIdentifier
+                       }).Delete("t, r").ExecuteWithoutResults();
         }
     }
 }

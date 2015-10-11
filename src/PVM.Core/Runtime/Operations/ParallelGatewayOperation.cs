@@ -51,6 +51,7 @@ namespace PVM.Core.Runtime.Operations
                 {
                     Logger.InfoFormat("Cannot join in node '{0}' yet. Joined: {1}, To join: {2}. Waiting...",
                         execution.CurrentNode.Identifier, joinedTransitionCount, incomingTransitionCount);
+                    execution.Wait();
                     return;
                 }
 

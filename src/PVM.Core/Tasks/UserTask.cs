@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="UserTask.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,24 +18,26 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
+
 namespace PVM.Core.Tasks
 {
     public class UserTask
     {
         private readonly string executionIdentifier;
         private readonly string taskIdentifier;
-        private readonly string workflowDefinitionIdentifier;
+        private readonly string workflowInstanceIdentifier;
 
         public UserTask()
         {
-            
         }
-        public UserTask(string taskIdentifier, string executionIdentifier, string workflowDefinitionIdentifier)
+
+        public UserTask(string taskIdentifier, string executionIdentifier, string workflowInstanceIdentifier)
         {
             this.taskIdentifier = taskIdentifier;
             this.executionIdentifier = executionIdentifier;
-            this.workflowDefinitionIdentifier = workflowDefinitionIdentifier;
+            this.workflowInstanceIdentifier = workflowInstanceIdentifier;
         }
 
         public string ExecutionIdentifier
@@ -47,9 +50,32 @@ namespace PVM.Core.Tasks
             get { return taskIdentifier; }
         }
 
-        public string WorkflowDefinitionIdentifier
+        public string WorkflowInstanceIdentifier
         {
-            get { return workflowDefinitionIdentifier; }
+            get { return workflowInstanceIdentifier; }
+        }
+
+        protected bool Equals(UserTask other)
+        {
+            return string.Equals(taskIdentifier, other.taskIdentifier) &&
+                   string.Equals(workflowInstanceIdentifier, other.workflowInstanceIdentifier);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((UserTask) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((taskIdentifier != null ? taskIdentifier.GetHashCode() : 0)*397) ^
+                       (workflowInstanceIdentifier != null ? workflowInstanceIdentifier.GetHashCode() : 0);
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Data.Proxy;
 using PVM.Core.Definition;
 using PVM.Core.Persistence;
+using PVM.Core.Runtime.Plan;
 using PVM.Core.Tasks;
 
 namespace PVM.Core.Runtime
@@ -89,10 +90,11 @@ namespace PVM.Core.Runtime
                 throw new InvalidOperationException(string.Format("Workflow definition with identifier '{0}' not found", workflowDefinitionIdentifier));
             }
 
-            var executionPlan = new ExecutionPlan(serviceLocator, workflowDefinition);
-            var execution = new WorkflowInstance(workflowDefinitionIdentifier + "_" + Guid.NewGuid(), workflowDefinition, executionPlan);
+            var executionPlan = serviceLocator.GetInstance<IExecutionPlan>();
+            var identifier = workflowDefinitionIdentifier + "_" + Guid.NewGuid();
+            var execution = new Execution(identifier, identifier, workflowDefinition, executionPlan);
             
-            persistenceProvider.Persist(execution, workflowDefinition);
+            persistenceProvider.Persist(execution);
             execution.Start(workflowDefinition, DataMapper.ExtractData(data));
 
             return execution;
@@ -100,25 +102,26 @@ namespace PVM.Core.Runtime
 
         public void Complete(UserTask task)
         {
-            IWorkflowDefinition workflowDefinition = persistenceProvider.LoadWorkflowDefinition(task.WorkflowDefinitionIdentifier);
-            IExecution execution = persistenceProvider.LoadExecution(task.ExecutionIdentifier, new ExecutionPlan(serviceLocator, workflowDefinition));
+            IExecution execution = persistenceProvider.LoadExecution(task.ExecutionIdentifier, serviceLocator.GetInstance<IExecutionPlan>());
             if (execution == null)
             {
                 throw new InvalidOperationException(string.Format("Execution with identifier '{0}' not found", task.ExecutionIdentifier));
             }
 
+            // TODO: txn
+            TaskRepository.Remove(task);
             execution.Signal();
         }
 
         [CanBeNull]
-        public UserTask FindTask(string taskName)
+        public UserTask FindTask(string taskName, string workflowInstanceIdentifier)
         {
-            return TaskRepository.FindTask(taskName);
+            return TaskRepository.FindTask(taskName, workflowInstanceIdentifier);
         }
 
-        public IWorkflowInstance Load(string identifier)
+        public IExecution Load(string identifier)
         {
-            return persistenceProvider.LoadWorkflowInstance(identifier, workflowDefinition => new ExecutionPlan(serviceLocator, workflowDefinition));
+            return persistenceProvider.LoadExecution(identifier, serviceLocator.GetInstance<IExecutionPlan>());
         }
     }
 }

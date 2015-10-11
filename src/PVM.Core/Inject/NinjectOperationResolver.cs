@@ -1,6 +1,6 @@
 ﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="WorkflowInstanceModel.cs" company="PVM.NET Project Contributors">
+//  <copyright file="NinjectOperationResolver.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -19,10 +19,24 @@
 // -------------------------------------------------------------------------------
 #endregion
 
-namespace PVM.Persistence.Sql.Model
+using System;
+using Ninject;
+using PVM.Core.Runtime.Operations.Base;
+
+namespace PVM.Core.Inject
 {
-    public class WorkflowInstanceModel : ExecutionModel
+    public class NinjectOperationResolver : IOperationResolver
     {
-        public virtual string WorkflowDefinitionIdentifier { get; set; }
+        private readonly IKernel kernel;
+
+        public NinjectOperationResolver(IKernel kernel)
+        {
+            this.kernel = kernel;
+        }
+
+        public IOperation Resolve(Type type)
+        {
+            return kernel.Get(type) as IOperation;
+        }
     }
 }

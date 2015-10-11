@@ -1,7 +1,7 @@
 ﻿#region License
 
 // -------------------------------------------------------------------------------
-//  <copyright file="NullPersistenceProvider.cs" company="PVM.NET Project Contributors">
+//  <copyright file="InMemoryPersistenceProvider.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -21,20 +21,21 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using Microsoft.Practices.ServiceLocation;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Plan;
 
 namespace PVM.Core.Persistence
 {
     public class InMemoryPersistenceProvider : IPersistenceProvider
     {
-        private readonly IDictionary<string, IWorkflowDefinition> workflowDefinitions = new Dictionary<string, IWorkflowDefinition>();
-        private readonly IDictionary<string, IExecution> executions = new Dictionary<string, IExecution>(); 
+        private readonly IDictionary<string, IExecution> executions = new Dictionary<string, IExecution>();
 
-        public void Persist(IExecution execution, IWorkflowDefinition definition)
+        private readonly IDictionary<string, IWorkflowDefinition> workflowDefinitions =
+            new Dictionary<string, IWorkflowDefinition>();
+
+        public void Persist(IExecution execution)
         {
             if (executions.ContainsKey(execution.Identifier))
             {
@@ -67,11 +68,5 @@ namespace PVM.Core.Persistence
         {
             return executions[executionIdentifier];
         }
-
-        public IWorkflowInstance LoadWorkflowInstance(string identifier, Func<IWorkflowDefinition, IExecutionPlan> executionPlanCreatorCallback)
-        {
-            return executions[identifier] as IWorkflowInstance;
-        }
-
     }
 }

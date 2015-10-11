@@ -1,6 +1,7 @@
-﻿#region License
+#region License
+
 // -------------------------------------------------------------------------------
-//  <copyright file="ExecutionMapping.cs" company="PVM.NET Project Contributors">
+//  <copyright file="IExecutionPlan.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -17,28 +18,21 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
-using FluentNHibernate.Mapping;
-using PVM.Persistence.Sql.Model;
+using PVM.Core.Definition;
 
-namespace PVM.Persistence.Sql.Mapping
+namespace PVM.Core.Runtime.Plan
 {
-    public class ExecutionMap : ClassMap<ExecutionModel>
+    public interface IExecutionPlan
     {
-        public ExecutionMap()
-        {
-            Id(m => m.Identifier).GeneratedBy.Assigned();
-            HasMany(m => m.Children).Cascade.All();
-            HasMany(m => m.Variables).Cascade.All();
-            Map(m => m.CurrentNodeIdentifier);
-            Map(m => m.WorkflowInstanceIdentifier);
-            Map(m => m.IncomingTransition);
-            Map(m => m.IsActive);
-            Map(m => m.IsFinished);
-            References(m => m.Parent);
-
-            DiscriminateSubClassesOnColumn("Discriminator");
-        }     
+        void Proceed(IExecution execution, INode node);
+        void OnExecutionStarting(IExecution execution);
+        void OnExecutionStopped(IExecution execution);
+        void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier);
+        void OnExecutionResuming(IExecution execution);
+        void OnExecutionReachesWaitState(IExecution execution);
+        void OnExecutionSignaled(IExecution execution);
     }
 }

@@ -23,6 +23,7 @@
 
 using Ninject.Modules;
 using PVM.Core.Persistence;
+using PVM.Core.Runtime.Plan;
 using PVM.Core.Serialization;
 using PVM.Core.Tasks;
 
@@ -35,6 +36,8 @@ namespace PVM.Core.Inject
             Bind<IPersistenceProvider>().To<InMemoryPersistenceProvider>().InSingletonScope();
             Bind<IObjectSerializer>().To<JsonSerializer>().InSingletonScope();
             Bind<ITaskRepository>().To<InMemoryTaskRepository>().InSingletonScope();
+            Bind<IExecutionPlan>().To<DefaultExecutionPlan>().InSingletonScope();
+            Bind<IOperationResolver>().To<NinjectOperationResolver>().InSingletonScope();
         }
     }
 }

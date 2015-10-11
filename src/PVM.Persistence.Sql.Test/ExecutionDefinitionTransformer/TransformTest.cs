@@ -70,6 +70,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
                 execution.SetupGet(e => e.Data).Returns(variables);
                 execution.SetupGet(e => e.IsFinished).Returns(true);
                 execution.SetupGet(e => e.IncomingTransition).Returns(incomingTransition);
+                execution.SetupGet(e => e.WorkflowDefinition).Returns(Mock.Of<IWorkflowDefinition>());
 
                 return execution.Object;
             }
@@ -114,26 +115,12 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
         }
 
         [Test]
-        public void TransformsWorkflowInstance()
-        {
-            var workflowDefinition = new WorkflowDefinition("workflowDefinitionId", null, null, null);
-
-            var workflowInstance = new WorkflowInstance("id", workflowDefinition, Mock.Of<IExecutionPlan>());
-            var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
-
-            ExecutionModel result = transformer.Transform(workflowInstance, workflowDefinition);
-            
-
-            Assert.That(result, Is.InstanceOf<WorkflowInstanceModel>());
-            Assert.That(((WorkflowInstanceModel)result).WorkflowDefinitionIdentifier, Is.EqualTo(workflowDefinition.Identifier));
-        }
-        [Test]
         public void TransformsActiveState()
         {
             var execution = new TestExecutionBuilder().IsActive().BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.IsActive, Is.True);
         }
@@ -144,7 +131,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().WithCurrentNode(new Node("nodeIdentifier")).BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.CurrentNodeIdentifier, Is.EqualTo("nodeIdentifier"));
         }
@@ -156,7 +143,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().WithIdentifier(identifier).BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.Identifier, Is.EqualTo(identifier));
         }
@@ -169,7 +156,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().WithChild(child1).WithChild(child2).BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.Children.Count, Is.EqualTo(2));
             Assert.That(result.Children.Any(c => c.Identifier.Equals("child1")));
@@ -189,7 +176,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().WithVariables(variables).BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(serializer.Object);
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.Variables.Count, Is.EqualTo(2));
             Assert.That(result.Variables.First(v => v.VariableKey.Equals("var1")).SerializedValue, Is.EqualTo("id1"));
@@ -205,7 +192,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().WithVariables(variables).BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.Variables.First().ValueType, Is.EqualTo(typeof(ComplexVariableType).AssemblyQualifiedName));
         }
@@ -216,7 +203,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().IsFinished().BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.IsFinished, Is.True);
         }
@@ -228,7 +215,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
             var execution = new TestExecutionBuilder().WithIncomingTransition(transitionName).BuildExecution();
             var transformer = new Transform.ExecutionDefinitionTransformer(Mock.Of<IObjectSerializer>());
 
-            ExecutionModel result = transformer.Transform(execution, Mock.Of<IWorkflowDefinition>());
+            ExecutionModel result = transformer.Transform(execution);
 
             Assert.That(result.IncomingTransition, Is.EqualTo(transitionName));
         }

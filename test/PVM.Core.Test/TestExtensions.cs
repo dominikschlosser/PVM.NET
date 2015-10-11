@@ -25,6 +25,7 @@ using System;
 using PVM.Core.Builder;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Plan;
 
 namespace PVM.Core.Test
 {

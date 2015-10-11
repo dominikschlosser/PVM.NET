@@ -58,6 +58,7 @@
     <Compile Include="Model\ExecutionModel.cs" />
     <Compile Include="Model\NodeModel.cs" />
     <Compile Include="Model\TransitionModel.cs" />
+    <Compile Include="Model\UserTaskModel.cs" />
     <Compile Include="Neo4jPersistenceModule.cs" />
     <Compile Include="Neo4jPersistenceProvider.cs" />
     <Compile Include="Neo4jTaskRepository.cs" />

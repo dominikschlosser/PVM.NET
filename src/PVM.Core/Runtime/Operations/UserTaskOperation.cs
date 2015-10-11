@@ -37,8 +37,8 @@ namespace PVM.Core.Runtime.Operations
 
         public void Execute(IExecution execution)
         {
-            taskRepository.Add(new UserTask(execution.CurrentNode.Identifier, execution.Identifier, execution.Plan.WorkflowDefinition.Identifier));
             execution.Wait();
+            taskRepository.Add(new UserTask(execution.CurrentNode.Identifier, execution.Identifier, execution.WorkflowInstanceIdentifier));
         }
     }
 }

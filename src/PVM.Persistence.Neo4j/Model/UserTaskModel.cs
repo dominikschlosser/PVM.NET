@@ -1,7 +1,6 @@
-#region License
-
+﻿#region License
 // -------------------------------------------------------------------------------
-//  <copyright file="IExecutionPlan.cs" company="PVM.NET Project Contributors">
+//  <copyright file="UserTaskModel.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
 //    Authors: Dominik Schlosser (dominik.schlosser@gmail.com)
 //            
@@ -18,22 +17,13 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
-
 #endregion
-
-using PVM.Core.Definition;
-
-namespace PVM.Core.Runtime
+namespace PVM.Persistence.Neo4j.Model
 {
-    public interface IExecutionPlan
+    public class UserTaskModel
     {
-        void Proceed(IExecution execution, INode node);
-        void OnExecutionStarting(IExecution execution);
-        void OnExecutionStopped(IExecution execution);
-        void OnOutgoingTransitionIsNull(IExecution execution, string transitionIdentifier);
-        void OnExecutionResuming(IExecution execution);
-        void OnExecutionReachesWaitState(IExecution execution);
-        void OnExecutionSignaled(IExecution execution);
-        IWorkflowDefinition WorkflowDefinition { get; }
+        public string TaskIdentifier { get; set; } 
+        public string ExecutionIdentifier { get; set; } 
+        public string WorkflowInstanceIdentifier { get; set; } 
     }
 }

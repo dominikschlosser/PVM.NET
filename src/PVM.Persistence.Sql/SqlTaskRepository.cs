@@ -1,4 +1,5 @@
 ﻿#region License
+
 // -------------------------------------------------------------------------------
 //  <copyright file="SqlTaskRepository.cs" company="PVM.NET Project Contributors">
 //    Copyright (c) 2015 PVM.NET Project Contributors
@@ -17,9 +18,9 @@
 //    limitations under the License.
 //  </copyright>
 // -------------------------------------------------------------------------------
+
 #endregion
 
-using System.Transactions;
 using NHibernate;
 using PVM.Core.Tasks;
 using PVM.Persistence.Sql.Model;
@@ -37,34 +38,44 @@ namespace PVM.Persistence.Sql
 
         public void Add(UserTask userTask)
         {
-
-                using (var session = sessionFactory.OpenSession())
+            using (var session = sessionFactory.OpenSession())
+            {
+                var entity = new UserTaskModel
                 {
-                    var entity = new UserTaskModel()
-                    {
-                        TaskIdentifier = userTask.TaskIdentifier,
-                        ExecutionIdentifier = userTask.ExecutionIdentifier,
-                        WorkflowDefinitionIdentifier = userTask.WorkflowDefinitionIdentifier
-                    };
+                    TaskIdentifier = userTask.TaskIdentifier,
+                    ExecutionIdentifier = userTask.ExecutionIdentifier,
+                    WorkflowInstanceIdentifier = userTask.WorkflowInstanceIdentifier
+                };
 
-                    session.SaveOrUpdate(entity);
-                    session.Flush();
-                }
-
+                session.SaveOrUpdate(entity);
+                session.Flush();
+            }
         }
 
-        public UserTask FindTask(string taskName)
+        public UserTask FindTask(string taskName, string workflowInstanceIdentifier)
         {
             using (var session = sessionFactory.OpenSession())
             {
-                var model = session.QueryOver<UserTaskModel>().Where(w => w.TaskIdentifier == taskName).SingleOrDefault();
+                var model =
+                    session.QueryOver<UserTaskModel>()
+                           .Where(w => w.TaskIdentifier == taskName)
+                           .And(w => w.WorkflowInstanceIdentifier == workflowInstanceIdentifier)
+                           .SingleOrDefault();
 
                 if (model == null)
                 {
                     return null;
                 }
 
-                return new UserTask(model.TaskIdentifier, model.ExecutionIdentifier, model.WorkflowDefinitionIdentifier);
+                return new UserTask(model.TaskIdentifier, model.ExecutionIdentifier, model.WorkflowInstanceIdentifier);
+            }
+        }
+
+        public void Remove(UserTask userTask)
+        {
+            using (var session = sessionFactory.OpenSession())
+            {
+                session.Delete(FindTask(userTask.TaskIdentifier, userTask.WorkflowInstanceIdentifier));
             }
         }
     }

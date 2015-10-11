@@ -22,25 +22,46 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PVM.Core.Tasks
 {
     public class InMemoryTaskRepository : ITaskRepository
     {
-        private readonly IDictionary<string, UserTask> tasks = new Dictionary<string, UserTask>();
+        private readonly IDictionary<string, IList<UserTask>> tasks = new Dictionary<string, IList<UserTask>>();
 
         public void Add(UserTask userTask)
         {
-            tasks.Add(userTask.TaskIdentifier, userTask);
+            IList<UserTask> userTasks;
+            if (tasks.TryGetValue(userTask.WorkflowInstanceIdentifier, out userTasks))
+            {
+                userTasks.Add(userTask);
+            }
+            else
+            {
+                userTasks = new List<UserTask>();
+                userTasks.Add(userTask);
+                tasks.Add(userTask.WorkflowInstanceIdentifier, userTasks);
+            }
         }
 
-        public UserTask FindTask(string taskid)
+        public UserTask FindTask(string taskid, string workflowInstanceIdentifier)
         {
-            if (!tasks.ContainsKey(taskid))
+            if (!tasks.ContainsKey(workflowInstanceIdentifier))
             {
                 return null;
             }
-            return tasks[taskid];
+            return tasks[workflowInstanceIdentifier].SingleOrDefault(t => t.TaskIdentifier.Equals(taskid));
+        }
+
+        public void Remove(UserTask userTask)
+        {
+            if (!tasks.ContainsKey(userTask.WorkflowInstanceIdentifier))
+            {
+                return;
+            }
+
+            tasks[userTask.WorkflowInstanceIdentifier].Remove(userTask);
         }
     }
 }

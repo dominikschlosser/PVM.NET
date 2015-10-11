@@ -24,6 +24,7 @@ using Moq;
 using NUnit.Framework;
 using PVM.Core.Definition;
 using PVM.Core.Runtime;
+using PVM.Core.Runtime.Plan;
 using PVM.Core.Serialization;
 using PVM.Persistence.Sql.Model;
 using PVM.Persistence.Sql.Transform;
@@ -49,7 +50,6 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
 
             public TestContext()
             {
-                plan.SetupGet(p => p.WorkflowDefinition).Returns(workflowDefinition.Object);
                 workflowDefinition.SetupGet(w => w.Nodes).Returns(workflowDefinitionNodes);
                 workflowDefinitionTransformer.Setup(t => t.TransformBack(It.IsAny<WorkflowDefinitionModel>()))
                                         .Returns(workflowDefinition.Object);
@@ -57,19 +57,19 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
 
             public IExecution ExecuteTransform()
             {
-                return ExecuteTransform(BuildWorkflowInstanceModel());
+                return ExecuteTransform(BuildExecutionModel());
             }
 
             public IExecution ExecuteTransform(ExecutionModel executionModel)
             {
                 var transformer = new Transform.ExecutionDefinitionTransformer(objectSerializer);
 
-                return transformer.TransformBack(executionModel, plan.Object);
+                return transformer.TransformBack(executionModel, workflowDefinition.Object, plan.Object);
             }
 
-            private WorkflowInstanceModel BuildWorkflowInstanceModel()
+            private ExecutionModel BuildExecutionModel()
             {
-                return new WorkflowInstanceModel()
+                return new ExecutionModel()
                 {
                     Identifier = identifier,
                     CurrentNodeIdentifier = currentNode,
@@ -177,7 +177,7 @@ namespace PVM.Persistence.Sql.Test.ExecutionDefinitionTransformer
         [Test]
         public void AddsParent()
         {
-            WorkflowInstanceModel parent = new WorkflowInstanceModel();
+            ExecutionModel parent = new ExecutionModel();
             var child = new ExecutionModel()
             {
                 Children = new List<ExecutionModel>(),

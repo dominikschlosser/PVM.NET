@@ -53,7 +53,7 @@ namespace PVM.Core.Test.Workflows
 
             Assert.False(executed);
 
-            var userTask = workflowEngine.FindTask("myTask");
+            var userTask = workflowEngine.FindTask("myTask", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask);
 
             Assert.That(executed);
@@ -106,12 +106,12 @@ namespace PVM.Core.Test.Workflows
 
             Assert.False(executed);
 
-            var userTask = workflowEngine.FindTask("task1");
+            var userTask = workflowEngine.FindTask("task1", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask);
 
             Assert.False(executed);
 
-            var userTask2 = workflowEngine.FindTask("task2");
+            var userTask2 = workflowEngine.FindTask("task2", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask2);
 
             Assert.That(executed);
@@ -185,12 +185,12 @@ namespace PVM.Core.Test.Workflows
 
             Assert.False(executed);
 
-            var userTask = workflowEngine.FindTask("task1");
+            var userTask = workflowEngine.FindTask("task1", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(userTask);
 
             Assert.False(executed);
 
-            var nestedTask = workflowEngine.FindTask("nestedTask");
+            var nestedTask = workflowEngine.FindTask("nestedTask", instance.WorkflowInstanceIdentifier);
             workflowEngine.Complete(nestedTask);
 
             Assert.That(instance.IsFinished);
